@@ -33,9 +33,8 @@ export default function UploadFile() {
 
     const formData = new FormData();
     formData.append("quizFile", file);
-    
+
     console.log("formData", formData);
-    
 
     try {
       setLoading(true);
@@ -59,7 +58,7 @@ export default function UploadFile() {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <div
-        className={`w-[500px] h-[200px] border-2 rounded-xl flex flex-col items-center justify-center cursor-pointer transition ${
+        className={`w-[90%] sm:w-[500px] h-[150px] sm:h-[200px] border-2 rounded-xl flex flex-col items-center justify-center cursor-pointer transition ${
           isDragging ? "border-purple-500 bg-purple-50" : "border-gray-300"
         }`}
         onDragOver={(e) => {
@@ -70,18 +69,20 @@ export default function UploadFile() {
         onDrop={handleDrop}
         onClick={() => document.getElementById("fileInput")?.click()}
       >
-        <Upload className="w-10 h-10 text-gray-500 mb-2" />
-        <p className="text-gray-600 font-medium">
+        <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-gray-500 mb-2" />
+        <p className="text-gray-600 font-medium text-sm sm:text-base">
           Хичээлийн файл аа оруулаарай
         </p>
-        <p className="text-sm text-gray-400">
+        <p className="text-xs sm:text-sm text-gray-400 text-center">
           Байршуулахын тулд товшино уу эсвэл чирж буулгана уу
         </p>
-        <p className="text-xs text-gray-400">Зөвхөн PDF файлууд</p>
+        <p className="text-[10px] sm:text-xs text-gray-400">
+          Зөвхөн PDF файлууд
+        </p>
         <input
           type="file"
           id="fileInput"
-          accept=".PDF.pptx.json"
+          accept=".pdf,.pptx,.json"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -89,10 +90,12 @@ export default function UploadFile() {
 
       {file && (
         <div className="mt-4 flex flex-col items-center">
-          <p className="text-sm text-gray-700">Сонгосон файл: {file.name}</p>
+          <p className="text-xs sm:text-sm text-gray-700">
+            Сонгосон файл: {file.name}
+          </p>
           <Button
             onClick={handleUpload}
-            className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            className="mt-2 px-3 py-1 sm:px-4 sm:py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm sm:text-base"
           >
             Upload File
           </Button>
