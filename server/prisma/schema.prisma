@@ -8,15 +8,16 @@ datasource db {
 }
 
 model Room {
-  id          Int          @id @default(autoincrement())
-  roomName    String
-  code        String       @unique
-  teacherId   Int
-  teacher     Teacher      @relation(fields: [teacherId], references: [id])
+  id       Int    @id @default(autoincrement())
+  roomName String
+  code     String @unique
+
   students    Student[]
   assignments Assignment[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  Teacher     Teacher?     @relation(fields: [teacherId], references: [id])
+  teacherId   Int?
 }
 
 model Teacher {
