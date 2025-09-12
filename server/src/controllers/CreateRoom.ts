@@ -23,23 +23,10 @@ async function generateUniqueRoomCode(): Promise<string> {
 // Өрөө үүсгэх
 export const createRoom = async (req: Request, res: Response) => {
   try {
-    const { roomName, teacherId } = req.body;
+    const { roomName } = req.body;
 
     if (!roomName || typeof roomName !== "string" || roomName.trim() === "") {
       return res.status(400).json({ message: "Өрөөний нэрийг оруулна уу." });
-    }
-
-    if (!teacherId || typeof teacherId !== "number") {
-      return res.status(400).json({ message: "Teacher ID-г оруулна уу." });
-    }
-
-    // Багш байгаа эсэхийг шалгах
-    const teacher = await prisma.teacher.findUnique({
-      where: { id: teacherId },
-    });
-
-    if (!teacher) {
-      return res.status(404).json({ message: "Ийм багш олдсонгүй." });
     }
 
     const uniqueCode = await generateUniqueRoomCode();
@@ -48,21 +35,12 @@ export const createRoom = async (req: Request, res: Response) => {
       data: {
         roomName: roomName.trim(),
         code: uniqueCode,
-        teacher: {
-          connect: { id: teacherId },
-        },
       },
       select: {
         id: true,
         code: true,
         roomName: true,
         createdAt: true,
-        teacher: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
       },
     });
 
