@@ -9,6 +9,7 @@ datasource db {
 
 model Room {
   id          Int          @id @default(autoincrement())
+  roomName    String
   code        String       @unique
   teacherId   Int
   teacher     Teacher      @relation(fields: [teacherId], references: [id])
@@ -27,25 +28,25 @@ model Teacher {
 }
 
 model Student {
-  id           Int             @id @default(autoincrement())
-  studentName  String
-  socketId     String?
-  roomId       Int
-  room         Room            @relation(fields: [roomId], references: [id])
-  answers      StudentAnswer[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id          Int             @id @default(autoincrement())
+  studentName String
+  socketId    String?
+  roomId      Int
+  room        Room            @relation(fields: [roomId], references: [id])
+  answers     StudentAnswer[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
 
 model Assignment {
-  id          Int       @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   roomId      Int
-  room        Room      @relation(fields: [roomId], references: [id])
+  room        Room       @relation(fields: [roomId], references: [id])
   title       String
   description String?
   questions   Question[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Question {
@@ -54,18 +55,18 @@ model Question {
   assignment   Assignment      @relation(fields: [assignmentId], references: [id])
   text         String
   options      Option[]
-  answers      StudentAnswer[]   
+  answers      StudentAnswer[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 }
 
 model Option {
-  id         Int              @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   questionId Int
-  question   Question         @relation(fields: [questionId], references: [id])
+  question   Question        @relation(fields: [questionId], references: [id])
   text       String
-  isCorrect  Boolean          @default(false)
-  answers    StudentAnswer[]    
+  isCorrect  Boolean         @default(false)
+  answers    StudentAnswer[]
 }
 
 model StudentAnswer {
