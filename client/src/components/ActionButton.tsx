@@ -18,12 +18,12 @@ export default function ActionButton() {
 
   const handleToggle = () => {
     setShowCreateRoom(!showCreateRoom);
-    router.push("/teacher-room");
+    router.push("/teacherRoom");
   };
 
   const handleToggleJoin = () => {
     setShowCreateRoom(!showCreateRoom);
-    router.push("/student-room");
+    router.push("/studentRoom");
   };
 
   return (
@@ -42,8 +42,8 @@ export default function ActionButton() {
         {/* User Type Selection */}
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
           {/* Teacher Card */}
-          <div
-            //   onClick={() => setUserType('teacher')}
+          <button
+              onClick={handleToggle}
             className="bg-white rounded-3xl shadow-2xl p-12 text-center transform hover:scale-105 transition-all duration-300 cursor-pointer group"
           >
             <div className="w-32 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -66,11 +66,11 @@ export default function ActionButton() {
                 <span>Analytics</span>
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Student Card */}
-          <div
-            //   onClick={() => setUserType('student')}
+          <button
+              onClick={handleToggleJoin}
             className="bg-white rounded-3xl shadow-2xl p-12 text-center transform hover:scale-105 transition-all duration-300 cursor-pointer group"
           >
             <div className="w-32 h-32 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mx-auto mb-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -93,7 +93,7 @@ export default function ActionButton() {
                 <span>Leaderboard</span>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>
