@@ -1,6 +1,10 @@
+import UploadFile from "./uploadFile";
+
 
 export default function Home() {
   return (
-    <div></div>
+    <div>
+      <UploadFile/>
+    </div>
   );
 }
