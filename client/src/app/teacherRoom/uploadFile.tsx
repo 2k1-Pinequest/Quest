@@ -15,11 +15,17 @@ export default function UploadFile() {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+  
+    
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       setFile(e.dataTransfer.files[0]);
+        console.log("e.dataTransfer.files[0]", e.dataTransfer.files[0]);
     }
   };
+
+  console.log("fiel", file);
+  
 
 //   const handleUpload = async () => {
 //     if (!file) return alert("Файл сонгоно уу");
@@ -40,6 +46,7 @@ export default function UploadFile() {
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
+      
       <div
         className={`w-[500px] h-[200px] border-2 rounded-xl flex flex-col items-center justify-center cursor-pointer transition ${
           isDragging ? "border-purple-500 bg-purple-50" : "border-gray-300"
@@ -61,11 +68,13 @@ export default function UploadFile() {
         <input
           type="file"
           id="fileInput"
-          accept=".PDF"
+          accept=".PDF.pptx.json"
           onChange={handleFileChange}
           className="hidden"
         />
       </div>
+
+
       {file && (
         <div className="mt-4 flex flex-col items-center">
           <p className="text-sm text-gray-700">Сонгосон файл: {file.name}</p>
