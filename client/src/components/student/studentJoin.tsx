@@ -1,19 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, UserRoundPlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
-// ---------------------- StudentJoin Component ----------------------
 interface StudentJoinProps {
   onBack: () => void;
   onNext: (name: string, roomCode: string) => void;
 }
 
-export function StudentJoin({ onBack, onNext }: StudentJoinProps) {
+export function StudentJoin({ onNext }: StudentJoinProps) {
   const [roomCode, setRoomCode] = useState("");
   const [studentName, setStudentName] = useState("");
 
@@ -24,88 +23,68 @@ export function StudentJoin({ onBack, onNext }: StudentJoinProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Button
-          variant="ghost"
-          className="mb-6 p-2 text-white hover:bg-white/20 rounded-lg transition-colors"
-          onClick={onBack}
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-
-        <Card className="shadow-2xl rounded-2xl p-8">
-          <CardHeader>
-            <CardTitle className="text-center text-3xl font-bold mb-2">
-              Join Quiz
-            </CardTitle>
-            <p className="text-center text-gray-600">
-              Эхлэхийн тулд өрөөний код болон нэрээ оруулна уу
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-6 mt-6">
-            <div>
-              <Label htmlFor="roomCode">Room Code</Label>
-              <Input
-                id="roomCode"
-                type="text"
-                value={roomCode}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setRoomCode(e.target.value.toUpperCase())
-                }
-                placeholder="ENTER CODE"
-                maxLength={6}
-                className="text-center text-lg font-semibold tracking-widest"
-              />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 flex flex-col items-center justify-center px-4 py-8 space-y-6">
+       {/* <Button
+        variant="ghost"
+        className="mb-2 p-2 text-purple-700 hover:bg-gray-200/40 rounded-lg transition-colors self-start"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </Button> */}
+      <div className="text-center">
+        <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <UserRoundPlusIcon className="w-10 h-10 text-white" />
             </div>
+        <h1 className="text-4xl font-bold text-green-500 mb-2">Өрөөнд нэгдэх</h1>
+        <p className="text-gray-600 text-sm">
+          Эхлэхийн тулд хичээлийн код болон нэрээ оруулна уу
+        </p>
+      </div>  
+      <Card className="shadow-xl rounded-2xl p-6 w-full max-w-md">
+        <CardContent className="space-y-5 mt-2">
+       
+          <div>
+            <Label htmlFor="roomCode" className="text-sm font-medium">
+              Өрөөний код
+            </Label>
+            <Input
+              id="roomCode"
+              type="text"
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+              placeholder="КОД ОРУУЛАХ"
+              maxLength={6}
+              className="text-center text-lg font-semibold tracking-widest mt-1"
+            />
+          </div>
 
-            <div>
-              <Label htmlFor="studentName">Your Name</Label>
-              <Input
-                id="studentName"
-                type="text"
-                value={studentName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setStudentName(e.target.value)
-                }
-                placeholder="Enter your name"
-                maxLength={20}
-              />
-            </div>
+          {/* Name Input */}
+          <div>
+            <Label htmlFor="studentName" className="text-sm font-medium">
+              Нэр
+            </Label>
+            <Input
+              id="studentName"
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="Нэрээ бичнэ үү"
+              maxLength={20}
+              className="mt-1"
+            />
+          </div>
 
-            <Button
-              type="button"
-              onClick={handleNext}
-              disabled={!roomCode.trim() || !studentName.trim()}
-              className="w-full flex items-center justify-center space-x-2"
-            >
-              <span>Next</span>
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ---------------------- Parent Component ----------------------
-export default function QuizPage() {
-  const [step, setStep] = useState(1);
-
-  const handleBack = () => {
-    console.log("Back clicked");
-    setStep(step - 1);
-  };
-
-  const handleNext = (name: string, roomCode: string) => {
-    console.log("Student:", name, "Room:", roomCode);
-    setStep(step + 1);
-  };
-
-  return (
-    <div>
-      <StudentJoin onBack={handleBack} onNext={handleNext} />
+          {/* Next Button */}
+          <Button
+            type="button"
+            onClick={handleNext}
+            disabled={!roomCode.trim() || !studentName.trim()}
+            className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-500 text-white rounded-lg py-2"
+          >
+            <span>Үргэлжлүүлэх</span>
+            <ArrowRight className="w-5 h-5" />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
