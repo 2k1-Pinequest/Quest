@@ -1,117 +1,92 @@
-"use client";
+import { BookOpen, CirclePlus } from "lucide-react";
+import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
+import { TeacherAssignmentForm } from "./teacheAssignmentForm";
 
-import { useState } from "react";
-import { Quiz, Question } from "@/types/quiz";
-import { ArrowLeft, Plus, Upload } from "lucide-react";
-import QuestionForm from "./QuestionForm";
-import QuestionList from "./QuestionList";
-import UploadSection from "./uploadSection";
-
-interface TeacherDashboardProps {
-  onBack: () => void;
-  onStartQuiz: (quiz: Quiz) => void;
-}
-
-export default function TeacherDashboard({
-  onBack,
-  onStartQuiz,
-}: TeacherDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"create" | "upload">("create");
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [roomName, setRoomName] = useState("");
-  const [roomCode] = useState(() =>
-    Math.random().toString(36).substring(2, 8).toUpperCase()
-  );
-
-  const handleStartQuiz = () => {
-    if (questions.length === 0 || !roomName.trim()) return;
-    const quiz: Quiz = {
-      id: Date.now().toString(),
-      title: roomName,
-      questions,
-      roomCode,
-    };
-    onStartQuiz(quiz);
-  };
-
+export const TeacherClassRooms = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ---------- Header ---------- */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={onBack}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Teacher Dashboard
-            </h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <TeacherClassRoomHeader />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* angiud songogoh navbar heseg hu */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-users mr-2"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                My Classrooms
+              </h3>
+
+              <div className="space-y-2">
+                <button className="w-full text-left p-3 rounded-xl transition-colors bg-blue-100 text-blue-700 border-2 border-blue-200">
+                  <div className="font-semibold">10a</div>
+                  <div className="text-sm text-gray-500">VS29R5</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* angiin daalgawaruud*/}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              {/* angiin ner add assign button*/}
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">10A</h2>
+                  <p className="text-gray-600">
+                    Ангийн код
+                    <span className="font-mono font-semibold"> VS29R5</span>
+                  </p>
+                </div>
+
+                <TeacherAssignmentForm />
+
+              </div>
+            </div>
+
+            {/* neg shirheg daalgawar orood harhaar huuhed bolgonii submission haragdana*/}
+            <div className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      Initial Assignment
+                    </h3>
+                    <p className="text-gray-600 mt-1">Daalgawar 1</p>
+                  </div>
+
+                  <div className="text-sm text-gray-500">0 submission(s)</div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="text-center py-8 text-gray-500 flex flex-col justify-center items-center">
+                    {" "}
+
+                    <BookOpen className="h-15 w-15"/>
+                    No submissions yet
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
-
-      {/* ---------- Main ---------- */}
-      <div className="max-w-6xl mx-auto p-6">
-        {/* Room name input */}
-        <div className="mb-8">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Room name
-          </label>
-          <input
-            type="text"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
-            placeholder="Enter room name..."
-            className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg 
-                       focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
-          <button
-            onClick={() => setActiveTab("create")}
-            className={`px-6 py-2 rounded-md font-medium transition-colors ${
-              activeTab === "create"
-                ? "bg-white text-purple-600 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            <Plus className="w-4 h-4 inline mr-2" />
-            Create Questions
-          </button>
-          <button
-            onClick={() => setActiveTab("upload")}
-            className={`px-6 py-2 rounded-md font-medium transition-colors ${
-              activeTab === "upload"
-                ? "bg-white text-purple-600 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            <Upload className="w-4 h-4 inline mr-2" />
-            Upload File
-          </button>
-        </div>
-
-        {/* Tabs content */}
-        {activeTab === "create" && (
-          <div className="grid lg:grid-cols-2 gap-8">
-            <QuestionForm
-              onAddQuestion={(q) => setQuestions((prev) => [...prev, q])}
-            />
-            <QuestionList
-              questions={questions}
-              onStartQuiz={handleStartQuiz}
-              roomName={roomName}
-            />
-          </div>
-        )}
-
-        {activeTab === "upload" && <UploadSection />}
-      </div>
+      </main>
     </div>
   );
-}
+};
