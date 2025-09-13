@@ -1,15 +1,17 @@
 "use client";
-import TeacherDashboard from "@/components/teacher/teacherDashboard";
+import { TeacherClassRooms } from "@/components/teacher/teacherDashboard";
+// import TeacTeacherClassRoomsherDashboard from "@/components/teacher/teacherDashboard";
 import UploadFile from "./uploadFile";
 import { Quiz } from "@/types/quiz";
 
 export default function Home() {
-  const handleBack = () => {};
-  const handleStartQuiz = (quiz: Quiz) => {};
+  // const handleBack = () => {};
+  // const handleStartQuiz = (quiz: Quiz) => {};
   return (
     <div>
-      <TeacherDashboard onBack={handleBack} onStartQuiz={handleStartQuiz} />
-      <UploadFile />
+      <TeacherClassRooms />
+      {/* <TeacherDashboard onBack={handleBack} onStartQuiz={handleStartQuiz} /> */}
+      {/* <UploadFile /> */}
     </div>
   );
 }
