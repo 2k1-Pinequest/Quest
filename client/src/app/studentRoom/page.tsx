@@ -1,6 +1,7 @@
 "use client";
 import { StudentJoin } from "@/components/student/studentJoin";
-import { StudentQuizView } from "@/components/student/studentQuiz";
+import StudentDashboard from "@/components/student/studentQuiz";
+
 import { useState } from "react";
 
 export default function StudentRoomPage() {
@@ -17,13 +18,7 @@ export default function StudentRoomPage() {
   return (
     <div>
       {step === 1 && <StudentJoin onBack={handleBack} onNext={handleNext} />}
-      {step === 2 && (
-        <StudentQuizView
-          studentName={studentName}
-          avatar={avatar}
-          onBack={handleBack}
-        />
-      )}
+      {step === 2 && <StudentDashboard />}
     </div>
   );
 }
