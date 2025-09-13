@@ -7,31 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Room {
-  id       Int    @id @default(autoincrement())
-  roomName String
-  code     String @unique
-
-  students    Student[]
-  assignments Assignment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  Teacher     Teacher?     @relation(fields: [teacherId], references: [id])
-  teacherId   Int?
-}
-
+//
+// ========== TEACHER (Authentication орно) ==========
+//
 model Teacher {
   id        Int      @id @default(autoincrement())
   name      String
+  email     String   @unique
+  password  String   // hashed password
   rooms     Room[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+//
+// ========== STUDENT (Authentication орно) ==========
+//
 model Student {
   id          Int             @id @default(autoincrement())
   studentName String
-  socketId    String?
+  email       String   @unique
+  password    String   
   roomId      Int
   room        Room            @relation(fields: [roomId], references: [id])
   answers     StudentAnswer[]
@@ -39,45 +35,65 @@ model Student {
   updatedAt   DateTime        @updatedAt
 }
 
+//
+// ========== ROOM ==========
+//
+model Room {
+  id          Int          @id @default(autoincrement())
+  roomName    String
+  code        String       @unique
+  students    Student[]
+  assignments Assignment[]
+
+  Teacher     Teacher?     @relation(fields: [teacherId], references: [id])
+  teacherId   Int?
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+//
+// ========== ASSIGNMENT ==========
+//
 model Assignment {
   id          Int        @id @default(autoincrement())
   roomId      Int
   room        Room       @relation(fields: [roomId], references: [id])
   title       String
   description String?
+  fileUrl     String?    // Хавсралт файл эсвэл зураг
   questions   Question[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
 
+//
+// ========== QUESTION ==========
+//
 model Question {
   id           Int             @id @default(autoincrement())
   assignmentId Int
   assignment   Assignment      @relation(fields: [assignmentId], references: [id])
   text         String
-  options      Option[]
   answers      StudentAnswer[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 }
 
-model Option {
-  id         Int             @id @default(autoincrement())
-  questionId Int
-  question   Question        @relation(fields: [questionId], references: [id])
-  text       String
-  isCorrect  Boolean         @default(false)
-  answers    StudentAnswer[]
-}
-
+//
+// ========== STUDENT ANSWER (AI үнэлгээтэй) ==========
+//
 model StudentAnswer {
-  id         Int      @id @default(autoincrement())
-  studentId  Int
-  student    Student  @relation(fields: [studentId], references: [id])
-  questionId Int
-  question   Question @relation(fields: [questionId], references: [id])
-  optionId   Int
-  option     Option   @relation(fields: [optionId], references: [id])
-  isCorrect  Boolean
-  answeredAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  student     Student  @relation(fields: [studentId], references: [id])
+  questionId  Int
+  question    Question @relation(fields: [questionId], references: [id])
+
+  answerText  String   // Сурагчийн өгсөн хариулт
+  score       Float?   // AI эсвэл багшийн оноо
+  feedback    String?  // AI эсвэл багшийн өгсөн тайлбар
+  aiAnalysis  Json?    // AI-с гарсан нэмэлт анализ (JSON хадгална)
+
+  answeredAt  DateTime @default(now())
 }
