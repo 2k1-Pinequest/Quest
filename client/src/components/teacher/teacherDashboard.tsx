@@ -1,8 +1,14 @@
+"use client";
+
 import { BookOpen, CirclePlus } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
 
+import { useRouter } from "next/navigation";
+
 export const TeacherClassRooms = () => {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <TeacherClassRoomHeader />
@@ -55,14 +61,13 @@ export const TeacherClassRooms = () => {
                 </div>
 
                 <TeacherAssignmentForm />
-
               </div>
             </div>
 
-            {/* neg shirheg daalgawar orood harhaar huuhed bolgonii submission haragdana*/}
-            <div className="space-y-6">
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+            {/* neg shirheg daalgawar orood harhaar huuhed bolgonii submission ba ai analyze haragdana */}
 
+            <div className="space-y-6"    onClick={() => router.push("/teacherAssignmentDetail")}>
+              <div className="bg-white rounded-2xl shadow-lg p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900">
@@ -77,8 +82,7 @@ export const TeacherClassRooms = () => {
                 <div className="space-y-4">
                   <div className="text-center py-8 text-gray-500 flex flex-col justify-center items-center">
                     {" "}
-
-                    <BookOpen className="h-15 w-15"/>
+                    <BookOpen className="h-15 w-15" />
                     No submissions yet
                   </div>
                 </div>
