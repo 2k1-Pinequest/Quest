@@ -5,6 +5,6 @@ import { createTeacher } from "../controllers/teacher/sign-up.controller";
 
 const teacherRouter = Router();
 
-teacherRouter.post("/create", createTeacher);
-teacherRouter.post("/create", loginTeacher);
+teacherRouter.post("/sign-uo", createTeacher);
+teacherRouter.post("/sign-in", loginTeacher);
 export default teacherRouter;
