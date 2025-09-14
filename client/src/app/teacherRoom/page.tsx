@@ -1,8 +1,6 @@
 "use client";
 import { TeacherClassRooms } from "@/components/teacher/teacherDashboard";
-// import TeacTeacherClassRoomsherDashboard from "@/components/teacher/teacherDashboard";
-import UploadFile from "./uploadFile";
-import { Quiz } from "@/types/quiz";
+
 
 export default function Home() {
   // const handleBack = () => {};
