@@ -3,12 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// 5 оронтой random код үүсгэх функц
 const generateRoomCode = (): string => {
-  return Math.floor(10000 + Math.random() * 90000).toString(); // 10000–99999
+  return Math.floor(10000 + Math.random() * 90000).toString();
 };
 
-// ================== CREATE ROOM BY TEACHER ID WITH AUTO CODE ==================
 export const createRoom = async (req: Request, res: Response) => {
   try {
     const { roomName } = req.body;
@@ -18,23 +16,21 @@ export const createRoom = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "roomName is required" });
     }
 
-    // Teacher байгаа эсэхийг шалгах
-    const teacher = await prisma.teacher.findUnique({ where: { id: Number(teacherId) } });
+    const teacher = await prisma.teacher.findUnique({
+      where: { id: Number(teacherId) },
+    });
     if (!teacher) {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
-    // Давхардахгүй unique code үүсгэх
     let code = generateRoomCode();
     let existingRoom = await prisma.room.findUnique({ where: { code } });
 
-    // Давхардахаар дахин үүсгэнэ
     while (existingRoom) {
       code = generateRoomCode();
       existingRoom = await prisma.room.findUnique({ where: { code } });
     }
 
-    // Room үүсгэх
     const room = await prisma.room.create({
       data: {
         roomName,
