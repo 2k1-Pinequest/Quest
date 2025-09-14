@@ -6,7 +6,6 @@ export default function StudentRoomPage() {
   return (
     <div>
       <StudentDashboard />
-      {/* <Student /> */}
     </div>
   );
 }

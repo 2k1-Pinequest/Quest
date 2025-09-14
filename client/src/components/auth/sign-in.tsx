@@ -3,28 +3,26 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 interface FormInputs {
   email: string;
   password: string;
 }
 
-const TeacherLogin: React.FC = () => {
-  const router = useRouter();
-  const [message, setMessage] = useState<string | null>(null);
+interface TeacherLoginProps {
+  onSuccess?: () => void;
+}
 
+const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
+  const [message, setMessage] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormInputs>();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const res = await axios.post("http://localhost:4200/teacher/sign-in", data, { withCredentials: true });
-
-      // JWT-г localStorage-д хадгалах
       localStorage.setItem("token", res.data.token);
-
       setMessage("Амжилттай нэвтэрлээ!");
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => onSuccess?.(), 1000);
     } catch (err: any) {
       setMessage(err.response?.data?.message || "Нэвтрэхэд алдаа гарлаа");
     }
@@ -43,35 +41,22 @@ const TeacherLogin: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block mb-1 font-medium">И-мэйл</label>
-          <input
-            {...register("email", { required: "И-мэйл оруулах шаардлагатай" })}
-            type="email"
-            className="w-full border px-3 py-2 rounded"
-          />
+          <input {...register("email", { required: "И-мэйл оруулах шаардлагатай" })} type="email" className="w-full border px-3 py-2 rounded" />
           {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </div>
 
         <div>
           <label className="block mb-1 font-medium">Нууц үг</label>
-          <input
-            {...register("password", { required: "Нууц үг оруулах шаардлагатай" })}
-            type="password"
-            className="w-full border px-3 py-2 rounded"
-          />
+          <input {...register("password", { required: "Нууц үг оруулах шаардлагатай" })} type="password" className="w-full border px-3 py-2 rounded" />
           {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
+        <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
           {isSubmitting ? "Нэвтрэж байна..." : "Нэвтрэх"}
         </button>
 
         <p className="text-sm mt-2">
-          Бүртгэлгүй юу?{" "}
-          <a href="/sign-up" className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
+          Бүртгэлгүй юу? <a href="#" onClick={() => onSuccess?.()} className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
         </p>
       </form>
     </div>
