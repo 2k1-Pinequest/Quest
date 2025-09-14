@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import prisma from "../../utils/prisma";
+import prisma from "../../utils/prisma"; // prisma client
 
-// ================== TEACHER LOGIN ==================
 export const loginTeacher = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Имэйл болон нууц үг оруулах шаардлагатай" });
+      return res.status(400).json({ message: "Имэйл болон нууц үг оруулах шаардлагатай" });
     }
 
     // Teacher байгаа эсэх
@@ -27,6 +23,9 @@ export const loginTeacher = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Нууц үг буруу байна" });
     }
 
+    // Teacher-ийн өрөө байгаа эсэхийг шалгах
+    const room = await prisma.room.findFirst({ where: { teacherId: teacher.id } });
+
     // JWT үүсгэх
     const token = jwt.sign(
       { id: teacher.id, email: teacher.email },
@@ -38,6 +37,7 @@ export const loginTeacher = async (req: Request, res: Response) => {
       message: "Амжилттай нэвтэрлээ",
       token,
       teacher: { id: teacher.id, name: teacher.name, email: teacher.email },
+      hasRoom: !!room, // true бол room байгаа, false бол байхгүй
     });
   } catch (err: any) {
     res.status(500).json({ message: "Серверийн алдаа", error: err.message });
