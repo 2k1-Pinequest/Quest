@@ -1,7 +1,10 @@
 import { Router } from "express";
-import { createTeacher } from "../controllers/teacher/createTeacher.controller";
+
+import { loginTeacher } from "../controllers/teacher/sign-in.controller";
+import { createTeacher } from "../controllers/teacher/sign-up.controller";
 
 const teacherRouter = Router();
 
 teacherRouter.post("/create", createTeacher);
+teacherRouter.post("/create", loginTeacher);
 export default teacherRouter;
