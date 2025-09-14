@@ -11,7 +11,7 @@ import { TeacherClassRooms } from "@/components/teacher/teacherDashboard";
 
 export default function Home() {
   const router = useRouter();
-  const [step, setStep] = useState<"signup" | "login" | "createRoom" | "dashboard">("signup");
+  const [step, setStep] = useState<"login" | "signup" | "createRoom" | "dashboard">("login");
   const [teacherId, setTeacherId] = useState<number | null>(null);
 
   // Signup амжилттай

@@ -46,7 +46,7 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
           {isSubmitting ? "Нэвтрэж байна..." : "Нэвтрэх"}
         </button>
         <p className="text-sm mt-2">
-          Бүртгэлгүй юу?{" "}
+          Бүртгэлгүй бол?{" "}
           <a href="/teacherRoom/sign-up" className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
         </p>
       </form>
