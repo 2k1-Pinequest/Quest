@@ -1,20 +1,54 @@
 "use client";
 
-import { BookOpen, CirclePlus } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
-
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { mn } from "date-fns/locale";
+import { AssignmentItem } from "./assignmentItem";
 
 export const TeacherClassRooms = () => {
   const router = useRouter();
+
+  // Зөвхөн 10А ангийн (Нийгмийн багшийн) өдөр өдрөөр даалгавар
+  const classAssignments = [
+    {
+      date: "2025-09-14",
+      assignments: [
+        {
+          id: 1,
+          title: "Нийгэм – Даалгавар 1",
+          description: "Хүн ба нийгмийн тухай уншлага: хуудас 12–18",
+          submissions: 5,
+        },
+        {
+          id: 2,
+          title: "Нийгэм – Даалгавар 2",
+          description: "Монгол Улсын Үндсэн хуулийн талаар эсээ бич",
+          submissions: 0,
+        },
+      ],
+    },
+    {
+      date: "2025-09-15",
+      assignments: [
+        {
+          id: 3,
+          title: "Нийгэм – Даалгавар 3",
+          description: "Хүн ба байгаль орчны тухай уншлага",
+          submissions: 2,
+        },
+      ],
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <TeacherClassRoomHeader />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* angiud songogoh navbar heseg hu */}
+          {/* angiud songogoh navbar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -40,17 +74,16 @@ export const TeacherClassRooms = () => {
 
               <div className="space-y-2">
                 <button className="w-full text-left p-3 rounded-xl transition-colors bg-blue-100 text-blue-700 border-2 border-blue-200">
-                  <div className="font-semibold">10a</div>
+                  <div className="font-semibold">10A</div>
                   <div className="text-sm text-gray-500">VS29R5</div>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* angiin daalgawaruud*/}
+          {/* 10А ангийн өдөр өдрөөр даалгавар */}
           <div className="lg:col-span-3 space-y-6">
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              {/* angiin ner add assign button*/}
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">10A</h2>
@@ -59,35 +92,30 @@ export const TeacherClassRooms = () => {
                     <span className="font-mono font-semibold"> VS29R5</span>
                   </p>
                 </div>
-
                 <TeacherAssignmentForm />
               </div>
             </div>
 
-            {/* neg shirheg daalgawar orood harhaar huuhed bolgonii submission ba ai analyze haragdana */}
-
-            <div className="space-y-6"    onClick={() => router.push("/teacherAssignmentDetail")}>
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      Initial Assignment
-                    </h3>
-                    <p className="text-gray-600 mt-1">Daalgawar 1</p>
-                  </div>
-
-                  <div className="text-sm text-gray-500">0 submission(s)</div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="text-center py-8 text-gray-500 flex flex-col justify-center items-center">
-                    {" "}
-                    <BookOpen className="h-15 w-15" />
-                    No submissions yet
-                  </div>
-                </div>
+            {/* өдөр өдрөөр харуулах */}
+            {classAssignments.map((dayBlock) => (
+              <div key={dayBlock.date} className="space-y-4">
+                <h3 className="text-xl font-bold text-gray-800">
+                  {format(new Date(dayBlock.date), "yyyy 'оны' MMM d, EEEE", {
+                    locale: mn,
+                  })}
+                </h3>
+                {dayBlock.assignments.map((a) => (
+                  <AssignmentItem
+                    key={a.id}
+                    id={a.id}
+                    title={a.title}
+                    description={a.description}
+                    submissions={a.submissions}
+                  />
+                ))}
               </div>
-            </div>
+            ))}
+
           </div>
         </div>
       </main>
