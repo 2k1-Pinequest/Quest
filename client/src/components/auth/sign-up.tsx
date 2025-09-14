@@ -16,7 +16,9 @@ interface TeacherSignupProps {
 
 const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
   const [message, setMessage] = useState<string | null>(null);
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormInputs>();
+
   const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
@@ -30,7 +32,7 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
+    <div className="max-w-md mx-auto p-6 border rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Багшийн бүртгэл</h2>
 
       {message && (
@@ -40,36 +42,21 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-medium">Нэр</label>
-          <input {...register("name", { required: "Нэр оруулах шаардлагатай" })} className="w-full border px-3 py-2 rounded" />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-        </div>
+        <input {...register("name", { required: "Нэр оруулах шаардлагатай" })} placeholder="Нэр" className="w-full border px-3 py-2 rounded" />
+        {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
 
-        <div>
-          <label className="block mb-1 font-medium">И-мэйл</label>
-          <input {...register("email", {
-            required: "И-мэйл оруулах шаардлагатай",
-            pattern: { value: /\S+@\S+\.\S+/, message: "И-мэйл буруу байна" }
-          })} type="email" className="w-full border px-3 py-2 rounded" />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-        </div>
+        <input {...register("email", { required: "И-мэйл оруулах шаардлагатай", pattern: { value: /\S+@\S+\.\S+/, message: "И-мэйл буруу байна" } })} type="email" placeholder="Email" className="w-full border px-3 py-2 rounded" />
+        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-        <div>
-          <label className="block mb-1 font-medium">Нууц үг</label>
-          <input {...register("password", {
-            required: "Нууц үг оруулах шаардлагатай",
-            pattern: { value: passwordPattern, message: "Нууц үг 8+ тэмдэгт, том жижиг үсэг болон тоо агуулсан байх ёстой" }
-          })} type="password" className="w-full border px-3 py-2 rounded" />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-        </div>
+        <input {...register("password", { required: "Нууц үг оруулах шаардлагатай", pattern: { value: passwordPattern, message: "Нууц үг 8+ тэмдэгт, том жижиг үсэг болон тоо агуулсан байх ёстой" } })} type="password" placeholder="Нууц үг" className="w-full border px-3 py-2 rounded" />
+        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
         <button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
           {isSubmitting ? "Бүртгэж байна..." : "Бүртгүүлэх"}
         </button>
-
-        <p className="text-sm mt-2">
-          Бүртгэлтэй бол <a href="#" onClick={() => onSuccess?.()} className="text-blue-600">Энд дарж нэвтэрнэ үү</a>
+         <p className="text-sm mt-2">
+          Бүртгэлгүй юу?{" "}
+          <a href="/teacherRoom/sign-in" className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
         </p>
       </form>
     </div>

@@ -8,3 +8,7 @@ export default function Home() {
     </div>
   );
 }
+//  <p className="text-sm mt-2">
+//           Бүртгэлгүй юу?{" "}
+//           <a href="/teacherRoom/sign-up" className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
+//         </p>
