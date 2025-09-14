@@ -14,7 +14,7 @@ model Teacher {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  password  String   // hashed password
+  password  String // hashed password
   rooms     Room[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,10 +26,10 @@ model Teacher {
 model Student {
   id          Int             @id @default(autoincrement())
   studentName String
-  email       String   @unique
-  password    String   
-  roomId      Int
-  room        Room            @relation(fields: [roomId], references: [id])
+  email       String          @unique
+  password    String
+  roomId      Int?
+  room        Room?           @relation(fields: [roomId], references: [id])
   answers     StudentAnswer[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -45,11 +45,11 @@ model Room {
   students    Student[]
   assignments Assignment[]
 
-  Teacher     Teacher?     @relation(fields: [teacherId], references: [id])
-  teacherId   Int?
+  Teacher   Teacher? @relation(fields: [teacherId], references: [id])
+  teacherId Int?
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //
@@ -61,7 +61,7 @@ model Assignment {
   room        Room       @relation(fields: [roomId], references: [id])
   title       String
   description String?
-  fileUrl     String?    // Хавсралт файл эсвэл зураг
+  fileUrl     String? // Хавсралт файл эсвэл зураг
   questions   Question[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -84,16 +84,16 @@ model Question {
 // ========== STUDENT ANSWER (AI үнэлгээтэй) ==========
 //
 model StudentAnswer {
-  id          Int      @id @default(autoincrement())
-  studentId   Int
-  student     Student  @relation(fields: [studentId], references: [id])
-  questionId  Int
-  question    Question @relation(fields: [questionId], references: [id])
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  student    Student  @relation(fields: [studentId], references: [id])
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
 
-  answerText  String   // Сурагчийн өгсөн хариулт
-  score       Float?   // AI эсвэл багшийн оноо
-  feedback    String?  // AI эсвэл багшийн өгсөн тайлбар
-  aiAnalysis  Json?    // AI-с гарсан нэмэлт анализ (JSON хадгална)
+  answerText String // Сурагчийн өгсөн хариулт
+  score      Float? // AI эсвэл багшийн оноо
+  feedback   String? // AI эсвэл багшийн өгсөн тайлбар
+  aiAnalysis Json? // AI-с гарсан нэмэлт анализ (JSON хадгална)
 
-  answeredAt  DateTime @default(now())
+  answeredAt DateTime @default(now())
 }

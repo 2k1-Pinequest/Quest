@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
+import prisma from "../../utils/prisma";
 
 // ================== TEACHER LOGIN ==================
 export const loginTeacher = async (req: Request, res: Response) => {
@@ -11,7 +10,9 @@ export const loginTeacher = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Имэйл болон нууц үг оруулах шаардлагатай" });
+      return res
+        .status(400)
+        .json({ message: "Имэйл болон нууц үг оруулах шаардлагатай" });
     }
 
     // Teacher байгаа эсэх
@@ -36,7 +37,7 @@ export const loginTeacher = async (req: Request, res: Response) => {
     res.status(200).json({
       message: "Амжилттай нэвтэрлээ",
       token,
-      teacher: { id: teacher.id, name: teacher.name, email: teacher.email }
+      teacher: { id: teacher.id, name: teacher.name, email: teacher.email },
     });
   } catch (err: any) {
     res.status(500).json({ message: "Серверийн алдаа", error: err.message });
