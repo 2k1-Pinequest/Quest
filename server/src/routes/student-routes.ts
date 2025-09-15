@@ -5,7 +5,7 @@ import { loginStudent } from "../controllers/student/signIn.controller";
 
 const studentRouter = Router();
 
-studentRouter.post("/joinclass/:studentId", joinRoom);
+studentRouter.post("/joinclass", joinRoom);
 studentRouter.post("/register", createStudent);
 studentRouter.post("/login", loginStudent);
 export default studentRouter;
