@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Upload, ChevronLeft, ArrowLeft } from "lucide-react";
+import {
+  BookOpen,
+  Upload,
+  LogOut,
+  ChevronLeft,
+  ArrowLeft,
+  X,
+} from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -125,13 +132,13 @@ export default function StudentDashboard() {
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.6 }}
             >
               <button
                 onClick={() => setSelectedAssignment(null)}
-                className="flex items-center absolute top-4 right-4 z-50 p-2 rounded-full text-green-600 hover:text-green-700"
+                className="flex items-center absolute top-3 right-3 z-50 p-2 rounded-full text-blue-600 hover:text-blue-700"
               >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Гарах
+                <X className="h-4 w-4 mr-1" />
               </button>
 
               <div className="overflow-y-auto mt-10">
