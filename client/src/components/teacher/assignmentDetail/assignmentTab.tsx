@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Users, BarChart3 } from "lucide-react";
 import { OverviewCarts } from "./Stats/overviewCarts";
 import { Distribution } from "./Stats/distribution";
-import { SubmissionsHeader } from "./Submissions/SubmissionsHeader";
+import { SubmissionsAssignments } from "./Submissions/SubmissionAssignments";
+
 
 export const AssignmentTab = () => {
   // Түр зуурын state
@@ -55,7 +56,7 @@ export const AssignmentTab = () => {
           //     <li key={s.id}>{s.student}</li>
           //   ))}
           // </ul>
-          <SubmissionsHeader />
+          <SubmissionsAssignments />
         ) : (
           <div className="flex flex-col gap-6 p-30">
             <OverviewCarts submissions={currentRoom?.submissions} />
