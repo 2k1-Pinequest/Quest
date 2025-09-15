@@ -51,7 +51,7 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 flex flex-col items-center justify-center px-4 py-8 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex flex-col items-center justify-center">
       <div className="text-center">
         <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
           <UserRoundPlusIcon className="w-10 h-10 text-white" />
@@ -59,9 +59,6 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
         <h1 className="text-4xl font-bold text-green-500 mb-2">
           Өрөөнд нэгдэх
         </h1>
-        <p className="text-gray-600 text-sm">
-          Эхлэхийн тулд хичээлийн код болон нэрээ оруулна уу
-        </p>
       </div>
       <Card className="shadow-xl rounded-2xl p-6 w-full max-w-md">
         <CardContent className="space-y-5 mt-2">
