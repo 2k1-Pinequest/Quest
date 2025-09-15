@@ -1,4 +1,4 @@
-import TeacherSignup from "@/components/auth/sign-up";
+import TeacherSignup from "@/components/auth/teacher/sign-up";
 import ActionButton from "@/components/home";
 
 
