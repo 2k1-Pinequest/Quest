@@ -1,7 +1,7 @@
 "use client";
 
 import { TeacherAssignDetailHeader } from "@/components/teacher/assignmentDetail/assignmentdetailHeader";
-import { AssignmentTab } from "@/components/teacher/assignmentDetail/Stats/assignmentTab";
+import { AssignmentTab } from "@/components/teacher/assignmentDetail/assignmentTab";
 
 export const AssignmentDetails = ({
   assignmentId,

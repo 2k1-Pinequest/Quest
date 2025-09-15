@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Users, BarChart3 } from "lucide-react";
-import { OverviewCarts } from "./overviewCarts";
-import { Distribution } from "./distribution";
+import { OverviewCarts } from "./Stats/overviewCarts";
+import { Distribution } from "./Stats/distribution";
+import { SubmissionsHeader } from "./Submissions/SubmissionsHeader";
 
 export const AssignmentTab = () => {
   // Түр зуурын state
@@ -49,11 +50,12 @@ export const AssignmentTab = () => {
       {/* Dummy content */}
       <div className="mt-4 p-4 border rounded-lg bg-white">
         {selectedTab === "submissions" ? (
-          <ul className="list-disc pl-5 space-y-1 text-gray-700">
-            {currentRoom.submissions.map((s) => (
-              <li key={s.id}>{s.student}</li>
-            ))}
-          </ul>
+          // <ul className="list-disc pl-5 space-y-1 text-gray-700">
+          //   {currentRoom.submissions.map((s) => (
+          //     <li key={s.id}>{s.student}</li>
+          //   ))}
+          // </ul>
+          <SubmissionsHeader />
         ) : (
           <div className="flex flex-col gap-6 p-30">
             <OverviewCarts submissions={currentRoom?.submissions} />
