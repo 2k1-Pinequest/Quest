@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { BookOpen, Upload, LogOut, ChevronLeft, ArrowLeft } from "lucide-react";
-import Student from "./studentQuiz";
+import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 
