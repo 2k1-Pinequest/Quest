@@ -15,7 +15,7 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
 
   const handleCreate = async () => {
     if (!roomName.trim()) {
-      setMessage("Ангины нэр оруулах шаардлагатай");
+      setMessage("Хичээлийн нэр оруулах шаардлагатай");
       return;
     }
     setLoading(true);
@@ -33,11 +33,11 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
         }
       );
 
-      setMessage("Анги амжилттай үүслээ!");
+      setMessage("Хичээл амжилттай үүслээ!");
       setRoomName("");
       setTimeout(() => onCreated?.(), 1000);
     } catch (err: any) {
-      setMessage(err?.response?.data?.message || "Анги үүсгэхэд алдаа гарлаа");
+      setMessage(err?.response?.data?.message || "Хичээл үүсгэхэд алдаа гарлаа");
     } finally {
       setLoading(false);
     }
@@ -66,7 +66,7 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
           <input
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
-            placeholder="Ангины нэр"
+            placeholder="Хичээлийн нэр"
             disabled={loading}
             className="w-full border px-4 py-3 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -76,7 +76,7 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {loading ? "Үүсгэж байна..." : "Анги үүсгэх"}
+            {loading ? "Үүсгэж байна..." : "Хичээл үүсгэх"}
           </button>
         </div>
       </div>
