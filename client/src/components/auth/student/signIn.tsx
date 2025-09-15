@@ -24,12 +24,13 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const res = await axios.post(
-        "http://localhost:4200/student/joinclass",
+        "http://localhost:4200/student/login",
         data,
         { withCredentials: true }
       );
       localStorage.setItem("token", res.data.token);
       setMessage("Амжилттай нэвтэрлээ!");
+
       setTimeout(() => onSuccess?.(), 1000);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
