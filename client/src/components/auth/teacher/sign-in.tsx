@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface FormInputs {
   email: string;
@@ -31,8 +31,9 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
       localStorage.setItem("token", res.data.token);
       setMessage("Амжилттай нэвтэрлээ!");
       setTimeout(() => onSuccess?.(res.data.teacher.id, res.data.hasRoom), 1000);
-    } catch (err: any) {
-      setMessage(err.response?.data?.message || "Нэвтрэхэд алдаа гарлаа");
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      setMessage(error.response?.data?.message || "Нэвтрэхэд алдаа гарлаа");
     }
   };
 
