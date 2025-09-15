@@ -1,14 +1,10 @@
-import ActionButton from "@/components/home";
+import ActionButton from "@/components/home/home";
 
 
 export default function Home() {
   return (
-    <div className="">
+    <div>
       <ActionButton/>
     </div>
   );
 }
-//  <p className="text-sm mt-2">
-//           Бүртгэлгүй юу?{" "}
-//           <a href="/teacherRoom/sign-up" className="text-blue-600">Энд дарж бүртгүүлнэ үү</a>
-//         </p>
