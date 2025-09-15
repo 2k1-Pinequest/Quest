@@ -91,7 +91,7 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
 
         <p className="text-sm mt-2">
           Бүртгэлгүй юу?{" "}
-          <a href="#" onClick={() => onSuccess?.()} className="text-blue-600">
+          <a href="/studentRoom/signUp" className="text-blue-600">
             Энд дарж бүртгүүлнэ үү
           </a>
         </p>
