@@ -7,11 +7,7 @@ import axios, { AxiosError } from "axios";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,7 +57,7 @@ const StudentSignup: React.FC<StudentSignupProps> = ({ onSuccess }) => {
       setMessage("Амжилттай бүртгэгдлээ! Одоо join class руу шилжиж байна.");
 
       setTimeout(() => {
-        router.push("/studentRoom/joinclass"); 
+        router.push("/studentRoom/joinclass");
       }, 1000);
       onSuccess?.();
     } catch (err) {
@@ -138,11 +134,7 @@ const StudentSignup: React.FC<StudentSignupProps> = ({ onSuccess }) => {
                   <FormItem>
                     <Label>Нууц үг</Label>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="нууц үг"
-                        {...field}
-                      />
+                      <Input type="password" placeholder="нууц үг" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

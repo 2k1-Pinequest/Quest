@@ -4,24 +4,14 @@ import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
 
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Assignment {
   id: string;
@@ -82,11 +72,10 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   return (
     <div className="min-h-screen p-4 relative">
       <div className="max-w-4xl mx-auto">
- 
         <div className="mb-6">
           <div className="bg-white rounded-lg p-6 shadow-sm flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl  text-gray-900">
                 Сайн байна уу, {studentData.studentName}!
               </h1>
             </div>
@@ -130,7 +119,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                 </TabsTrigger>
               </TabsList>
 
-          
               <TabsContent value="text">
                 <Label htmlFor="textContent">Даалгаврын хариулт</Label>
                 <Textarea
@@ -143,7 +131,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                 />
               </TabsContent>
 
-           
               <TabsContent value="image">
                 <Label htmlFor="imageUpload">Зураг сонгох</Label>
                 <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
@@ -161,7 +148,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
               </TabsContent>
             </Tabs>
 
-         
             <div>
               <Label htmlFor="teacherQuestion">
                 Багшаас асуух асуулт (optional)
