@@ -24,15 +24,18 @@ model Teacher {
 // ========== STUDENT (Authentication орно) ==========
 //
 model Student {
-  id          Int             @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   studentName String
-  email       String          @unique
+  email       String @unique
   password    String
   roomId      Int?
-  room        Room?           @relation(fields: [roomId], references: [id])
-  answers     StudentAnswer[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  room        Room?  @relation(fields: [roomId], references: [id])
+
+  assignmentAi StudentAssignmentAi?
+
+  answers   StudentAnswer[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 //
@@ -55,6 +58,18 @@ model Room {
 //
 // ========== ASSIGNMENT ==========
 //
+
+model StudentAssignmentAi {
+  id          Int      @id @default(autoincrement())
+  studentId   Int      @unique
+  student     Student  @relation(fields: [studentId], references: [id])
+  score       Int
+  summary     String
+  mistakes    String[]
+  suggestions String[]
+  overall     String
+}
+
 model Assignment {
   id          Int        @id @default(autoincrement())
   roomId      Int
