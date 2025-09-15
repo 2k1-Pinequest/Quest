@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import TeacherSignup from "@/components/auth/sign-up";
-import TeacherLogin from "@/components/auth/sign-in";
+import TeacherSignup from "@/components/auth/teacher/sign-up";
+import TeacherLogin from "@/components/auth/teacher/sign-in";
 import TeacherCreateRoom from "@/components/teacher/createRoom/newRoom";
 import { TeacherClassRooms } from "@/components/teacher/teacherDashboard";
 

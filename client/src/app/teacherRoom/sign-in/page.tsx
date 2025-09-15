@@ -1,4 +1,4 @@
-import TeacherLogin from "@/components/auth/sign-in";
+import TeacherLogin from "@/components/auth/teacher/sign-in";
 import ActionButton from "@/components/home";
 
 
