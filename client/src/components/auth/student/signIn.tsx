@@ -130,15 +130,12 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
           </Form>
         </CardContent>
 
-        <CardFooter className="flex justify-center">
-          <p className="text-sm">
-            Бүртгэлгүй юу?{" "}
-            <a
-            href="/studentRoom/signUp"
-            onClick={() => onSuccess?.()}
-            className="text-blue-600"
-          >
-            Энд дарж нэвтэрнэ үү
+
+        <p className="text-sm mt-2">
+          Бүртгэлгүй юу?{" "}
+          <a href="/studentRoom/signUp" className="text-blue-600">
+            Энд дарж бүртгүүлнэ үү
+
           </a>
           </p>
         </CardFooter>
