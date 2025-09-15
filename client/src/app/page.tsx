@@ -1,10 +1,12 @@
 import ActionButton from "@/components/home";
+import { AssignDialog } from "@/components/teacher/assignmentDetail/Submissions/AssignDialog";
 
 
 export default function Home() {
   return (
     <div className="">
       <ActionButton/>
+      <AssignDialog/>
     </div>
   );
 }
