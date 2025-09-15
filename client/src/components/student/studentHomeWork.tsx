@@ -25,13 +25,6 @@ interface Assignment {
   createdAt: string;
 }
 
-interface Notification {
-  id: string;
-  message: string;
-  type: "success" | "info";
-  timestamp: string;
-}
-
 interface JwtPayload {
   id: string;
   studentName: string;
@@ -48,18 +41,15 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   const [textContent, setTextContent] = useState("");
   const [teacherQuestion, setTeacherQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [readIds, setReadIds] = useState<string[]>([]);
 
   useEffect(() => {
-    // JWT decode
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
         setStudentData({
           studentName: decoded.studentName,
-          roomCode: "9A", // та серверээс авч болдог бол эндээс солино
+          roomCode: "9A",
         });
       } catch (e) {
         console.error("Token decode error:", e);
@@ -70,11 +60,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         roomCode: "9A",
       });
     }
-
-    const savedReadIds: string[] = JSON.parse(
-      localStorage.getItem("readNotifications") || "[]"
-    );
-    setReadIds(savedReadIds);
   }, []);
 
   const handleSubmit = () => {
@@ -89,18 +74,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     }, 3000);
   };
 
-  const markAsRead = (id: string) => {
-    if (!readIds.includes(id)) {
-      const updated = [...readIds, id];
-      setReadIds(updated);
-      localStorage.setItem("readNotifications", JSON.stringify(updated));
-    }
-  };
-
-  const unreadCount = notifications.filter(
-    (n) => !readIds.includes(n.id)
-  ).length;
-
   if (!studentData) return <div>Ачааллаж байна...</div>;
 
   return (
@@ -114,7 +87,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                 Сайн байна уу, {studentData.studentName}!
               </h1>
             </div>
-
             <div className="flex items-center gap-4">
               <span className="font-medium">Ангийн код:</span>
               <Badge variant="secondary" className="text-lg px-3 py-1">
@@ -128,7 +100,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center">
-              {assignment.title}
               <AlertCircle className="h-5 w-5 mr-2 text-blue-600" /> Заавар
             </CardTitle>
           </CardHeader>
@@ -141,25 +112,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
             </ul>
           </CardContent>
         </Card>
-
-        {/* Submission Feedback */}
-        {submitted && (
-          <div className="fixed top-4 right-4 z-50">
-            <Card className="bg-green-50 border-green-200 shadow-lg">
-              <CardContent className="flex items-center p-4">
-                <CheckCircle className="h-6 w-6 text-green-600 mr-3" />
-                <div>
-                  <p className="font-medium text-green-800">
-                    Амжилттай илгээгдлээ ✅
-                  </p>
-                  <p className="text-sm text-green-600">
-                    Багш таны даалгаврыг шалгаж, үнэлгээ өгөх болно.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Submission Form */}
         <Card>
@@ -241,6 +193,19 @@ export default function Student({ assignment }: { assignment: Assignment }) {
             >
               Даалгавар илгээх
             </Button>
+
+            {/* Submission Feedback доор нь */}
+            {submitted && (
+              <div className="mt-4 border-2 border-green-500 rounded-lg p-4 bg-green-50">
+                <p className="font-medium text-green-800 flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  Амжилттай илгээгдлээ ✅
+                </p>
+                <p className="text-sm text-green-600 mt-1">
+                  Багш таны даалгаврыг шалгаж, үнэлгээ өгөх болно.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
