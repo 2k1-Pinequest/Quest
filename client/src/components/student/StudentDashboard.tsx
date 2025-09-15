@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BookOpen, Upload, LogOut, ChevronLeft, ArrowLeft } from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+
 
 interface Assignment {
   id: string;
@@ -17,8 +17,7 @@ interface Assignment {
 export default function StudentDashboard() {
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
-  const searchParams = useSearchParams();
-  const studentId = searchParams.get("studentId");
+ 
 
   const room = {
     id: "mockRoom123",
