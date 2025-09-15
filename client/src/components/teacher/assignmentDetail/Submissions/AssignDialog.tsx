@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Submission } from "@/types";
 import { useState } from "react";
@@ -13,15 +12,17 @@ import { OverviewCards } from "./OverviewCards";
 import { OverviewDetails } from "./OverviewDetails";
 import { TeacherFeedbackCard } from "./TeacherFeedbackCard";
 
-interface ClassStatsProps {
-  submissions: Submission[];
+interface AssignDialogProps {
+  selectedSubmission: Submission | null;
+  showDetailModal: boolean;
+  setShowDetailModal: (open: boolean) => void;
 }
 
-export const AssignDialog = ({ submissions }: ClassStatsProps) => {
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<Submission | null>(null);
-
+export const AssignDialog = ({
+  selectedSubmission,
+  showDetailModal,
+  setShowDetailModal,
+}: AssignDialogProps) => {
   // Score edit state
   const [isEditingScore, setIsEditingScore] = useState(false);
   const [editedScore, setEditedScore] = useState<number | null>(null);
@@ -74,9 +75,6 @@ export const AssignDialog = ({ submissions }: ClassStatsProps) => {
   };
   return (
     <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-      <DialogTrigger asChild>
-          <Button variant="outline">Open Dialog</Button>
-        </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-xl">
