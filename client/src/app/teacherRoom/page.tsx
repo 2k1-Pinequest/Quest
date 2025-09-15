@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import TeacherSignup from "@/components/auth/teacher/sign-up";
 import TeacherLogin from "@/components/auth/teacher/sign-in";
 import TeacherCreateRoom from "@/components/teacher/createRoom/newRoom";
@@ -10,14 +9,11 @@ import { TeacherClassRooms } from "@/components/teacher/teacherDashboard";
 
 
 export default function Home() {
-  const router = useRouter();
   const [step, setStep] = useState<"login" | "signup" | "createRoom" | "dashboard">("login");
   const [teacherId, setTeacherId] = useState<number | null>(null);
-
-  // Signup амжилттай
+  
   const handleSignupSuccess = () => setStep("login");
 
-  // Login амжилттай
   const handleLoginSuccess = (id: number, hasRoom: boolean) => {
     setTeacherId(id);
     if (hasRoom) {
