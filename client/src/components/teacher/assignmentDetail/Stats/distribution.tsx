@@ -6,6 +6,7 @@ interface ClassStatsProps {
 }
 
 export const Distribution = ({ submissions }: ClassStatsProps) => {
+  
   const scoreDistribution = {
     excellent: submissions.filter((s) => s.aiScore >= 90).length,
     good: submissions.filter((s) => s.aiScore >= 80 && s.aiScore < 90).length,
