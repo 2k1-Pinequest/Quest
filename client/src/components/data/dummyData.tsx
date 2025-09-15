@@ -1,0 +1,58 @@
+import { Submission } from "../teacher/assignmentDetail/Submissions/SubmissionAssignments";
+
+export const dummySubmissions: Submission[] = [
+  {
+    id: "1",
+    studentName: "Alice Johnson",
+    assignmentTitle: "React Components Lab",
+    score: 92,
+    aiSuggestion: "approve",
+    status: "pending",
+    submissionDate: "2025-01-15 14:30",
+  },
+  {
+    id: "2",
+    studentName: "Bob Smith",
+    assignmentTitle: "JavaScript Functions",
+    score: 76,
+    aiSuggestion: "review",
+    status: "pending",
+    submissionDate: "2025-01-15 16:45",
+  },
+  {
+    id: "3",
+    studentName: "Carol Davis",
+    assignmentTitle: "CSS Flexbox Project",
+    score: 88,
+    aiSuggestion: "approve",
+    status: "approved",
+    submissionDate: "2025-01-14 12:20",
+  },
+  {
+    id: "4",
+    studentName: "David Wilson",
+    assignmentTitle: "API Integration Task",
+    score: 65,
+    aiSuggestion: "review",
+    status: "pending",
+    submissionDate: "2025-01-15 18:10",
+  },
+  {
+    id: "5",
+    studentName: "Emma Brown",
+    assignmentTitle: "Database Design",
+    score: 94,
+    aiSuggestion: "approve",
+    status: "pending",
+    submissionDate: "2025-01-15 09:15",
+  },
+  {
+    id: "6",
+    studentName: "Frank Miller",
+    assignmentTitle: "React Components Lab",
+    score: 58,
+    aiSuggestion: "review",
+    status: "rejected",
+    submissionDate: "2025-01-14 20:30",
+  },
+];
