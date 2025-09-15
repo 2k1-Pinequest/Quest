@@ -26,11 +26,10 @@ export default function Home() {
     console.log("Student name:", name);
     console.log("Room code:", roomCode);
     setStep("dashboard");
-    router.push("/studentRoom/dashboard");
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 space-y-6">
+    <div className="w-full mx-auto space-y-6">
       {step === "signup" && <StudentSignup onSuccess={handleSignupSuccess} />}
       {step === "login" && <StudentLogin onSuccess={handleLoginSuccess} />}
       {step === "joinclass" && <StudentJoin onNext={handleNext} />}
