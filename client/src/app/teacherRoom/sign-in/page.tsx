@@ -1,5 +1,4 @@
-import TeacherLogin from "@/components/auth/sign-in";
-import ActionButton from "@/components/home";
+import TeacherLogin from "@/components/auth/teacher/sign-in";
 
 
 export default function Home() {

@@ -8,28 +8,50 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
 interface StudentJoinProps {
-  onBack: () => void;
+  onBack?: () => void;
   onNext: (name: string, roomCode: string) => void;
 }
 
 export function StudentJoin({ onNext }: StudentJoinProps) {
   const [roomCode, setRoomCode] = useState("");
   const [studentName, setStudentName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleNext = () => {
-    if (roomCode.trim() && studentName.trim()) {
+  const handleNext = async () => {
+    if (!roomCode.trim() || !studentName.trim()) return;
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`http://localhost:4200/student/joinclass/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomCode: roomCode.trim().toUpperCase(),
+          studentName: studentName.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to join room");
+      }
+
+      const data = await res.json();
+      console.log("Server response:", data);
+
       onNext(studentName.trim(), roomCode.trim().toUpperCase());
+    } catch (error) {
+      console.error("Error joining room:", error);
+      alert("Өрөөнд нэгдэхэд алдаа гарлаа.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 flex flex-col items-center justify-center px-4 py-8 space-y-6">
-      {/* <Button
-        variant="ghost"
-        className="mb-2 p-2 text-purple-700 hover:bg-gray-200/40 rounded-lg transition-colors self-start"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </Button> */}
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 flex flex-col items-center justify-center">
       <div className="text-center">
         <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
           <UserRoundPlusIcon className="w-10 h-10 text-white" />
@@ -37,9 +59,6 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
         <h1 className="text-4xl font-bold text-green-500 mb-2">
           Өрөөнд нэгдэх
         </h1>
-        <p className="text-gray-600 text-sm">
-          Эхлэхийн тулд хичээлийн код болон нэрээ оруулна уу
-        </p>
       </div>
       <Card className="shadow-xl rounded-2xl p-6 w-full max-w-md">
         <CardContent className="space-y-5 mt-2">
@@ -58,7 +77,6 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
             />
           </div>
 
-          {/* Name Input */}
           <div>
             <Label htmlFor="studentName" className="text-sm font-medium">
               Нэр
@@ -74,14 +92,13 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
             />
           </div>
 
-          {/* Next Button */}
           <Button
             type="button"
             onClick={handleNext}
-            disabled={!roomCode.trim() || !studentName.trim()}
+            disabled={!roomCode.trim() || !studentName.trim() || loading}
             className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-500 text-white rounded-lg py-2"
           >
-            <span>Үргэлжлүүлэх</span>
+            <span>{loading ? "Нэгдэж байна..." : "Үргэлжлүүлэх"}</span>
             <ArrowRight className="w-5 h-5" />
           </Button>
         </CardContent>

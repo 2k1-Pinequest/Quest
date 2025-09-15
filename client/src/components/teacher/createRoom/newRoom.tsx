@@ -18,31 +18,68 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
       setMessage("Ангины нэр оруулах шаардлагатай");
       return;
     }
-    setLoading(true); setMessage(null);
+    setLoading(true);
+    setMessage(null);
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-      await axios.post(`http://localhost:4200/room/${teacherId}`, { roomName }, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined
-      });
+      await axios.post(
+        `http://localhost:4200/room/${teacherId}`,
+        { roomName },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }
+      );
 
       setMessage("Анги амжилттай үүслээ!");
       setRoomName("");
       setTimeout(() => onCreated?.(), 1000);
     } catch (err: any) {
       setMessage(err?.response?.data?.message || "Анги үүсгэхэд алдаа гарлаа");
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 border rounded shadow">
-      <h3 className="text-xl font-semibold mb-4">Анги үүсгэх</h3>
-      {message && <div className={`mb-4 p-2 rounded ${message.includes("амжилттай") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{message}</div>}
-      <input value={roomName} onChange={(e) => setRoomName(e.target.value)} placeholder="Ангины нэр" className="w-full border px-3 py-2 rounded mb-3" disabled={loading} />
-      <button onClick={handleCreate} disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-        {loading ? "Үүсгэж байна..." : "Анги үүсгэх"}
-      </button>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-lg">
+        <h3 className="text-2xl font-extrabold text-center text-gray-800 mb-6">
+          Анги үүсгэх
+        </h3>
+
+        {message && (
+          <div
+            className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
+              message.includes("амжилттай")
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+
+        <div className="space-y-5">
+          <input
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+            placeholder="Ангины нэр"
+            disabled={loading}
+            className="w-full border px-4 py-3 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+          />
+
+          <button
+            onClick={handleCreate}
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? "Үүсгэж байна..." : "Анги үүсгэх"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

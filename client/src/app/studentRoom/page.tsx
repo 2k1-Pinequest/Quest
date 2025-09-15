@@ -5,26 +5,34 @@ import { useRouter } from "next/navigation";
 import StudentSignup from "@/components/auth/student/signUp";
 import StudentLogin from "@/components/auth/student/signIn";
 import StudentDashboard from "@/components/student/StudentDashboard";
+import { StudentJoin } from "@/components/student/studentJoin";
 
 export default function Home() {
   const router = useRouter();
-  const [step, setStep] = useState<"signup" | "login" | "dashboard">("signup");
 
-  // Signup амжилттай бол login руу шилжүүлэх
+  const [step, setStep] = useState<
+    "login" | "signup" | "joinclass" | "dashboard"
+  >("login");
+
   const handleSignupSuccess = () => {
     setStep("login");
   };
 
-  // Login амжилттай бол dashboard руу шилжүүлэх
   const handleLoginSuccess = () => {
+    setStep("joinclass");
+  };
+
+  const handleNext = (name: string, roomCode: string) => {
+    console.log("Student name:", name);
+    console.log("Room code:", roomCode);
     setStep("dashboard");
-    router.push("/studentRoom/dashboard"); // Dashboard руу redirect
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 space-y-6">
+    <div className="w-full mx-auto space-y-6">
       {step === "signup" && <StudentSignup onSuccess={handleSignupSuccess} />}
       {step === "login" && <StudentLogin onSuccess={handleLoginSuccess} />}
+      {step === "joinclass" && <StudentJoin onNext={handleNext} />}
       {step === "dashboard" && <StudentDashboard />}
     </div>
   );

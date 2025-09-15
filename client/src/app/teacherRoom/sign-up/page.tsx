@@ -1,6 +1,4 @@
-import TeacherSignup from "@/components/auth/sign-up";
-import ActionButton from "@/components/home";
-
+import TeacherSignup from "@/components/auth/teacher/sign-up";
 
 export default function Home() {
   return (
