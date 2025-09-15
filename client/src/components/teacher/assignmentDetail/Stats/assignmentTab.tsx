@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Users, BarChart3 } from "lucide-react";
-import { OverviewCarts } from "./components/overviewCarts";
-import { Distribution } from "./components/distribution";
+import { OverviewCarts } from "./overviewCarts";
+import { Distribution } from "./distribution";
 
 export const AssignmentTab = () => {
   // Түр зуурын state
@@ -56,11 +56,10 @@ export const AssignmentTab = () => {
           </ul>
         ) : (
           <div className="flex flex-col gap-6 p-30">
-            <OverviewCarts submissions={currentRoom?.submissions}/>
-            <Distribution submissions={currentRoom?.submissions}/>
+            <OverviewCarts submissions={currentRoom?.submissions} />
+            <Distribution submissions={currentRoom?.submissions} />
           </div>
         )}
-        
       </div>
     </div>
   );
