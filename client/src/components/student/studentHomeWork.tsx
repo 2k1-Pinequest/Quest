@@ -91,7 +91,8 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <AlertCircle className="h-5 w-5 mr-2 text-blue-600" /> Заавар
+              <AlertCircle className="h-5 w-5 mr-2 text-blue-600" /> заавар
+              {assignment.title}
             </CardTitle>
           </CardHeader>
           <CardContent>

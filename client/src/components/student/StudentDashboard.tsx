@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  BookOpen,
-  Upload,
-  LogOut,
-  ChevronLeft,
-  ArrowLeft,
-  X,
-} from "lucide-react";
+import { BookOpen, Upload, ChevronLeft, X } from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
 
