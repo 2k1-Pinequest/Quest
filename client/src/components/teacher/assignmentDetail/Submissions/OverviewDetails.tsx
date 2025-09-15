@@ -40,14 +40,14 @@ export const OverviewDetails = ({
         <CardContent>
           <div
             className={`p-4 rounded-lg ${
-              selectedSubmission.aiSuggestions.includes("approve")
+              selectedSubmission?.aiSuggestions?.includes("approve")
                 ? "bg-green-50 border border-green-200"
                 : "bg-yellow-50 border border-yellow-200"
             }`}
           >
             <p
               className={`text-sm ${
-                selectedSubmission.aiSuggestions.includes("approve")
+                selectedSubmission?.aiSuggestions?.includes("approve")
                   ? "text-green-800"
                   : "text-yellow-800"
               }`}
