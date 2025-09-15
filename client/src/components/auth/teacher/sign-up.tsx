@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface FormInputs {
   name: string;
@@ -26,8 +26,9 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
       await axios.post("http://localhost:4200/teacher/sign-up", data, { withCredentials: true });
       setMessage("Амжилттай бүртгэгдлээ! Одоо нэвтрэх боломжтой.");
       setTimeout(() => onSuccess?.(), 1500);
-    } catch (err: any) {
-      setMessage(err.response?.data?.message || "Бүртгэл хийхэд алдаа гарлаа");
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      setMessage(error.response?.data?.message || "Бүртгэл хийхэд алдаа гарлаа");
     }
   };
 
@@ -40,11 +41,10 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
 
         {message && (
           <div
-            className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
-              message.includes("Амжилттай")
+            className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${message.includes("Амжилттай")
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-700"
-            }`}
+              }`}
           >
             {message}
           </div>
