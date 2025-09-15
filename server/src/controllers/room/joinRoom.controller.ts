@@ -4,15 +4,13 @@ import prisma from "../../utils/prisma";
 export const joinRoom = async (req: Request, res: Response) => {
   try {
     const { studentName, roomCode } = req.body;
-    const { studentId } = req.params;
 
-    if (!studentId || !studentName || !roomCode) {
+    if (!studentName || !roomCode) {
       return res.status(400).json({
-        message: "studentId (params), studentName болон roomCode шаардлагатай",
+        message: "studentName болон roomCode шаардлагатай",
       });
     }
 
-    // Room олох
     const room = await prisma.room.findUnique({
       where: { code: roomCode },
     });
@@ -21,15 +19,13 @@ export const joinRoom = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Room олдсонгүй" });
     }
 
-    // Сурагч байгаа эсэхийг шалгах
-    const student = await prisma.student.findUnique({
-      where: { id: Number(studentId) },
+    // Одоо studentName-аар сурагч хайх
+    const student = await prisma.student.findFirst({
+      where: { studentName }, // studentName гэж нэгтгэж олоно
     });
 
-    if (!student || student.studentName !== studentName) {
-      return res
-        .status(404)
-        .json({ message: "Сурагчийн мэдээлэл таарахгүй байна" });
+    if (!student) {
+      return res.status(404).json({ message: "Сурагч олдсонгүй" });
     }
 
     // Room-д join хийж өгнө
