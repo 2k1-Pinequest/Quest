@@ -101,7 +101,7 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="нууц үг"
                         {...field}
                       />
                     </FormControl>
@@ -123,13 +123,14 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
             </form>
           </Form>
         </CardContent>
-
-        <p className="text-sm mt-2">
-          Бүртгэлгүй юу?{" "}
-          <a href="/studentRoom/signUp" className="text-blue-600">
-            Энд дарж бүртгүүлнэ үү
-          </a>
-        </p>
+        <CardFooter className="justify-center">
+          <p className="text-sm mt-2">
+            Бүртгэлгүй бол{" "}
+            <a href="/studentRoom/signUp" className="text-blue-600">
+              Энд дарж бүртгүүлнэ үү
+            </a>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
