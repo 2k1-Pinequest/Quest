@@ -83,7 +83,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <div className="mb-6">
           <div className="bg-white rounded-lg p-6 shadow-sm flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl  text-gray-900">
                 Сайн байна уу, {studentData.studentName}!
               </h1>
             </div>
@@ -197,7 +197,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
             {/* Submission Feedback доор нь */}
             {submitted && (
               <div className="mt-4 border-2 border-green-500 rounded-lg p-4 bg-green-50">
-                <p className="font-medium text-green-800 flex items-center gap-2">
+                <p className=" text-green-800 flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-600" />
                   Амжилттай илгээгдлээ ✅
                 </p>
