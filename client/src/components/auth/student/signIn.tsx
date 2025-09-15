@@ -3,11 +3,7 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios, { AxiosError } from "axios";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,9 +55,7 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
         <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
           <UserRoundPlusIcon className="w-10 h-10 text-white" />
         </div>
-        <h1 className="text-4xl font-bold text-green-500 mb-2">
-         Нэвтрэх
-        </h1>
+        <h1 className="text-4xl font-bold text-green-500 mb-2">Нэвтрэх</h1>
       </div>
       <Card className="w-full max-w-md shadow-lg">
         <CardContent>
@@ -130,15 +124,12 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
           </Form>
         </CardContent>
 
-
         <p className="text-sm mt-2">
           Бүртгэлгүй юу?{" "}
           <a href="/studentRoom/signUp" className="text-blue-600">
             Энд дарж бүртгүүлнэ үү
-
           </a>
-          </p>
-        </CardFooter>
+        </p>
       </Card>
     </div>
   );
