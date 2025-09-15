@@ -45,7 +45,7 @@ export function TeacherAssignmentForm() {
       <DialogTrigger asChild>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2">
           <CirclePlus />
-          <span>Add Assignment</span>
+          <span>hicheel oruulah</span>
         </Button>
       </DialogTrigger>
 
@@ -58,20 +58,21 @@ export function TeacherAssignmentForm() {
 
         <form className="space-y-4 mt-2" onSubmit={handleSubmit}>
           {/* Даалгаврын гарчиг */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="flex flex-col gap-1">
+            <label className="text-md font-semibold text-gray-700">
               Даалгаврын гарчиг
             </label>
             <Input
               placeholder="Жишээ: Математик хичээл №1"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="placeholder:text-sm placeholder:text-gray-400"
             />
           </div>
 
           {/* Тайлбар */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="flex flex-col gap-1">
+            <label className="text-md font-semibold text-gray-700">
               Тайлбар
             </label>
             <Textarea
@@ -79,12 +80,13 @@ export function TeacherAssignmentForm() {
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+               className="placeholder:text-sm placeholder:text-gray-400"
             />
           </div>
 
           {/* Хавсаргах файл */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="flex flex-col gap-1">
+            <label className="text-md font-semibold text-gray-700">
               Файл хавсаргах
             </label>
             <Input
@@ -94,8 +96,8 @@ export function TeacherAssignmentForm() {
           </div>
 
           {/* Дуусах хугацаа */}
-          <div className="flex flex-col gap-2">
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="flex flex-col gap-1">
+            <label className="text-md font-semibold text-gray-700">
               Дуусах хугацаа
             </label>
             <Popover>
