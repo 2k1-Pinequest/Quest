@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOpen, Upload, ChevronLeft, X } from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import AssignmentCard from "./AssignmentCard";
+import { Separator } from "../ui/separator";
 
 interface Assignment {
   id: string;
@@ -16,41 +19,59 @@ interface Assignment {
 export default function StudentDashboard() {
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
-
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [loading, setLoading] = useState(false);
   const room = {
     id: "mockRoom123",
     roomCode: "7MGL3M",
-    title: "Classroom Demo",
+    title: "9a ",
   };
-  const assignments: Assignment[] = [
-    {
-      id: "assign_1",
-      roomId: "mockRoom123",
-      title: "Алтан ургын товч танилцуулга",
-      instruction: "Номны 23-25р хуудсыг ашиглан тайлбарла",
-      createdAt: "10/26/2025",
-    },
-    {
-      id: "assign_2",
-      roomId: "mockRoom123",
-      title: "Монголын нууц товчоо",
-      instruction: "500 үгтэй эсээ бичнэ үү..",
-      createdAt: "10/25/2025",
-    },
-    {
-      id: "assign_3",
-      roomId: "mockRoom123",
-      title: "Монголын нууц товчоо",
-      instruction: "500 үгтэй эсээ бичнэ үү..",
-      createdAt: "10/25/2025",
-    },
-  ];
+  // const assignments: Assignment[] = [
+  //   {
+  //     id: "assign_1",
+  //     roomId: "mockRoom123",
+  //     title: "Алтан ургын товч танилцуулга",
+  //     instruction: "Номны 23-25р хуудсыг ашиглан тайлбарла",
+  //     createdAt: "10/26/2025",
+  //   },
+  //   {
+  //     id: "assign_2",
+  //     roomId: "mockRoom123",
+  //     title: "Монголын нууц товчоо",
+  //     instruction: "500 үгтэй эсээ бичнэ үү..",
+  //     createdAt: "10/25/2025",
+  //   },
+  //   {
+  //     id: "assign_3",
+  //     roomId: "mockRoom123",
+  //     title: "Монголын нууц товчоо",
+  //     instruction: "500 үгтэй эсээ бичнэ үү..",
+  //     createdAt: "10/25/2025",
+  //   },
+  // ];
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:4200/student/assignments/1`
+        );
+        setAssignments(res.data);
+      } catch (err) {
+        console.error("Failed to fetch assignments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, [room.id]);
 
   const handleGoBack = () => console.log("Navigating back...");
 
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-8 py-8 bg-gray-50">
-      <div className="w-full max-w-[1280px] mx-auto flex flex-col">
+      <div className="w-full max-w-[1000px] mx-auto flex flex-col">
         <header className="flex items-center justify-between mb-10">
           <div className="flex items-center space-x-4">
             <button
@@ -60,7 +81,7 @@ export default function StudentDashboard() {
               <ChevronLeft size={28} />
             </button>
             <div>
-              <h1 className="text-3xl ">9А Түүх</h1>
+              <h1 className="text-3xl ">{room.title}</h1>
               <p className="text-sm text-gray-500 mt-1">
                 Ангийн код: {room.roomCode}
               </p>
@@ -70,41 +91,14 @@ export default function StudentDashboard() {
 
         <main className="space-y-8">
           <h3 className="text-2xl ">Ирсэн даалгавар</h3>
+          <Separator/>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {assignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className="bg-white rounded-3xl shadow-lg p-6 hover:shadow-xl transition-all flex flex-col max-h-80"
-              >
-                <div className="flex items-center space-x-3 mb-3">
-                  <BookOpen size={22} className="text-blue-500" />
-                  <h4 className="font-semibold text-lg">{assignment.title}</h4>
-                </div>
-
-                <p
-                  className="text-gray-600 text-sm mb-4 overflow-hidden"
-                  style={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                  }}
-                >
-                  {assignment.instruction}
-                </p>
-
-                <div className="flex-1"></div>
-
-                <div className="flex flex-col">
-                  <div className="text-xs text-gray-500 mb-2">
-                    Дуусах хугацаа: {assignment.createdAt}
-                  </div>
-                  <button
-                    onClick={() => setSelectedAssignment(assignment)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl flex items-center justify-center space-x-2 font-medium transition"
-                  >
-                    <Upload size={16} /> <span>Даалгавар илгээх</span>
-                  </button>
-                </div>
+            {assignments.map((assignment, index) => (
+              <div key={assignment.id} className="flex flex-col">
+                <AssignmentCard
+                  assignment={assignment}
+                  onSelect={setSelectedAssignment}
+                />
               </div>
             ))}
           </div>
