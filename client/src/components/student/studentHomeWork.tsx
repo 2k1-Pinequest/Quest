@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TextareaAutosize from "react-textarea-autosize";
 
 interface Assignment {
   id: string;
@@ -122,13 +120,13 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
               <TabsContent value="text">
                 <Label htmlFor="textContent">Даалгаврын хариулт</Label>
-                <Textarea
+                <TextareaAutosize
                   id="textContent"
                   value={textContent}
                   onChange={(e) => setTextContent(e.target.value)}
                   placeholder="Даалгаврын хариултаа энд бичнэ үү..."
-                  rows={6}
-                  className="mt-1"
+                  minRows={6}
+                  className="mt-1 w-full border rounded p-2 resize-none"
                 />
               </TabsContent>
 
@@ -153,13 +151,13 @@ export default function Student({ assignment }: { assignment: Assignment }) {
               <Label htmlFor="teacherQuestion">
                 Багшаас асуух асуулт (optional)
               </Label>
-              <Textarea
+              <TextareaAutosize
                 id="teacherQuestion"
                 value={teacherQuestion}
                 onChange={(e) => setTeacherQuestion(e.target.value)}
                 placeholder="Багшаас асуух асуултаа энд бичнэ үү..."
-                rows={3}
-                className="mt-1"
+                minRows={2}
+                className="mt-1 w-full border rounded p-2 resize-none"
               />
             </div>
 
