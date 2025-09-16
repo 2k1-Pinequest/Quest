@@ -29,23 +29,8 @@ export const TeacherAssignDetailHeader = () => {
           <p className="text-gray-600">Room Code: {currentRoom.code}</p>
         </div>
 
-        {/* Right side buttons */}
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => console.log("Create new room")}
-            className="flex items-center bg-gradient-to-r from-green-500 to-teal-600 text-white px-4 py-2 rounded-lg font-medium hover:from-green-600 hover:to-teal-700 transition-all duration-200 text-sm"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            New Room
-          </button>
+        <div></div>
 
-          <button
-            onClick={() => console.log("Exit")}
-            className="text-gray-600 hover:text-gray-800 transition-colors duration-200 text-sm"
-          >
-            Exit
-          </button>
-        </div>
       </div>
     </div>
   );

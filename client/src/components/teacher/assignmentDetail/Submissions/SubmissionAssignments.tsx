@@ -37,7 +37,7 @@ export const SubmissionsAssignments = () => {
   ).length;
 
   return (
-    <div className="bg-white rounded-2xl shadow mx-30 shadow-lg">
+    <div className="bg-white rounded-2xl w-full shadow-lg">
       {/* Header with Bulk Actions */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">

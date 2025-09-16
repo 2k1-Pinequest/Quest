@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, CirclePlus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 
 interface TeacherAssignmentFormProps {
   teacherId: number;
@@ -87,6 +88,7 @@ console.log(data)
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="placeholder:text-sm placeholder:text-gray-400"
               placeholder="Тайлбар..."
               rows={3}
             />

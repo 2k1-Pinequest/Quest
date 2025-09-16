@@ -1,10 +1,12 @@
 "use client";
 
-import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-import { TeacherAssignmentForm } from "./teacheAssignmentForm";
+
 import { useRouter } from "next/navigation";
-import { AssignmentItem } from "./assignmentItem";
+
 import { useEffect, useState } from "react";
+import { TeacherClassRoomHeader } from "./Assign/teacherClassroomHeader";
+import { TeacherAssignmentForm } from "./Assign/teacheAssignmentForm";
+import { AssignmentItem } from "./Assign/assignmentItem";
 
 type Props = {
   teacherId: number;

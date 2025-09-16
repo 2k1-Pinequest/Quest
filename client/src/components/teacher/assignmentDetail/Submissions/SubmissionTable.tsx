@@ -41,7 +41,7 @@ export const SubmissionsTable: React.FC<Props> = ({
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto ">
       <table className="w-full">
         <thead className="bg-gray-50 ">
           <tr>
