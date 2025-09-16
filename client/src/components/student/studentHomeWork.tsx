@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import axios from "axios";
+
+import TextareaAutosize from "react-textarea-autosize";
+
 
 interface Assignment {
   id: string;
@@ -31,15 +33,40 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     studentName: string;
     roomCode: string;
   } | null>(null);
+
+  const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // const [imageFile, setImageFile] = useState<File | null>(null);
   const [textContent, setTextContent] = useState("");
   const [teacherQuestion, setTeacherQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("e.target.files", e.target.files);
+
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+      console.log("e.dataTransfer.files[0]", e.dataTransfer.files[0]);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
+        console.log("decoded", decoded);
+
         setStudentData({
           studentName: decoded.studentName,
           roomCode: "9A",
@@ -55,17 +82,67 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     }
   }, []);
 
-  const handleSubmit = () => {
-    if (!textContent.trim()) return;
-    console.log("Даалгавар:", textContent);
-    console.log("Асуулт багшид:", teacherQuestion);
-    setSubmitted(true);
-    setTimeout(() => {
-      setTextContent("");
-      setTeacherQuestion("");
-      setSubmitted(false);
-    }, 3000);
+  const handleSubmit = async () => {
+    console.log("textContent", textContent);
+    console.log("file upload", file);
+
+    if (!textContent.trim() && !file) {
+      alert("Та даалгавраа бичвэрээр эсвэл зураг хэлбэрээр оруулна уу!");
+      return;
+    }
+    const formData = new FormData();
+    if (file) {
+      formData.append("file", file);
+    }
+
+    // formData.append("assignmentId", assignment.id);
+
+    if (!assignment?.id) {
+      alert("Assignment ID олдсонгүй!");
+      return;
+    }
+    formData.append("assignmentId", "4");
+
+    console.log("formData", formData);
+
+    try {
+      const response = axios.post(
+        "http://localhost:4200/studentAssign/analyzeAssignment/2", // 1 нь studentId жишээ
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // const response = axios.get("http://localhost:4200/hi")
+
+      console.log("response", response);
+      const data = await response;
+
+      console.log("data", data);
+
+      // console.log("AI Analysis:", response.data.analysis);
+      // console.log("Submission:", response.data.submission);
+      // console.log("Даалгавар текст:", textContent);
+      // console.log("Даалгавар зураг:", imageFile);
+      // console.log("Асуулт багшид:", teacherQuestion);
+      // console.log("Student data:", studentData);
+
+      setSubmitted(true);
+      setTimeout(() => {
+        setTextContent("");
+        setTeacherQuestion("");
+        setFile(null);
+        setSubmitted(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Upload алдаа:", error);
+    }
   };
+
+  console.log("fiel", file);
 
   if (!studentData) return <div>Ачааллаж байна...</div>;
 
@@ -109,32 +186,41 @@ export default function Student({ assignment }: { assignment: Assignment }) {
           <CardHeader>
             <CardTitle>Даалгавар илгээх</CardTitle>
           </CardHeader>
+
           <CardContent className="space-y-4">
-            <Tabs defaultValue="text" className="w-full">
+            <Tabs defaultValue="image" className="w-full">
               <TabsList className="grid grid-cols-2 w-full">
-                <TabsTrigger value="text" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" /> Бичвэр
-                </TabsTrigger>
+                {/* Upload таб зүүн талд */}
                 <TabsTrigger value="image" className="flex items-center gap-2">
                   <Upload className="h-4 w-4" /> Зураг
+                </TabsTrigger>
+
+                {/* Бичвэр таб баруун талд */}
+                <TabsTrigger value="text" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" /> Бичвэр
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="text">
                 <Label htmlFor="textContent">Даалгаврын хариулт</Label>
-                <Textarea
+                <TextareaAutosize
                   id="textContent"
                   value={textContent}
                   onChange={(e) => setTextContent(e.target.value)}
                   placeholder="Даалгаврын хариултаа энд бичнэ үү..."
-                  rows={6}
-                  className="mt-1"
+                  minRows={6}
+                  className="mt-1 w-full border rounded p-2 resize-none"
                 />
               </TabsContent>
 
               <TabsContent value="image">
                 <Label htmlFor="imageUpload">Зураг сонгох</Label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                <div
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById("fileInput")?.click()}
+                  className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors"
+                >
                   <Upload className="h-12 w-12 mx-auto text-gray-400 mb-3" />
                   <p className="text-gray-600">
                     Зураг сонгох эсвэл энд тавина уу
@@ -144,6 +230,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                     type="file"
                     accept="image/*"
                     className="mt-3"
+                    onChange={handleFileChange}
                   />
                 </div>
               </TabsContent>
@@ -153,20 +240,20 @@ export default function Student({ assignment }: { assignment: Assignment }) {
               <Label htmlFor="teacherQuestion">
                 Багшаас асуух асуулт (optional)
               </Label>
-              <Textarea
+              <TextareaAutosize
                 id="teacherQuestion"
                 value={teacherQuestion}
                 onChange={(e) => setTeacherQuestion(e.target.value)}
                 placeholder="Багшаас асуух асуултаа энд бичнэ үү..."
-                rows={3}
-                className="mt-1"
+                minRows={2}
+                className="mt-1 w-full border rounded p-2 resize-none"
               />
             </div>
 
             <Button
               onClick={handleSubmit}
               className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
-              disabled={!textContent.trim()}
+              disabled={!textContent.trim() && !file}
             >
               Даалгавар илгээх
             </Button>

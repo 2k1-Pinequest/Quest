@@ -2,7 +2,6 @@ import express from "express";
 import multer from "multer";
 import { analyzeAssignment } from "../controllers/GeminiStudent/studentSubmitAnalyze.controller";
 
-
 const assignmentRouter = express.Router();
 
 // Multer setup (upload зургуудыг хадгалах)
@@ -17,6 +16,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // POST endpoint – зураг upload хийж анализ хийх
-assignmentRouter.post("/analyzeAssignment/:studentId", upload.single("file"), analyzeAssignment);
+assignmentRouter.post(
+  "/analyzeAssignment/:studentId",
+  upload.single("file"),
+  analyzeAssignment
+);
 
 export default assignmentRouter;
