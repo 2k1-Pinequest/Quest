@@ -14,7 +14,6 @@ import axios from "axios";
 
 import TextareaAutosize from "react-textarea-autosize";
 
-
 interface Assignment {
   id: string;
   roomId: string;
@@ -29,6 +28,10 @@ interface JwtPayload {
 }
 
 export default function Student({ assignment }: { assignment: Assignment }) {
+  console.log("assignment", assignment?.id);
+
+  const [loading, setLoading] = useState(false);
+
   const [studentData, setStudentData] = useState<{
     studentName: string;
     roomCode: string;
@@ -101,11 +104,12 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       alert("Assignment ID олдсонгүй!");
       return;
     }
-    formData.append("assignmentId", "4");
+    formData.append("assignmentId", assignment?.id);
 
     console.log("formData", formData);
 
     try {
+      setLoading(true);
       const response = axios.post(
         "http://localhost:4200/studentAssign/analyzeAssignment/2", // 1 нь studentId жишээ
         formData,
@@ -139,6 +143,8 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       }, 3000);
     } catch (error) {
       console.error("Upload алдаа:", error);
+    } finally {
+      setLoading(false); // ← дуусахад loading false
     }
   };
 
@@ -168,7 +174,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <AlertCircle className="h-5 w-5 mr-2 text-blue-600" /> заавар
+              <AlertCircle className="h-5 w-5 mr-2 text-blue-600" /> заавар{" "}
               {assignment.title}
             </CardTitle>
           </CardHeader>
@@ -188,84 +194,74 @@ export default function Student({ assignment }: { assignment: Assignment }) {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <Tabs defaultValue="image" className="w-full">
-              <TabsList className="grid grid-cols-2 w-full">
-                {/* Upload таб зүүн талд */}
-                <TabsTrigger value="image" className="flex items-center gap-2">
-                  <Upload className="h-4 w-4" /> Зураг
-                </TabsTrigger>
+            <Label htmlFor="imageUpload" className="block text-lg font-medium">
+              Даалгаврын зураг оруулах (заавал)
+            </Label>
 
-                {/* Бичвэр таб баруун талд */}
-                <TabsTrigger value="text" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" /> Бичвэр
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="text">
-                <Label htmlFor="textContent">Даалгаврын хариулт</Label>
-                <TextareaAutosize
-                  id="textContent"
-                  value={textContent}
-                  onChange={(e) => setTextContent(e.target.value)}
-                  placeholder="Даалгаврын хариултаа энд бичнэ үү..."
-                  minRows={6}
-                  className="mt-1 w-full border rounded p-2 resize-none"
-                />
-              </TabsContent>
-
-              <TabsContent value="image">
-                <Label htmlFor="imageUpload">Зураг сонгох</Label>
-                <div
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={() => document.getElementById("fileInput")?.click()}
-                  className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors"
-                >
-                  <Upload className="h-12 w-12 mx-auto text-gray-400 mb-3" />
-                  <p className="text-gray-600">
-                    Зураг сонгох эсвэл энд тавина уу
-                  </p>
-                  <Input
-                    id="imageUpload"
-                    type="file"
-                    accept="image/*"
-                    className="mt-3"
-                    onChange={handleFileChange}
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            <div>
-              <Label htmlFor="teacherQuestion">
-                Багшаас асуух асуулт (optional)
-              </Label>
-              <TextareaAutosize
-                id="teacherQuestion"
-                value={teacherQuestion}
-                onChange={(e) => setTeacherQuestion(e.target.value)}
-                placeholder="Багшаас асуух асуултаа энд бичнэ үү..."
-                minRows={2}
-                className="mt-1 w-full border rounded p-2 resize-none"
+            <div
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById("imageUpload")?.click()}
+              className="mt-1 border-4 border-dashed border-blue-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer bg-blue-50"
+            >
+              <Upload className="h-16 w-16 mx-auto text-blue-400 mb-3" />
+              <p className="text-blue-600 text-lg font-medium">
+                Зураг сонгох эсвэл энд тавина уу
+              </p>
+              <p className="text-sm text-blue-500 mt-1">
+                Хүүхэд та гэрийн даалгавраа зураг хэлбэрээр илгээнэ
+              </p>
+              <Input
+                id="imageUpload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
               />
             </div>
 
             <Button
               onClick={handleSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
-              disabled={!textContent.trim() && !file}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3 mt-4"
+              disabled={!file}
             >
-              Даалгавар илгээх
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    ></path>
+                  </svg>
+                  Илгээж байна...
+                </>
+              ) : (
+                "Даалгавар илгээх"
+              )}
             </Button>
 
             {submitted && (
-              <div className="mt-4 border-2 border-blue-500 rounded-lg p-4 bg-blue-50">
-                <p className="font-medium text-blue-800 flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-blue-600" />
+              <div className="mt-4 border-2 border-green-500 rounded-lg p-4 bg-green-50">
+                <p className="font-medium text-green-800 flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
                   Амжилттай илгээгдлээ ✅
                 </p>
-                <p className="text-sm text-blue-600 mt-1">
-                  Багш таны даалгаврыг шалгаж, үнэлгээ өгөх болно.
+                <p className="text-sm text-green-600 mt-1">
+                  Багш таны даалгаврыг шалгаж үнэлгээ өгөх болно.
                 </p>
               </div>
             )}

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import AssignmentCard from "./AssignmentCard";
 import { Separator } from "../ui/separator";
+import { useRouter } from "next/navigation";
 
 interface Assignment {
   id: string;
@@ -17,16 +18,19 @@ interface Assignment {
 }
 
 export default function StudentDashboard() {
-  
+  const router = useRouter();
+
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
+
   const room = {
     id: "mockRoom123",
     roomCode: "7MGL3M",
     title: "9a ",
   };
+
   // const assignments: Assignment[] = [
   //   {
   //     id: "assign_1",
@@ -50,6 +54,7 @@ export default function StudentDashboard() {
   //     createdAt: "10/25/2025",
   //   },
   // ];
+  
   useEffect(() => {
     const fetchAssignments = async () => {
       setLoading(true);
@@ -68,7 +73,9 @@ export default function StudentDashboard() {
     fetchAssignments();
   }, [room.id]);
 
-  const handleGoBack = () => console.log("Navigating back...");
+  const handleGoBack = () => {
+    router.push("/");
+  };
 
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-8 py-8 bg-gray-50">
@@ -92,7 +99,7 @@ export default function StudentDashboard() {
 
         <main className="space-y-8">
           <h3 className="text-2xl ">Ирсэн даалгавар</h3>
-          <Separator/>
+          <Separator />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {assignments.map((assignment, index) => (
               <div key={assignment.id} className="flex flex-col">
@@ -129,7 +136,7 @@ export default function StudentDashboard() {
                 <X className="h-4 w-4 mr-1" />
               </button>
 
-              <div className="overflow-y-auto mt-10">
+              <div className="overflow-y-auto">
                 <Student assignment={selectedAssignment} />
               </div>
             </motion.div>
