@@ -2,133 +2,132 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, CirclePlus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export function TeacherAssignmentForm() {
+interface TeacherAssignmentFormProps {
+  teacherId: number;
+  roomId: number;
+}
 
+export function TeacherAssignmentForm({ teacherId, roomId }: TeacherAssignmentFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [textContent, setTextContent] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
 
-  // Submit handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const assignmentData = {
-      title,
-      description,
-      file,
-      dueDate,
-    };
+    try {
+      const payload = {
+        teacherId,
+        roomId,
+        title,
+        description,
+        textContent,
+        dueDate: dueDate?.toISOString(),
+      };
 
-    console.log("Submitted assignment:", assignmentData);
+      const { data } = await axios.post(
+        "http://localhost:4200/teacher/createAssignment",
+        payload
+      );
+console.log(data)
+      alert("Даалгавар амжилттай үүслээ!");
+
+      setTitle("");
+      setDescription("");
+      setTextContent("");
+      setDueDate(undefined);
+    } catch (err: any) {
+      alert("Алдаа: " + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2">
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
           <CirclePlus />
-          <span>hicheel oruulah</span>
+          <span>Даалгавар үүсгэх</span>
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            Шинэ гэрийн даалгавар
-          </DialogTitle>
+          <DialogTitle className="text-xl font-bold">Шинэ гэрийн даалгавар</DialogTitle>
         </DialogHeader>
 
         <form className="space-y-4 mt-2" onSubmit={handleSubmit}>
-          {/* Даалгаврын гарчиг */}
+          {/* Гарчиг */}
           <div className="flex flex-col gap-1">
-            <label className="text-md font-semibold text-gray-700">
-              Даалгаврын гарчиг
-            </label>
+            <label>Даалгаврын гарчиг</label>
             <Input
-              placeholder="Жишээ: Математик хичээл №1"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="placeholder:text-sm placeholder:text-gray-400"
+              placeholder="Жишээ: Математик №1"
             />
           </div>
 
           {/* Тайлбар */}
           <div className="flex flex-col gap-1">
-            <label className="text-md font-semibold text-gray-700">
-              Тайлбар
-            </label>
+            <label>Тайлбар</label>
             <Textarea
-              placeholder="Даалгаврын дэлгэрэнгүй тайлбар бичнэ үү..."
-              rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-               className="placeholder:text-sm placeholder:text-gray-400"
+              placeholder="Тайлбар..."
+              rows={3}
             />
           </div>
 
-          {/* Хавсаргах файл */}
+          {/* Текст оруулах */}
           <div className="flex flex-col gap-1">
-            <label className="text-md font-semibold text-gray-700">
-              Файл хавсаргах
-            </label>
-            <Input
-              type="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            <label>Даалгаврын текст</label>
+            <Textarea
+              value={textContent}
+              onChange={(e) => setTextContent(e.target.value)}
+              placeholder="Даалгаврын текстээ энд бичнэ үү..."
+              rows={5}
             />
           </div>
 
           {/* Дуусах хугацаа */}
           <div className="flex flex-col gap-1">
-            <label className="text-md font-semibold text-gray-700">
-              Дуусах хугацаа
-            </label>
+            <label>Дуусах хугацаа</label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                >
+                <Button variant="outline" className="w-full justify-start text-left">
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate ? format(dueDate, "yyyy/MM/dd") : "Огноо сонгох"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={setDueDate}
-                  initialFocus
-                />
+                <Calendar mode="single" selected={dueDate} onSelect={setDueDate} />
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Submit button */}
+          {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                // Болих товч дарвал state-уудыг цэвэрлэж болно
                 setTitle("");
                 setDescription("");
-                setFile(null);
+                setTextContent("");
                 setDueDate(undefined);
               }}
             >
@@ -136,9 +135,10 @@ export function TeacherAssignmentForm() {
             </Button>
             <Button
               type="submit"
+              disabled={loading}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
-              Хадгалах
+              {loading ? "Түр хүлээнэ үү..." : "Хадгалах"}
             </Button>
           </div>
         </form>

@@ -109,48 +109,31 @@ export const TeacherClassRooms = ({ teacherId }: Props) => {
 
               {/* Class list */}
               <div className="space-y-2 flex-1">
-                {classrooms.map((c) => (
-                  <button
-                    key={c.id}
-                    className="w-full text-left p-3 rounded-xl transition-colors hover:bg-gray-50"
-                  >
-                    <div className="font-semibold">{c.roomName}</div>
-                    <div className="text-sm text-gray-500">{c.code}</div>
-                    <span
-                      onClick={() => deleteClassroom(c.id)}
-                      className="cursor-pointer text-red-500 hover:text-red-700 font-bold"
-                    >
-                      ✕
-                    </span>
-                  </button>
-                ))}
+                <button className="w-full text-left p-3 rounded-xl transition-colors hover:bg-gray-50">
+                  <div className="font-semibold">10Aaaaa</div>
+                  <div className="text-sm text-gray-500">VS29R5</div>
+                </button>
               </div>
 
-              {/* Add class input эсвэл button */}
-              {showInput ? (
-                <div className="mt-4 flex gap-2 z-10">
-                  <input
-                    type="text"
-                    value={newClassInput}
-                    onChange={(e) => setNewClassInput(e.target.value)}
-                    placeholder="Ангийн нэр"
-                    className="flex-1 border rounded-xl px-3 py-2 text-sm"
-                  />
-                  <button
-                    onClick={addClassroom}
-                    className="px-3 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-                  >
-                    Нэмэх
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowInput(true)}
-                  className="mt-4 flex items-center justify-center gap-2 text-blue-600 font-medium py-2 px-3 rounded-xl border border-blue-300 hover:bg-blue-50 transition"
+              {/* Add class button */}
+              <button className="mt-4 flex items-center justify-center gap-2 text-blue-600 font-medium py-2 px-3 rounded-xl border border-blue-300 hover:bg-blue-50 transition">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-plus"
                 >
-                  + Анги нэмэх
-                </button>
-              )}
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+                Анги нэмэх
+              </button>
             </div>
           </div>
 
@@ -165,7 +148,7 @@ export const TeacherClassRooms = ({ teacherId }: Props) => {
                     <span className="font-mono font-semibold">VS29R5</span>
                   </p>
                 </div>
-                <TeacherAssignmentForm />
+                <TeacherAssignmentForm teacherId={1} roomId={1} />
               </div>
             </div>
 
