@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Submission } from "@/types";
 import { BarChart3, TrendingUp, Trophy, Users } from "lucide-react";
 
@@ -25,66 +26,50 @@ export const OverviewCarts = ({ submissions }: ClassStatsProps) => {
   };
 
   return (
-    <div>
-      <div className="grid md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
+    <Card className="rounded-2xl shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">Анги статистик</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid md:grid-cols-3 gap-10">
+          {/* Сурагчийн тоо */}
+          <div className="flex items-center justify-between  rounded-xl p-4">
             <div>
               <p className="text-gray-600 text-sm">Сурагчийн тоо</p>
-              <p className="text-3xl font-bold text-blue-600">
-                {totalStudents}
-              </p>
+              <p className="text-3xl font-bold text-blue-600">{totalStudents}</p>
             </div>
             <Users className="h-12 w-12 text-blue-500" />
           </div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
+          {/* Илгээсэн даалгавар */}
+          <div className="flex items-center justify-between  rounded-xl p-4">
             <div>
-              <p className="text-gray-600 text-sm">Илгээсэн даалгаврууд</p>
-              <p className="text-3xl font-bold text-green-600">
-                {submissions.length}
-              </p>
+              <p className="text-gray-600 text-sm">Илгээсэн даалгавар</p>
+              <p className="text-3xl font-bold text-blue-600">{submissions.length}</p>
             </div>
-            <BarChart3 className="h-12 w-12 text-green-500" />
+            <BarChart3 className="h-12 w-12 text-blue-600" />
           </div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
+          {/* Дундаж оноо */}
+          <div className="flex items-center justify-between  rounded-xl p-4">
             <div>
               <p className="text-gray-600 text-sm">Дундаж оноо</p>
               <p
                 className={`text-3xl font-bold ${
                   averageScore >= 90
-                    ? "text-green-600"
-                    : averageScore >= 80
                     ? "text-blue-600"
                     : averageScore >= 70
-                    ? "text-yellow-600"
-                    : "text-red-600"
+                    ? "text-blue-600"
+                    : "text-blue-600"
                 }`}
               >
                 {averageScore}/100
               </p>
             </div>
-            <TrendingUp className="h-12 w-12 text-purple-500" />
+            <TrendingUp className="h-12 w-12 text-blue-600" />
           </div>
         </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-600 text-sm">Шилдэг сурагчид</p>
-              <p className="text-3xl font-bold text-yellow-600">
-                {scoreDistribution.excellent}
-              </p>
-            </div>
-            <Trophy className="h-12 w-12 text-yellow-500" />
-          </div>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

@@ -14,11 +14,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+} from "../../ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 
 export function TeacherAssignmentForm() {
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -80,7 +79,7 @@ export function TeacherAssignmentForm() {
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-               className="placeholder:text-sm placeholder:text-gray-400"
+              className="placeholder:text-sm placeholder:text-gray-400"
             />
           </div>
 
