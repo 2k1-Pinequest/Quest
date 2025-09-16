@@ -56,8 +56,7 @@ model Assignment {
   room        Room     @relation(fields: [roomId], references: [id])
   title       String
   description String?
-  fileUrl     String?   // Хавсралт файл эсвэл зураг
-
+  fileUrl     String?  
   submissions StudentSubmission[]
   aiAnalyses  StudentAssignmentAi[]
 
