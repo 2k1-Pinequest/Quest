@@ -16,6 +16,8 @@ function fileToGenerativePart(filePath: string, mimeType: string): Part {
 
 export const analyzeAssignment = async (req: Request, res: Response) => {
   const { studentId } = req.params;
+  const { assignmentId } = req.body;
+  
   try {
     if (!req.file) {
       return res.status(400).json({ error: "Зураг upload хийгдээгүй байна" });
@@ -24,7 +26,7 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
-        temperature: 0, 
+        temperature: 0,
         topP: 1,
         topK: 1,
       },
@@ -73,9 +75,37 @@ JSON нь дараах бүтэцтэй байна:
       if (err) console.error(err);
     });
 
-    const aiStudentAssignment = await prisma.studentAssignmentAi.create({
+
+    //STUDENT SUBMISSION 
+    const submission = await prisma.studentSubmission.create({
       data: {
         studentId: Number(studentId),
+        // assignmentId: Number(assignmentId),
+        assignmentId:1,
+        fileUrl: req.file ? req.file.path : null,
+      },
+    });
+
+    //STUDENT ASSIGNMENT AI ANALZYE
+    const aiStudentAssignment = await prisma.studentAssignmentAi.upsert({
+      where: {
+        studentId_assignmentId: {
+          studentId: Number(studentId),
+          // assignmentId: Number(assignmentId),
+          assignmentId:1,
+        },
+      },
+      update: {
+        score: parsed.score,
+        summary: parsed.summary,
+        mistakes: parsed.mistakes,
+        suggestions: parsed.suggestions,
+        overall: parsed.overall,
+      },
+      create: {
+        studentId: Number(studentId),
+        // assignmentId: Number(assignmentId),
+        assignmentId:1,
         score: parsed.score,
         summary: parsed.summary,
         mistakes: parsed.mistakes,
@@ -84,7 +114,12 @@ JSON нь дараах бүтэцтэй байна:
       },
     });
 
-    res.json({ success: true, analysis: aiStudentAssignment });
+    res.json({
+      success: true,
+      analysis: aiStudentAssignment,
+      submission: submission,
+    });
+
   } catch (err: any) {
     console.error(err);
     res.status(500).json({
