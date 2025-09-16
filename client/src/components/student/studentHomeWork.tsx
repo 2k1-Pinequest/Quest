@@ -111,7 +111,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     try {
       setLoading(true);
       const response = axios.post(
-        "http://localhost:4200/studentAssign/analyzeAssignment/2", // 1 нь studentId жишээ
+        "http://localhost:4200/studentAssign/analyzeAssignment/1", // 1 нь studentId жишээ
         formData,
         {
           headers: {

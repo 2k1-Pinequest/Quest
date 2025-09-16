@@ -24,7 +24,7 @@ export const AssignmentItem = ({
     >
       <div className="flex flex-col gap-2 ">
         <div>
-          <h3 className="text-sm text-gray-800">09.15</h3>
+          <h3 className="text-sm text-gray-800">09.17</h3>
           <div className="">
             <h4 className="text-xl font-semibold text-gray-900">{title}</h4>
             <p className="text-gray-600 font-medium mt-1">{description}</p>
