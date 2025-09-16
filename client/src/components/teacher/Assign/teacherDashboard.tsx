@@ -1,11 +1,10 @@
 "use client";
 
-import { BookOpen, Plus, Users } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-import { TeacherAssignmentForm } from "./teacheAssignmentForm";
+
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-import { mn } from "date-fns/locale";
+
 import { AssignmentItem } from "./assignmentItem";
 import { Button } from "../../ui/button";
 
@@ -107,7 +106,7 @@ export const TeacherClassRooms = () => {
                     <span className="font-mono font-semibold">VS29R5</span>
                   </p>
                 </div>
-                <TeacherAssignmentForm />
+                
               </div>
               <div className="border mb-5"></div>
               {classAssignments.map((dayBlock) => (
@@ -127,8 +126,6 @@ export const TeacherClassRooms = () => {
                 </div>
               ))}
             </div>
-
-            {/* өдөр өдрөөр харуулах */}
           </div>
         </div>
       </main>

@@ -1,39 +1,29 @@
 import React, { useState } from "react";
 import { CheckCheck } from "lucide-react";
 
-import { SubmissionsTable } from "./SubmissionTable";
+
 import { dummySubmissions } from "@/components/data/dummyData";
+import { Submission } from "@/types";
+import { SubmissionsTable } from "./SubmissionTable";
 
-export interface Submission {
-  id: string;
-  studentName: string;
-  assignmentTitle: string;
-  score: number;
-  aiSuggestion: "approve" | "review";
-  status: "pending" | "approved" | "rejected";
-  submissionDate: string;
-}
+type FilterType = "all" | "suggested-approve" | "suggested-review" | "approved";
 
-export const SubmissionsAssignments = () => {
-  const [submissions, setSubmissions] =
-    useState<Submission[]>(dummySubmissions);
-
-  const [filter, setFilter] = useState<
-    "all" | "suggested-approve" | "suggested-review" | "approved"
-  >("all");
+export const SubmissionsAssignments: React.FC = () => {
+  const [submissions, setSubmissions] = useState<Submission[]>(dummySubmissions);
+  const [filter, setFilter] = useState<FilterType>("all");
 
   const bulkApproveAISuggestions = () => {
     setSubmissions((prev) =>
-      prev.map((submission) =>
-        submission.aiSuggestion === "approve" && submission.status === "pending"
-          ? { ...submission, status: "approved" }
-          : submission
+      prev.map((s) =>
+        s.aiSuggestions[0] === "approve" && s.teacherReview?.status === "pending"
+          ? { ...s, teacherReview: { ...s.teacherReview, status: "approved" } }
+          : s
       )
     );
   };
 
   const pendingApprovalCount = submissions.filter(
-    (s) => s.aiSuggestion === "approve" && s.status === "pending"
+    (s) => s.aiSuggestions[0] === "approve" && s.teacherReview?.status === "pending"
   ).length;
 
   return (
@@ -56,7 +46,7 @@ export const SubmissionsAssignments = () => {
             )}
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as any)}
+              onChange={(e) => setFilter(e.target.value as FilterType)}
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Submissions</option>
@@ -68,7 +58,6 @@ export const SubmissionsAssignments = () => {
         </div>
       </div>
 
-      {/* Table */}
       <SubmissionsTable
         submissions={submissions}
         setSubmissions={setSubmissions}

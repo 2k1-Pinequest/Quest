@@ -3,11 +3,7 @@
 import { TeacherAssignDetailHeader } from "@/components/teacher/assignmentDetail/assignmentdetailHeader";
 import { AssignmentTab } from "@/components/teacher/assignmentDetail/assignmentTab";
 
-export const AssignmentDetails = ({
-  assignmentId,
-}: {
-  assignmentId: string;
-}) => {
+export const AssignmentDetails = () => {
   return (
     <div className="min-h-screen p-6">
       <TeacherAssignDetailHeader />

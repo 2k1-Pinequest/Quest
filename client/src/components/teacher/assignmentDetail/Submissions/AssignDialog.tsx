@@ -1,4 +1,6 @@
 "use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Submission } from "@/types";
-import { useState } from "react";
 import { OverviewCards } from "./OverviewCards";
 import { OverviewDetails } from "./OverviewDetails";
 import { TeacherFeedbackCard } from "./TeacherFeedbackCard";
@@ -23,23 +24,20 @@ export const AssignDialog = ({
   showDetailModal,
   setShowDetailModal,
 }: AssignDialogProps) => {
-  // Score edit state
   const [isEditingScore, setIsEditingScore] = useState(false);
   const [editedScore, setEditedScore] = useState<number | null>(null);
 
-  // Teacher feedback state
   const [teacherFeedback, setTeacherFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Functions to edit score
+  // Score edit functions
   const handleScoreEdit = () => {
-    setEditedScore(selectedSubmission?.aiScore || 0);
+    setEditedScore(selectedSubmission?.aiScore ?? 0);
     setIsEditingScore(true);
   };
 
-  const handleScoreChange = (value: string) => {
-    const num = parseInt(value, 10);
-    if (!isNaN(num)) setEditedScore(num);
+  const handleScoreChange = (value: number) => {
+    setEditedScore(value);
   };
 
   const handleScoreSave = () => {
@@ -73,6 +71,7 @@ export const AssignDialog = ({
     setIsSubmitting(false);
     setShowDetailModal(false);
   };
+
   return (
     <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -94,9 +93,10 @@ export const AssignDialog = ({
             </div>
           </DialogTitle>
         </DialogHeader>
+
         {selectedSubmission && (
           <div className="space-y-6">
-            {/* Overview Cards: ScoreCard, SubmissionInfoCard, AI Suggestion */}
+            {/* Overview Cards */}
             <OverviewCards
               isEditingScore={isEditingScore}
               editedScore={editedScore}
@@ -108,7 +108,7 @@ export const AssignDialog = ({
               getScoreColor={getScoreColor}
             />
 
-            {/* Overview Details: Submission Content + AI Evaluation */}
+            {/* Overview Details */}
             <OverviewDetails selectedSubmission={selectedSubmission} />
 
             {/* Teacher Feedback */}

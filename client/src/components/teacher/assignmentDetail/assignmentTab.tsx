@@ -3,19 +3,51 @@ import { Users, BarChart3 } from "lucide-react";
 import { OverviewCarts } from "./Stats/overviewCarts";
 import { Distribution } from "./Stats/distribution";
 import { SubmissionsAssignments } from "./Submissions/SubmissionAssignments";
+import { Submission } from "@/types";
 
 export const AssignmentTab = () => {
   // Түр зуурын state
   const [selectedTab, setSelectedTab] = useState("submissions");
 
   // Dummy өгөгдөл (дараа нь props/state-оор солино)
-  const currentRoom = {
-    submissions: [
-      { id: 1, student: "John" },
-      { id: 2, student: "Sara" },
-      { id: 3, student: "Boldoo" },
-    ],
-  };
+ const currentRoom: { submissions: Submission[] } = {
+  submissions: [
+    {
+      id: "1",
+      studentName: "John",
+      roomCode: "AB123",
+      content: "My assignment text",
+      type: "text" as const, // ← literal string
+      aiScore: 85,
+      aiFeedback: "Good job",
+      aiSuggestions: ["approve"],
+      submittedAt: new Date(),
+    },
+    {
+      id: "2",
+      studentName: "Sara",
+      roomCode: "AB123",
+      content: "My assignment file",
+      type: "upload" as const, // ← literal string
+      aiScore: 92,
+      aiFeedback: "Excellent",
+      aiSuggestions: ["approve"],
+      submittedAt: new Date(),
+    },
+    {
+      id: "3",
+      studentName: "Boldoo",
+      roomCode: "AB123",
+      content: "Some text content",
+      type: "text" as const, // ← literal string
+      aiScore: 78,
+      aiFeedback: "Needs improvement",
+      aiSuggestions: ["review"],
+      submittedAt: new Date(),
+    },
+  ],
+};
+
 
   return (
     <div className="flex flex-col items-center">
