@@ -8,14 +8,9 @@ import axios from "axios";
 import AssignmentCard from "./AssignmentCard";
 import { Separator } from "../ui/separator";
 import { useRouter } from "next/navigation";
+import { Assignment } from "@/types";
 
-interface Assignment {
-  id: string;
-  roomId: string;
-  title: string;
-  instruction: string;
-  createdAt: string;
-}
+
 
 export default function StudentDashboard() {
   const router = useRouter();

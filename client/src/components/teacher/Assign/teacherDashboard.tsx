@@ -1,11 +1,9 @@
 "use client";
 
+
 import { BookOpen, Plus, Trash2, Users } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-import { TeacherAssignmentForm } from "./teacheAssignmentForm";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
-import { mn } from "date-fns/locale";
 import { AssignmentItem } from "./assignmentItem";
 import { Button } from "../../ui/button";
 import { useEffect, useState } from "react";
@@ -249,7 +247,10 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                     </span>
                   </p>
                 </div>
+
+
                 <TeacherAssignmentForm roomId={1} teacherId={1} />
+
               </div>
               <div className="border mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {assignments.map((dayBlock) => (
@@ -268,8 +269,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 ))}
               </div>
             </div>
-
-            {/* өдөр өдрөөр харуулах */}
           </div>
         </div>
       </main>

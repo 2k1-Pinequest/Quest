@@ -37,3 +37,11 @@ export interface ProgressPoint {
   date: Date;
   score: number;
 }
+export interface Assignment {
+  id: string;
+  roomId: string;
+  title: string;
+  instruction: string;
+  createdAt: string;
+  
+}

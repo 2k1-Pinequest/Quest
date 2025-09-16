@@ -1,5 +1,6 @@
 "use client";
 
+import { Assignment } from "@/types";
 import { BookOpen, Upload } from "lucide-react";
 
 interface AssignmentCardProps {
@@ -8,8 +9,9 @@ interface AssignmentCardProps {
     title: string;
     instruction: string;
     createdAt: string;
+    roomId: string
   };
-  onSelect: (assignment: any) => void;
+  onSelect: (assignment: Assignment) => void;
 }
 
 export default function AssignmentCard({ assignment, onSelect }: AssignmentCardProps) {

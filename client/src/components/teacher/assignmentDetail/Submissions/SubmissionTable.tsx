@@ -1,7 +1,5 @@
 import React from "react";
-// import { Submission } from "@/types";
-// import { SubmissionRow } from "./SubmissionRow";
-import { Submission } from "./SubmissionAssignments";
+import { Submission } from "@/types";
 import { SubmissionRow } from "./SubmissionRow";
 
 interface Props {
@@ -10,56 +8,43 @@ interface Props {
   filter: "all" | "suggested-approve" | "suggested-review" | "approved";
 }
 
-export const SubmissionsTable: React.FC<Props> = ({
-  submissions,
-  setSubmissions,
-  filter,
-}) => {
-
-  const filteredSubmissions = submissions.filter((submission) => {
+export const SubmissionsTable: React.FC<Props> = ({ submissions, setSubmissions, filter }) => {
+  const filteredSubmissions = submissions.filter((s) => {
     switch (filter) {
       case "suggested-approve":
-        return submission.aiSuggestion === "approve";
+        return s.aiSuggestions[0] === "approve";
       case "suggested-review":
-        return submission.aiSuggestion === "review";
+        return s.aiSuggestions[0] === "review";
       case "approved":
-        return submission.status === "approved";
+        return s.teacherReview?.status === "approved";
       default:
         return true;
     }
   });
 
-  const updateSubmissionStatus = (
-    id: string,
-    status: "approved" | "rejected"
-  ) => {
+  const updateSubmissionStatus = (id: string, status: "approved" | "rejected") => {
     setSubmissions((prev) =>
-      prev.map((submission) =>
-        submission.id === id ? { ...submission, status } : submission
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              teacherReview: { ...s.teacherReview, status, comment: s.teacherReview?.comment ?? "", finalScore: s.aiScore },
+            }
+          : s
       )
     );
   };
 
   return (
-    <div className="overflow-x-auto ">
-      <table className="w-full">
-        <thead className="bg-gray-50 ">
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead className="bg-gray-50">
           <tr>
-            <th className="text-left py-3 px-6 font-medium text-gray-700">
-              Student
-            </th>
-            <th className="text-left py-3 px-6 font-medium text-gray-700">
-              Score
-            </th>
-            <th className="text-left py-3 px-6 font-medium text-gray-700">
-              AI Suggestion
-            </th>
-            <th className="text-left py-3 px-6 font-medium text-gray-700">
-              Status
-            </th>
-            <th className="text-left py-3 px-6 font-medium text-gray-700">
-              Actions
-            </th>
+            <th className="text-left py-3 px-6 font-medium text-gray-700">Student</th>
+            <th className="text-left py-3 px-6 font-medium text-gray-700">Score</th>
+            <th className="text-left py-3 px-6 font-medium text-gray-700">AI Suggestion</th>
+            <th className="text-left py-3 px-6 font-medium text-gray-700">Status</th>
+            <th className="text-left py-3 px-6 font-medium text-gray-700">Actions</th>
           </tr>
         </thead>
         <tbody>

@@ -1,13 +1,15 @@
 "use client";
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, Brain, Check, X, Edit3 } from "lucide-react";
+import { Submission } from "@/types";
 
 interface OverviewCardsProps {
   isEditingScore: boolean;
   editedScore: number | null;
-  selectedSubmission: any;
-  handleScoreChange: (value: any) => void;
+  selectedSubmission: Submission;
+  handleScoreChange: (value: number) => void;
   handleScoreSave: () => void;
   handleScoreCancel: () => void;
   handleScoreEdit: () => void;
@@ -24,6 +26,9 @@ export const OverviewCards = ({
   handleScoreEdit,
   getScoreColor,
 }: OverviewCardsProps) => {
+  const maxScore = 100;
+  const firstSuggestion = selectedSubmission.aiSuggestions[0] || "review";
+
   return (
     <div>
       {/* Score Card */}
@@ -39,21 +44,15 @@ export const OverviewCards = ({
               <div className="flex items-center gap-2">
                 <input
                   type="number"
-                  value={editedScore || ""}
-                  onChange={(e) => handleScoreChange(e.target.value)}
+                  value={editedScore ?? ""}
+                  onChange={(e) => handleScoreChange(Number(e.target.value))}
                   min={0}
-                  max={selectedSubmission.maxScore || 100}
+                  max={maxScore}
                   className="w-20 text-lg font-bold border px-1 py-0.5 rounded"
                   autoFocus
                 />
-                <span className="text-gray-400 text-lg">
-                  /{selectedSubmission.maxScore || 100}
-                </span>
-                <Button
-                  size="sm"
-                  onClick={handleScoreSave}
-                  className="h-8 px-2"
-                >
+                <span className="text-gray-400 text-lg">/{maxScore}</span>
+                <Button size="sm" onClick={handleScoreSave} className="h-8 px-2">
                   <Check size={14} />
                 </Button>
                 <Button
@@ -69,14 +68,12 @@ export const OverviewCards = ({
               <div className="flex items-center gap-2">
                 <span
                   className={`text-2xl font-bold ${getScoreColor(
-                    editedScore || selectedSubmission.score
+                    editedScore ?? selectedSubmission.aiScore
                   )}`}
                 >
-                  {editedScore || selectedSubmission.score}
+                  {editedScore ?? selectedSubmission.aiScore}
                 </span>
-                <span className="text-gray-400">
-                  /{selectedSubmission.maxScore || 100}
-                </span>
+                <span className="text-gray-400">/{maxScore}</span>
                 <Button size="sm" variant="ghost" onClick={handleScoreEdit}>
                   <Edit3 size={14} />
                 </Button>
@@ -95,14 +92,11 @@ export const OverviewCards = ({
         </CardHeader>
         <CardContent>
           <p className="text-sm font-medium">
-            {new Date(selectedSubmission.submissionDate).toLocaleDateString(
-              "en-US",
-              {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }
-            )}
+            {new Date(selectedSubmission.submittedAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
           </p>
         </CardContent>
       </Card>
@@ -117,17 +111,15 @@ export const OverviewCards = ({
         <CardContent>
           <span
             className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-              selectedSubmission.aiSuggestion === "approve"
+              firstSuggestion === "approve"
                 ? "bg-green-100 text-green-800"
                 : "bg-yellow-100 text-yellow-800"
             }`}
           >
-            {selectedSubmission.aiSuggestion === "approve"
-              ? "Approve"
-              : "Review Needed"}
+            {firstSuggestion === "approve" ? "Approve" : "Review Needed"}
           </span>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
