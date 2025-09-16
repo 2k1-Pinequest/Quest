@@ -36,8 +36,6 @@ export function TeacherAssignmentForm() {
     };
 
     console.log("Submitted assignment:", assignmentData);
-
-    // TODO: энд API руу POST хийх код нэмнэ
   };
 
   return (
