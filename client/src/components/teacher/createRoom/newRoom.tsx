@@ -13,7 +13,7 @@ const TeacherCreateRoom: React.FC<Props> = ({ teacherId, onCreated }) => {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleCreate = async () => {
+ const handleCreate = async () => {
     if (!roomName.trim()) {
       setMessage("Хичээлийн нэр оруулах шаардлагатай");
       return;
