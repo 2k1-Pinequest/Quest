@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Plus, Users } from "lucide-react";
+import { BookOpen, Plus, Trash2, Users } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
 import { useRouter } from "next/navigation";
@@ -8,38 +8,176 @@ import { format } from "date-fns";
 import { mn } from "date-fns/locale";
 import { AssignmentItem } from "./assignmentItem";
 import { Button } from "../../ui/button";
+import { useEffect, useState } from "react";
+import { AddClass } from "./addDeleteRoom";
+import axios from "axios";
 
-export const TeacherClassRooms = () => {
+// {
+//     "id": 6,
+//     "roomId": 1,
+//     "title": "Математие язгуур",
+//     "description": "бодоорой",
+//     "textContent": "Номны 23-р хуудасыг бод",
+//     "dueDate": "2025-09-17T16:00:00.000Z",
+//     "createdAt": "2025-09-16T12:47:38.529Z",
+//     "updatedAt": "2025-09-16T12:47:38.529Z"
+// }
+
+interface Assignment {
+  id: number;
+  roomId: string;
+  title: string;
+  description: string;
+  textContent: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const room = {
+  id: "mockRoom123",
+  roomCode: "7MGL3M",
+  title: "9a ",
+};
+
+export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const router = useRouter();
 
+  const [classrooms, setClassrooms] = useState<
+    { id: number; roomName: string; code: string }[]
+  >([]);
+
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
+    null
+  );
+
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  const [newClassInput, setNewClassInput] = useState("");
+  const [showInput, setShowInput] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("classrooms");
+    if (saved) {
+      setClassrooms(JSON.parse(saved));
+    } else {
+      setClassrooms([{ id: 1, roomName: "10A", code: "VS29R5" }]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!teacherId) return;
+
+    fetch(`http://localhost:4200/room/${teacherId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response not ok");
+        return res.json();
+      })
+      .then((data) => setClassrooms(data))
+      .catch((err) => console.error(err));
+  }, [teacherId]);
+
+  const addClassroom = (roomName: string) => {
+    if (!teacherId) {
+      console.error("teacherId is undefined");
+      return;
+    }
+
+    console.log("roomName", roomName);
+
+    if (!roomName.trim()) return;
+
+    axios
+      .post(`http://localhost:4200/room/${teacherId}`, {
+        roomName: roomName.trim(),
+      })
+      .then((res) => {
+        console.log("RESPONSE CREATE ROOM", res.data);
+        return res.data; // JSON болгож буцааж байна
+      })
+      .then((data) => {
+        if (data.room) {
+          setClassrooms((prev) => [...prev, data.room]); // өмнөх state-д нэмж өгнө
+          setNewClassInput("");
+          setShowInput(false);
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const deleteClassroom = async (roomId: number, roomName: string) => {
+    // Баталгаажуулалт
+    const confirmDelete = window.confirm(
+      `Та "${roomName}" анги-г устгахыг хүсэж байна уу?`
+    );
+    if (!confirmDelete) return; // Хэрэглэгч цуцлав
+
+    try {
+      // Backend рүү DELETE request
+      await axios.delete(`http://localhost:4200/room/${roomId}`);
+
+      // State update
+      setClassrooms((prev) => prev.filter((c) => c.id !== roomId));
+    } catch (err) {
+      console.error("Failed to delete classroom:", err);
+    }
+  };
+
+  // const handleAddClassroom = () => {};
+
   // Зөвхөн 10А ангийн (Нийгмийн багшийн) өдөр өдрөөр даалгавар
-  const classAssignments = [
-    {
-      date: "2025-09-14",
-      assignments: [
-        {
-          id: 1,
-          title: "Нийгэм",
-          description: "Хүн ба нийгмийн тухай уншлага: хуудас 12–18",
-          submissions: 5,
-        },
 
-        {
-          id: 2,
-          title: "Нийгэм",
-          description: "Монгол Улсын Үндсэн хуулийн талаар эсээ бич",
-          submissions: 0,
-        },
+  // const classAssignments = [
+  //   {
+  //     date: "2025-09-14",
+  //     assignments: [
+  //       {
+  //         id: 1,
+  //         title: "Нийгэм",
+  //         description: "Хүн ба нийгмийн тухай уншлага: хуудас 12–18",
+  //         submissions: 5,
+  //       },
 
-        {
-          id: 3,
-          title: "Нийгэм",
-          description: "Монгол Улсын Үндсэн хуулийн талаар эсээ бич",
-          submissions: 0,
-        },
-      ],
-    },
-  ];
+  //       {
+  //         id: 2,
+  //         title: "Нийгэм",
+  //         description: "Монгол Улсын Үндсэн хуулийн талаар эсээ бич",
+  //         submissions: 0,
+  //       },
+
+  //       {
+  //         id: 3,
+  //         title: "Нийгэм",
+  //         description: "Монгол Улсын Үндсэн хуулийн талаар эсээ бич",
+  //         submissions: 0,
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:4200/student/assignments/1`
+        );
+        setAssignments(res.data);
+        console.log("assignments", assignments);
+      } catch (err) {
+        console.error("Failed to fetch assignments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, [room.id]);
+
+  console.log("assignments", assignments);
+  const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
   return (
     <div className="">
@@ -54,42 +192,40 @@ export const TeacherClassRooms = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   My Classrooms
                 </h3>
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 text-white hover:text-black"
-                >
-                  <Plus />
-                </Button>
+                <AddClass addClassroom={addClassroom} />
               </div>
 
               <div className="border mb-5"></div>
 
               {/* Class list */}
               <div className="flex flex-col gap-2">
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 text-white hover:text-black"
-                >
-                  <div className="font-semibold">9A Анги</div>
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 text-white hover:text-black"
-                >
-                  <div className="font-semibold">9Б Анги</div>
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 text-white hover:text-black"
-                >
-                  <div className="font-semibold">8A Анги</div>
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 text-white hover:text-black"
-                >
-                  <div className="font-semibold">6A Анги</div>
-                </Button>
+                {classrooms.map((c) => (
+                  <div
+                    key={c.id}
+                    onClick={() => setActiveClassroomId(c.id)}
+                    className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition
+    ${
+      activeClassroomId === c.id
+        ? "bg-blue-700" // сонгогдсон үед
+        : "bg-blue-500 hover:bg-blue-600"
+    }  // энгийн үед
+  `}
+                  >
+                    <span className="font-semibold text-white">
+                      {c.roomName} анги
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // delete дээр дарахад сонголт өөрчлөгдөхгүй
+                        deleteClassroom(c.id, c.roomName);
+                      }}
+                      className="p-1 rounded-full text-gray-200 hover:text-red-400 transition"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                ))}
               </div>
 
               {/* Add class button */}
@@ -101,31 +237,36 @@ export const TeacherClassRooms = () => {
             <div className="border rounded-2xl p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">10A Анги</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {activeClassroom
+                      ? `${activeClassroom.roomName} Анги`
+                      : "Анги сонгоно уу"}
+                  </h2>
                   <p className="text-gray-600">
-                    Ангийн код
-                    <span className="font-mono font-semibold">VS29R5</span>
+                    Ангийн код{" "}
+                    <span className="font-mono font-semibold">
+                      {activeClassroom ? activeClassroom.code : "---"}
+                    </span>
                   </p>
                 </div>
-                <TeacherAssignmentForm />
+                <TeacherAssignmentForm roomId={1} teacherId={1} />
               </div>
-              <div className="border mb-5"></div>
-              {classAssignments.map((dayBlock) => (
-                <div
-                  key={dayBlock.date}
-                  className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-                >
-                  {dayBlock.assignments.map((a) => (
+              <div className="border mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {assignments.map((dayBlock) => (
+                  <div key={dayBlock.createdAt}>
+                    {/* {dayBlock.assignments.map((a) => ( */}
+
                     <AssignmentItem
-                      key={a.id}
-                      id={a.id}
-                      title={a.title}
-                      description={a.description}
-                      submissions={a.submissions}
+                      key={dayBlock.createdAt}
+                      id={dayBlock.id}
+                      title={dayBlock.title}
+                      description={dayBlock.description}
+                      submissions={6}
                     />
-                  ))}
-                </div>
-              ))}
+                    {/* ))} */}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* өдөр өдрөөр харуулах */}
