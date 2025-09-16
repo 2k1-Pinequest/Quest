@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,8 +50,9 @@ console.log(data)
       setDescription("");
       setTextContent("");
       setDueDate(undefined);
-    } catch (err: any) {
-      alert("Алдаа: " + (err.response?.data?.message || err.message));
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+        alert("Алдаа: " + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
