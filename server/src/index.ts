@@ -5,6 +5,8 @@ import teacherRouter from "./routes/createTeacher";
 import studentRouter from "./routes/student-routes";
 import assignmentRouter from "./routes/StudentAssignment.router";
 
+import { Request, Response } from "express";
+
 const app = express();
 
 const PORT = 4200;
@@ -15,6 +17,10 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.get("/hi", (req:Request, res:Response)=>{
+  res.send("hi")
+})
 
 app.use("/room", roomRouter);
 app.use("/teacher", teacherRouter);
