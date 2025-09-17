@@ -51,7 +51,7 @@ const StudentSignup: React.FC<StudentSignupProps> = ({ onSuccess }) => {
 
   const onSubmit = async (data: FormInputs) => {
     try {
-      await axios.post("http://localhost:4200/student/register", data, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, data, {
         withCredentials: true,
       });
       setMessage("Амжилттай бүртгэгдлээ! Одоо join class руу шилжиж байна.");

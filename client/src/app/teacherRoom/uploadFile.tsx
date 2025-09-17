@@ -39,7 +39,7 @@ export default function UploadFile() {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:4200/api/quizzes/upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes/upload`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

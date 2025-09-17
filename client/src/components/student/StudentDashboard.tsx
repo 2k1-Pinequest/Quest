@@ -55,7 +55,7 @@ export default function StudentDashboard() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://localhost:4200/student/assignments/1`
+          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/1`
         );
         setAssignments(res.data);
       } catch (err) {

@@ -35,7 +35,7 @@ const StudentLogin: React.FC<StudentLoginProps> = ({ onSuccess }) => {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const res = await axios.post(
-        "http://localhost:4200/student/login",
+        `${process.env.NEXT_PUBLIC_API_URL}/student/login`,
         data,
         { withCredentials: true }
       );

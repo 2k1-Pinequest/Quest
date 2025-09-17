@@ -23,7 +23,7 @@ export function StudentJoin({ onNext }: StudentJoinProps) {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:4200/student/joinclass/`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student/joinclass/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

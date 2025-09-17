@@ -33,7 +33,7 @@ export const TeacherClassRooms = ({ teacherId }: Props) => {
   useEffect(() => {
     if (!teacherId) return;
 
-    fetch(`http://localhost:4200/room/${teacherId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Network response not ok");
         return res.json();
@@ -50,7 +50,7 @@ export const TeacherClassRooms = ({ teacherId }: Props) => {
 
     if (!newClassInput.trim()) return;
 
-    fetch(`http://localhost:4200/room/${teacherId}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ roomName: newClassInput.trim() }),
@@ -67,7 +67,7 @@ export const TeacherClassRooms = ({ teacherId }: Props) => {
   };
 
   const deleteClassroom = (roomId: number) => {
-    fetch(`http://localhost:4200/room/${roomId}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${roomId}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

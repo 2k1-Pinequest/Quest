@@ -69,7 +69,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   useEffect(() => {
     if (!teacherId) return;
 
-    fetch(`http://localhost:4200/room/${teacherId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Network response not ok");
         return res.json();
@@ -89,7 +89,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     if (!roomName.trim()) return;
 
     axios
-      .post(`http://localhost:4200/room/${teacherId}`, {
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, {
         roomName: roomName.trim(),
       })
       .then((res) => {
@@ -115,7 +115,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
     try {
       // Backend рүү DELETE request
-      await axios.delete(`http://localhost:4200/room/${roomId}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/room/${roomId}`);
 
       // State update
       setClassrooms((prev) => prev.filter((c) => c.id !== roomId));
@@ -161,7 +161,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://localhost:4200/student/assignments/1`
+          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/1`
         );
         setAssignments(res.data);
         console.log("assignments", assignments);
