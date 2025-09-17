@@ -111,7 +111,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     try {
       setLoading(true);
       const response = axios.post(
-        "http://localhost:4200/studentAssign/analyzeAssignment/1", // 1 нь studentId жишээ
+        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/1`, // 1 нь studentId жишээ
         formData,
         {
           headers: {
@@ -120,7 +120,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         }
       );
 
-      // const response = axios.get("http://localhost:4200/hi")
+      // const response = axios.get("${process.env.NEXT_PUBLIC_API_URL}/hi")
 
       console.log("response", response);
       const data = await response;

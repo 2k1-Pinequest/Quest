@@ -24,7 +24,7 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const res = await axios.post(
-        "http://localhost:4200/teacher/sign-in",
+        `${process.env.NEXT_PUBLIC_API_URL}/teacher/sign-in`,
         data,
         { withCredentials: true }
       );

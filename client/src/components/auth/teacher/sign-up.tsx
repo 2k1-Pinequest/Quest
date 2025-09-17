@@ -23,7 +23,7 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      await axios.post("http://localhost:4200/teacher/sign-up", data, { withCredentials: true });
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/teacher/sign-up`, data, { withCredentials: true });
       setMessage("Амжилттай бүртгэгдлээ! Одоо нэвтрэх боломжтой.");
       setTimeout(() => onSuccess?.(), 1500);
     } catch (err) {

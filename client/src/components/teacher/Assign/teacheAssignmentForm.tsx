@@ -40,7 +40,7 @@ export function TeacherAssignmentForm({ teacherId, roomId }: TeacherAssignmentFo
       };
 
       const { data } = await axios.post(
-        "http://localhost:4200/teacher/createAssignment",
+        `${process.env.NEXT_PUBLIC_API_URL}/teacher/createAssignment`,
         payload
       );
 console.log(data)
