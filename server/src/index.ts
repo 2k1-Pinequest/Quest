@@ -11,10 +11,36 @@ const app = express();
 
 const PORT = 4200;
 
-app.use(cors({
-  origin: "http://edusnap-iota.vercel.app",
-  credentials: true
-}));
+
+const allowedOrigins = [
+
+  "http://localhost:3000",
+
+  "https://edusnap-iota.vercel.app",
+
+];
+app.use(
+
+  cors({
+
+    origin: function (origin, callback) {
+
+      if (!origin || allowedOrigins.includes(origin)) {
+
+        callback(null, true);
+
+      } else {
+
+        callback(new Error("Not allowed by CORS"));
+
+      }
+
+    },
+
+  })
+
+);
+
 
 app.use(express.json());
 
