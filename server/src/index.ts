@@ -12,7 +12,7 @@ const app = express();
 const PORT = 4200;
 
 app.use(cors({
-  origin: "http://edusnap-iota.vercel.app
+  origin: "http://edusnap-iota.vercel.app",
   credentials: true
 }));
 
