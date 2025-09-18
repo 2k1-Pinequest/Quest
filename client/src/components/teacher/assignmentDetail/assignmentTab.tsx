@@ -59,8 +59,7 @@ export const AssignmentTab = () => {
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
-            <Users className="h-4 w-4 mr-2" />
-            Submissions ({currentRoom.submissions.length})
+            Гэрийн Даалгавар ({currentRoom.submissions.length})
           </button>
 
           <button

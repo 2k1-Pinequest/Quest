@@ -1,68 +1,55 @@
 import React, { useState } from "react";
 import { CheckCheck } from "lucide-react";
 
-
 import { dummySubmissions } from "@/components/data/dummyData";
 import { Submission } from "@/types";
-import { SubmissionsTable } from "./SubmissionTable";
+import { SubmissionCarousel } from "./SubmissionCarousel";
+import { GurvanUildel } from "./GurvanUildel";
+
 
 type FilterType = "all" | "suggested-approve" | "suggested-review" | "approved";
 
 export const SubmissionsAssignments: React.FC = () => {
-  const [submissions, setSubmissions] = useState<Submission[]>(dummySubmissions);
+  const [submissions, setSubmissions] =
+    useState<Submission[]>(dummySubmissions);
   const [filter, setFilter] = useState<FilterType>("all");
 
   const bulkApproveAISuggestions = () => {
     setSubmissions((prev) =>
       prev.map((s) =>
-        s.aiSuggestions[0] === "approve" && s.teacherReview?.status === "pending"
+        s.aiSuggestions[0] === "approve" &&
+        s.teacherReview?.status === "pending"
           ? { ...s, teacherReview: { ...s.teacherReview, status: "approved" } }
           : s
       )
     );
   };
 
-  const pendingApprovalCount = submissions.filter(
-    (s) => s.aiSuggestions[0] === "approve" && s.teacherReview?.status === "pending"
-  ).length;
-
   return (
-    <div className="bg-white rounded-2xl w-full shadow-lg">
-      {/* Header with Bulk Actions */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Student Submissions
-          </h2>
-          <div className="flex gap-3">
-            {pendingApprovalCount > 0 && (
-              <button
-                onClick={bulkApproveAISuggestions}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-              >
-                <CheckCheck size={16} />
-                Bulk Approve AI Suggestions ({pendingApprovalCount})
-              </button>
-            )}
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterType)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Submissions</option>
-              <option value="suggested-approve">Suggested Approve</option>
-              <option value="suggested-review">Suggested Review</option>
-              <option value="approved">Approved</option>
-            </select>
-          </div>
+    <div className="rounded-2xl w-full border p-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-900">Suragchiin ner</h2>
+        <h1>Suragchiin daalgavar ilgeesen on sar</h1>
+      </div>
+      <div className="flex gap-10 pt-5">
+        <div className="flex flex-col items-center gap-3">
+          <h1>Илгээсэн даалгавар</h1>
+          <SubmissionCarousel />
+        </div>
+        <div className="border"></div>
+        <div className="flex flex-col gap-3">
+          <h1> AI analyze</h1>
+          <h1>Оюутан рационал тоог аравтын бутархай болон энгийн бутархай хэлбэрт хөрвүүлэх, мөн давтагдах аравтын бутархайг таних, хөрвүүлэх чадвараа сайн харуулсан. Гэсэн хэдий ч тоон шугам дээр цэг тэмдэглэх, зарим тоог хөрвүүлэхдээ алдаа гаргасан байна.</h1>
+
         </div>
       </div>
+      <GurvanUildel />
 
-      <SubmissionsTable
+      {/* <SubmissionsTable
         submissions={submissions}
         setSubmissions={setSubmissions}
         filter={filter}
-      />
+      /> */}
     </div>
   );
 };
