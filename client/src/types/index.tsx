@@ -43,5 +43,4 @@ export interface Assignment {
   title: string;
   instruction: string;
   dueDate: string;
-  
 }
