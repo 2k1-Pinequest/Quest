@@ -15,7 +15,6 @@ export const AssignmentItem = ({
   id,
   title,
   description,
-  submissions,
   createdAt,
   dueDate,
 }: AssignmentItemProps) => {
@@ -47,14 +46,13 @@ export const AssignmentItem = ({
       })()
     : "No date";
 
-  // dateColor-г бүх div-д ашиглах
 const now = new Date();
-let dateColor = "bg-white"; // default: хугацаа дуусаагүй
+let dateColor = "bg-white";
 
 if (parsedDueDate) {
   const diff = parsedDueDate.getTime() - now.getTime();
   if (diff < 0) {
-    dateColor = "bg-gray-400"; // хугацаа дууссан
+    dateColor = "bg-gray-300"; 
   }
 }
 
@@ -70,7 +68,6 @@ if (parsedDueDate) {
           <h4 className="text-xl font-semibold text-gray-900">{title}</h4>
           <p className="text-gray-600 font-medium mt-1">{description}</p>
         </div>
-        {/* <div className="text-xs text-gray-500">{submissions} submission(s)</div> */}
       </div>
     </div>
   );
