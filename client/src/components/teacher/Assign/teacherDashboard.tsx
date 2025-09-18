@@ -2,7 +2,7 @@
 
 import { Trash2 } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-import { useRouter } from "next/navigation";
+
 import { AssignmentItem } from "./assignmentItem";
 import { useEffect, useState } from "react";
 import { AddClass } from "./addDeleteRoom";
@@ -30,30 +30,30 @@ interface Classroom {
 }
 
 export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
-  const router = useRouter();
-
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
+    null
+  );
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
-useEffect(() => {
-  if (!teacherId) return;
+  useEffect(() => {
+    if (!teacherId) return;
 
-  fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Network response not ok");
-      return res.json();
-    })
-    .then((data: Classroom[]) => {
-      setClassrooms(data);
-      // Хэрвээ анги сонгогдоогүй бол эхний ангийг default болгох
-      if (data.length > 0 && activeClassroomId === null) {
-        setActiveClassroomId(data[0].id);
-      }
-    })
-    .catch((err) => console.error(err));
-}, [teacherId]);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response not ok");
+        return res.json();
+      })
+      .then((data: Classroom[]) => {
+        setClassrooms(data);
+        // Хэрвээ анги сонгогдоогүй бол эхний ангийг default болгох
+        if (data.length > 0 && activeClassroomId === null) {
+          setActiveClassroomId(data[0].id);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, [teacherId]);
 
   // --------- шинэ анги нэмэх ---------
   const addClassroom = (roomName: string) => {
@@ -187,7 +187,6 @@ useEffect(() => {
                 <TeacherAssignmentForm
                   roomId={activeClassroom ? activeClassroom.id : 0}
                   teacherId={teacherId}
-                 
                 />
               </div>
 
