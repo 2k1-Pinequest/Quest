@@ -5,7 +5,7 @@ export const TeacherAssignDetailHeader = () => {
   const router = useRouter();
   // Түр зуурын жишээ өгөгдөл
   const currentRoom = {
-    homeworkTitle: "Math Homework - Fractions",
+    homeworkTitle: "Математик 10А",
     code: "ABC123",
   };
 
@@ -30,7 +30,6 @@ export const TeacherAssignDetailHeader = () => {
         </div>
 
         <div></div>
-
       </div>
     </div>
   );
