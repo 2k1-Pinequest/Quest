@@ -19,11 +19,9 @@ interface Assignment {
   createdAt: string;
   updatedAt: string;
   _count: {
-    submissions: number; // зөвхөн тоо
+    submissions: number;
   };
 }
-
-
 
 interface Classroom {
   id: number;
@@ -35,24 +33,27 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const router = useRouter();
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
-    null
-  );
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // --------- анги авах ---------
-  useEffect(() => {
-    if (!teacherId) return;
+useEffect(() => {
+  if (!teacherId) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response not ok");
-        return res.json();
-      })
-      .then((data) => setClassrooms(data))
-      .catch((err) => console.error(err));
-  }, [teacherId]);
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
+    .then((res) => {
+      if (!res.ok) throw new Error("Network response not ok");
+      return res.json();
+    })
+    .then((data: Classroom[]) => {
+      setClassrooms(data);
+      // Хэрвээ анги сонгогдоогүй бол эхний ангийг default болгох
+      if (data.length > 0 && activeClassroomId === null) {
+        setActiveClassroomId(data[0].id);
+      }
+    })
+    .catch((err) => console.error(err));
+}, [teacherId]);
 
   // --------- шинэ анги нэмэх ---------
   const addClassroom = (roomName: string) => {
@@ -123,12 +124,12 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     <div>
       <TeacherClassRoomHeader />
       <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
-        <div className="flex gap-10">
+        <div className="flex gap-10 w-full">
           {/* ------ Classroom sidebar ------ */}
-          <div className="lg:col-span-1">
-            <div className="border w-[233px] p-6 rounded-xl flex flex-col">
-              <div className="flex justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <div className="w-[233px] flex-shrink-0">
+            <div className="border p-6 rounded-xl flex flex-col">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
                   Миний ангиуд
                 </h3>
                 <AddClass addClassroom={addClassroom} />
@@ -155,7 +156,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                         e.stopPropagation();
                         deleteClassroom(c.id, c.roomName);
                       }}
-                      className="p-1 rounded-full text-gray-200 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:scale-110 transition-all duration-200"
+                      className="p-1 rounded-full text-gray-200 hover:text-red-400 hover:scale-110 transition-all duration-200"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -166,8 +167,8 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
           </div>
 
           {/* ------ Classroom details ------ */}
-          <div className="lg:col-span-3 flex-1">
-            <div className="border rounded-2xl p-6">
+          <div className="flex-1 min-h-[400px]">
+            <div className="border rounded-2xl p-6 h-full flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
@@ -183,16 +184,15 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   </p>
                 </div>
 
-                {activeClassroom && (
-                  <TeacherAssignmentForm
-                    roomId={activeClassroom.id}
-                    teacherId={teacherId}
-                  />
-                )}
+                <TeacherAssignmentForm
+                  roomId={activeClassroom ? activeClassroom.id : 0}
+                  teacherId={teacherId}
+                 
+                />
               </div>
 
               {/* ------ Assignments list ------ */}
-              <div className="mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 flex-1 min-h-[200px]">
                 {loading ? (
                   <p>Даалгавруудыг ачаалж байна...</p>
                 ) : assignments.length > 0 ? (
@@ -202,13 +202,13 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                       id={a.id}
                       title={a.title}
                       description={a.description || ""}
-                      submissions={a._count.submissions} 
+                      submissions={a._count.submissions}
                       createdAt={a.createdAt}
                       dueDate={a.dueDate || ""}
                     />
                   ))
                 ) : (
-                  <p>Ангиа сонгоно уу</p>
+                  <p>Даалгавар байхгүй байна</p>
                 )}
               </div>
             </div>
