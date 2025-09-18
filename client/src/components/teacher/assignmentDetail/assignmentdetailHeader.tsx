@@ -10,7 +10,7 @@ export const TeacherAssignDetailHeader = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
       <div className="flex items-center justify-between mb-8">
         {/* Back button */}
         <button
@@ -22,11 +22,11 @@ export const TeacherAssignDetailHeader = () => {
         </button>
 
         {/* Title + room code */}
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-2xl font-bold text-gray-800 leading-tight">
             {currentRoom.homeworkTitle}
           </h1>
-          <p className="text-gray-600">Room Code: {currentRoom.code}</p>
+          <p className="text-gray-600 mt-1">{currentRoom.code}</p>
         </div>
 
         <div></div>
