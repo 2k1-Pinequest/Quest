@@ -6,7 +6,6 @@ interface ClassStatsProps {
 }
 
 export const Distribution = ({ submissions }: ClassStatsProps) => {
-  
   const scoreDistribution = {
     excellent: submissions.filter((s) => s.aiScore >= 90).length,
     good: submissions.filter((s) => s.aiScore >= 80 && s.aiScore < 90).length,
@@ -20,16 +19,16 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
     text: submissions.filter((s) => s.type === "text").length,
   };
 
-    const commonSuggestions = submissions
-      .flatMap(s => s.aiSuggestions)
-      .reduce((acc, suggestion) => {
-        acc[suggestion] = (acc[suggestion] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+  const commonSuggestions = submissions
+    .flatMap((s) => s.aiSuggestions)
+    .reduce((acc, suggestion) => {
+      acc[suggestion] = (acc[suggestion] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
-    const topSuggestions = Object.entries(commonSuggestions)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5);
+  const topSuggestions = Object.entries(commonSuggestions)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5);
 
   return (
     <div>
@@ -37,7 +36,7 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
         {/* Score Distribution */}
         <div className="bg-white rounded-2xl p-6 shadow-lg">
           <h3 className="text-xl font-bold text-gray-800 mb-6">
-             Онооны хуваарилалт
+            Онооны хуваарилалт
           </h3>
           <div className="space-y-4">
             {[
@@ -85,71 +84,7 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
             ))}
           </div>
         </div>
-
-        {/* Submission Types */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">
-            Илгээсэн хэлбэр
-          </h3>
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                  📸
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">Зураг</p>
-                  <p className="text-sm text-gray-600">
-                   OCR боловсруулсан
-                  </p>
-                </div>
-              </div>
-              <div className="text-2xl font-bold text-blue-600">
-                {submissionsByType.upload}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                  ✍️
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">Текст</p>
-                  <p className="text-sm text-gray-600">Онлайн оруулсан</p>
-                </div>
-              </div>
-              <div className="text-2xl font-bold text-green-600">
-                {submissionsByType.text}
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-
-      {/* Common Areas for Improvement */}
-      {/* {topSuggestions.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-            <AlertTriangle className="h-6 w-6 mr-2 text-orange-500" />
-             Хамгийн түгээмэл сайжруулах зүйлс
-          </h3>
-          <div className="space-y-3">
-            {topSuggestions.map(([suggestion, count], index) => (
-              <div key={suggestion} className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
-                <div className="flex items-center">
-                  <span className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-4">
-                    {index + 1}
-                  </span>
-                  <p className="text-gray-800">{suggestion}</p>
-                </div>
-                <span className="text-orange-600 font-medium">{count} сурагч</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )} */}
-    
     </div>
   );
 };
