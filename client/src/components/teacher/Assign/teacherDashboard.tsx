@@ -2,7 +2,6 @@
 
 import { Trash2 } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-
 import { AssignmentItem } from "./assignmentItem";
 import { useEffect, useState } from "react";
 import { AddClass } from "./addDeleteRoom";
@@ -37,6 +36,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
+  
   useEffect(() => {
     if (!teacherId) return;
 
@@ -47,7 +47,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       })
       .then((data: Classroom[]) => {
         setClassrooms(data);
-        // Хэрвээ анги сонгогдоогүй бол эхний ангийг default болгох
         if (data.length > 0 && activeClassroomId === null) {
           setActiveClassroomId(data[0].id);
         }
@@ -55,14 +54,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       .catch((err) => console.error(err));
   }, [teacherId]);
 
-  // --------- шинэ анги нэмэх ---------
+  
   const addClassroom = (roomName: string) => {
-    if (!teacherId) {
-      console.error("teacherId is undefined");
-      return;
-    }
-
-    if (!roomName.trim()) return;
+    if (!teacherId || !roomName.trim()) return;
 
     axios
       .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, {
@@ -70,14 +64,12 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       })
       .then((res) => res.data)
       .then((data) => {
-        if (data.room) {
-          setClassrooms((prev) => [...prev, data.room]);
-        }
+        if (data.room) setClassrooms((prev) => [...prev, data.room]);
       })
       .catch((err) => console.error(err));
   };
 
-  // --------- анги устгах ---------
+  
   const deleteClassroom = async (roomId: number, roomName: string) => {
     const confirmDelete = window.confirm(
       `Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`
@@ -96,7 +88,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     }
   };
 
-  // --------- тухайн ангийн даалгавар авах ---------
+  
   useEffect(() => {
     if (!activeClassroomId) return;
 
@@ -120,12 +112,36 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
+  
+  const groupedAssignments = assignments.reduce(
+    (acc: Record<string, Assignment[]>, assignment) => {
+      const dateKey = new Date(assignment.createdAt).toISOString().split("T")[0]; // YYYY-MM-DD
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(assignment);
+      return acc;
+    },
+    {}
+  );
+
+  const sortedDates = Object.keys(groupedAssignments).sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  );
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("mn-MN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <div>
       <TeacherClassRoomHeader />
       <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
         <div className="flex gap-10 w-full">
-          {/* ------ Classroom sidebar ------ */}
+          
           <div className="w-[233px] flex-shrink-0">
             <div className="border p-6 rounded-xl flex flex-col">
               <div className="flex justify-between items-center mb-4">
@@ -166,7 +182,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
             </div>
           </div>
 
-          {/* ------ Classroom details ------ */}
+          
           <div className="flex-1 min-h-[400px]">
             <div className="border rounded-2xl p-6 h-full flex flex-col">
               <div className="flex justify-between items-start mb-4">
@@ -190,21 +206,36 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 />
               </div>
 
-              {/* ------ Assignments list ------ */}
-              <div className="mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 flex-1 min-h-[200px]">
+              
+              <div className="flex-1 min-h-[200px] overflow-y-auto">
                 {loading ? (
                   <p>Даалгавруудыг ачаалж байна...</p>
                 ) : assignments.length > 0 ? (
-                  assignments.map((a) => (
-                    <AssignmentItem
-                      key={a.id}
-                      id={a.id}
-                      title={a.title}
-                      description={a.description || ""}
-                      submissions={a._count.submissions}
-                      createdAt={a.createdAt}
-                      dueDate={a.dueDate || ""}
-                    />
+                  sortedDates.map((date) => (
+                  <div key={date} className="mb-8">
+                      
+                    <div className="flex items-center space-x-4 my-6">
+                      <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                        {formatDate(date)}
+                       </span>
+                     <div className="flex-1 border-t border-gray-300" />
+                  </div>
+
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {groupedAssignments[date].map((a) => (
+                          <AssignmentItem
+                            key={a.id}
+                            id={a.id}
+                            title={a.title}
+                            description={a.description || ""}
+                            submissions={a._count.submissions}
+                            createdAt={a.createdAt}
+                            dueDate={a.dueDate || ""}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <p>Даалгавар байхгүй байна</p>
