@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export const TeacherAssignDetailHeader = () => {

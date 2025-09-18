@@ -1,6 +1,5 @@
 "use client";
 
-
 import { BookOpen, Plus, Trash2, Users } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { useRouter } from "next/navigation";
@@ -249,9 +248,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   </p>
                 </div>
 
-
                 <TeacherAssignmentForm roomId={1} teacherId={1} />
-
               </div>
               <div className="border mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {assignments.map((dayBlock) => (

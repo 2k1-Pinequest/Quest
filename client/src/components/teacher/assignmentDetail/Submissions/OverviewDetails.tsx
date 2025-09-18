@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+
 import { FileText, Brain } from "lucide-react";
 import { Submission } from "@/types";
 
@@ -52,7 +52,8 @@ export const OverviewDetails = ({
                   : "text-yellow-800"
               }`}
             >
-              {selectedSubmission.aiFeedback || "No AI evaluation available for this submission."}
+              {selectedSubmission.aiFeedback ||
+                "No AI evaluation available for this submission."}
             </p>
           </div>
         </CardContent>

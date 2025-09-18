@@ -1,19 +1,12 @@
-
 import React from "react";
 import { AssignmentDetails } from "./assignmentSubAnalyze";
 
-
-export default function TeacherAssignDetail({
-  params,
-}: {
-  params: Promise<{ assignId: string }>;
-}) {
-  const resolvedParams = React.use(params); // unwrap хийнэ
-  const assignId = resolvedParams.assignId;
-
+export default function TeacherAssignDetail() {
   return (
-    <div>
-      <AssignmentDetails assignmentId={assignId} />
+    <div className="min-h-screen flex justify-center">
+      <div className="w-full max-w-[1200px]">
+        <AssignmentDetails />
+      </div>
     </div>
   );
 }

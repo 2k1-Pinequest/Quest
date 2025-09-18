@@ -9,16 +9,28 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, CirclePlus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface TeacherAssignmentFormProps {
   teacherId: number;
   roomId: number;
 }
 
-export function TeacherAssignmentForm({ teacherId, roomId }: TeacherAssignmentFormProps) {
+export function TeacherAssignmentForm({
+  teacherId,
+  roomId,
+}: TeacherAssignmentFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [textContent, setTextContent] = useState("");
@@ -43,7 +55,7 @@ export function TeacherAssignmentForm({ teacherId, roomId }: TeacherAssignmentFo
         `${process.env.NEXT_PUBLIC_API_URL}/teacher/createAssignment`,
         payload
       );
-console.log(data)
+      console.log(data);
       alert("Даалгавар амжилттай үүслээ!");
 
       setTitle("");
@@ -52,7 +64,7 @@ console.log(data)
       setDueDate(undefined);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-        alert("Алдаа: " + (error.response?.data?.message || error.message));
+      alert("Алдаа: " + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
@@ -69,7 +81,9 @@ console.log(data)
 
       <DialogContent className="sm:max-w-lg rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Шинэ гэрийн даалгавар</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            Шинэ гэрийн даалгавар
+          </DialogTitle>
         </DialogHeader>
 
         <form className="space-y-4 mt-2" onSubmit={handleSubmit}>
@@ -111,13 +125,20 @@ console.log(data)
             <label>Дуусах хугацаа</label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start text-left">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left"
+                >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate ? format(dueDate, "yyyy/MM/dd") : "Огноо сонгох"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={dueDate} onSelect={setDueDate} />
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                />
               </PopoverContent>
             </Popover>
           </div>

@@ -1,5 +1,4 @@
 import { Submission } from "@/types";
-import { AlertTriangle } from "lucide-react";
 
 interface ClassStatsProps {
   submissions: Submission[];
@@ -12,11 +11,6 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
     satisfactory: submissions.filter((s) => s.aiScore >= 70 && s.aiScore < 80)
       .length,
     needsWork: submissions.filter((s) => s.aiScore < 70).length,
-  };
-
-  const submissionsByType = {
-    upload: submissions.filter((s) => s.type === "upload").length,
-    text: submissions.filter((s) => s.type === "text").length,
   };
 
   const commonSuggestions = submissions
@@ -83,6 +77,29 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
               </div>
             ))}
           </div>
+        </div>
+        {/* Хамгийн нийтлэг AI зөвлөмжүүд */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 className="text-xl font-bold text-gray-800 mb-6">
+            Сурагчдаас ирж буй асуултууд
+          </h3>
+          {topSuggestions.length > 0 ? (
+            <ul className="space-y-2">
+              {topSuggestions.map(([suggestion, count]) => (
+                <li
+                  key={suggestion}
+                  className="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg"
+                >
+                  <span className="text-sm text-gray-700">{suggestion}</span>
+                  <span className="text-sm font-semibold text-blue-600">
+                    {count}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-500">Одоогоор зөвлөмж алга.</p>
+          )}
         </div>
       </div>
     </div>
