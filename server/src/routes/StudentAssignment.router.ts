@@ -15,10 +15,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// POST endpoint – зураг upload хийж анализ хийх
+// POST endpoint – олон зураг upload хийж анализ хийх
 assignmentRouter.post(
   "/analyzeAssignment/:studentId",
-  upload.single("file"),
+  upload.array("files", 3), // ← "files" гэдэг нэрээр 10 хүртэл зураг upload хийнэ
   analyzeAssignment
 );
 

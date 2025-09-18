@@ -84,6 +84,7 @@ model StudentSubmission {
   aiAnalysis Json? // AI-н дэлгэрэнгүй JSON анализ
 
   submittedAt DateTime @default(now())
+  
 }
 
 //
