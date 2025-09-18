@@ -10,8 +10,6 @@ import { Separator } from "../ui/separator";
 import { useRouter } from "next/navigation";
 import { Assignment } from "@/types";
 
-
-
 export default function StudentDashboard() {
   const router = useRouter();
 
@@ -49,7 +47,7 @@ export default function StudentDashboard() {
   //     createdAt: "10/25/2025",
   //   },
   // ];
-  
+
   useEffect(() => {
     const fetchAssignments = async () => {
       setLoading(true);
