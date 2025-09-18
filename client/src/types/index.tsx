@@ -21,12 +21,12 @@ export interface Submission {
   studentName: string;
   roomCode: string;
   content: string;
-  type: 'upload' | 'text';
+  type: "upload" | "text";
   aiScore: number;
   aiFeedback: string;
   aiSuggestions: string[];
   teacherReview?: {
-    status: 'approved' | 'rejected' | 'pending';
+    status: "approved" | "rejected" | "pending";
     comment: string;
     finalScore?: number;
   };
@@ -43,5 +43,5 @@ export interface Assignment {
   title: string;
   instruction: string;
   dueDate: string;
-  
+  createdAt: string;
 }
