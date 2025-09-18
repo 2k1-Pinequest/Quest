@@ -15,30 +15,30 @@ function fileToGenerativePart(filePath: string, mimeType: string): Part {
 }
 
 export const analyzeAssignment = async (req: Request, res: Response) => {
-  const { studentId } = req.params;
-  const { assignmentId } = req.body;
-
-  console.log("studentId:", studentId);
-  console.log("assignmentId:", typeof assignmentId);
-  console.log("uploaded file:", req.file);
-
   try {
-    if (!req.file) {
+    const { studentId } = req.params;
+    const { assignmentId } = req.body;
+
+    console.log("studentId:", studentId);
+    console.log("assignmentId:", assignmentId);
+    console.log("uploaded files:", req.files);
+
+    if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
       return res.status(400).json({ error: "Зураг upload хийгдээгүй байна" });
     }
 
-    console.log("assignment", req.file);
-    console.log("req.assignment id:", assignmentId);
+    const files = req.files as Express.Multer.File[];
 
-    // return res.json({
+    // res.json({
     //   success: true,
-    //   studentId,
-    //   assignmentId,
-    //   file: req.file,
+    //   req: req.files,
     // });
 
+    // Gemini руу илгээх Part[] болгон хувиргана
+    const parts = files.map((f) => fileToGenerativePart(f.path, f.mimetype));
+
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash", // эсвэл gemini-1.5-flash / gemini-2.5-flash
       generationConfig: {
         temperature: 0,
         topP: 1,
@@ -46,26 +46,31 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
       },
     });
 
-    const imagePath = req.file.path;
-    const mimeType = req.file.mimetype;
-
     const prompt = `
-    Чи зөвхөн JSON буцаа. Markdown болон текст оруулахгүй.
+Чи зөвхөн JSON буцаа. Markdown, текст, тайлбар битгий оруул. 
+Чи зөвхөн сурагчийн бодлого бүрийн үнэн зөв байдлаар дүн гаргана. 
+Сурагчийн бичсэн дүн/оноо огт анхаарах хэрэггүй.
 
-    JSON нь дараах бүтэцтэй байна:
-    {
-      "score": number,
-      "summary": string,
-      "mistakes": [string],
-      "suggestions": [string],
-      "overall": string
-    }
+JSON бүтэц:
+{
+  "totalTasks": number,
+  "correctTasks": number,
+  "score": number,  // 100-аас бодлого бүрийн үнэн байдлаар тооцсон бүхэл тоо
+  "summary": string,
+  "mistakes": [string],
+  "suggestions": [string],
+  "overall": string
+}
 
-    Оноо (score)-г 100-аас өг. Дутуу болон алдаатай бодлого бүрт 5-10 оноо хас.
-    `;
+Зөвлөмж:
+1. "score" = (correctTasks / totalTasks) * 100, **бүхэл тоогоор округлэнэ**.
+2. "mistakes" зөвхөн үнэндээ алдаатай бодлогын дугаар, нэрийг агуулна.
+3. "suggestions" нь сурагчийг хөгжүүлэх бодит зөвлөмж байх.
+4. Хүссэн бүх дүн **математик болон бодлогын үнэн байдлаас шууд гарах**.
+`;
 
-    const imagePart = fileToGenerativePart(imagePath, mimeType);
-    const result = await model.generateContent([prompt, imagePart]);
+    // Олон зураг + prompt хамтад нь явуулна
+    const result = await model.generateContent([prompt, ...parts]);
 
     let cleanOutput = (await result.response.text()).trim();
 
@@ -85,27 +90,41 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
       });
     }
 
-    fs.unlink(imagePath, (err) => {
-      if (err) console.error(err);
-    });
+    console.log("parsed", parsed);
 
-    //STUDENT SUBMISSION
+    // --- DB-д хадгалах ---
+    // Оюутны submission хадгална
     const submission = await prisma.studentSubmission.create({
       data: {
         studentId: Number(studentId),
         assignmentId: Number(assignmentId),
-        // assignmentId:1,
-        fileUrl: req.file ? req.file.path : null,
+        fileUrl: files.map((f) => f.path).join(","), // олон зураг path хадгалах
       },
     });
 
-    //STUDENT ASSIGNMENT AI ANALZYE
+    // const submission = await prisma.studentSubmission.upsert({
+    //   where: {
+    //     studentId_assignmentId: {
+    //       studentId: Number(studentId),
+    //       assignmentId: Number(assignmentId),
+    //     },
+    //   },
+    //   update: {
+    //     fileUrl: files.map((f) => f.path).join(","),
+    //   },
+    //   create: {
+    //     studentId: Number(studentId),
+    //     assignmentId: Number(assignmentId),
+    //     fileUrl: files.map((f) => f.path).join(","),
+    //   },
+    // });
+
+    // AI анализ хадгална
     const aiStudentAssignment = await prisma.studentAssignmentAi.upsert({
       where: {
         studentId_assignmentId: {
           studentId: Number(studentId),
           assignmentId: Number(assignmentId),
-          // assignmentId:1,
         },
       },
       update: {
@@ -118,7 +137,6 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
       create: {
         studentId: Number(studentId),
         assignmentId: Number(assignmentId),
-        // assignmentId:1,
         score: parsed.score,
         summary: parsed.summary,
         mistakes: parsed.mistakes,
@@ -127,10 +145,17 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
       },
     });
 
+    // --- Temporary files устгах ---
+    files.forEach((f) => {
+      fs.unlink(f.path, (err) => {
+        if (err) console.error("File delete error:", err);
+      });
+    });
+
     res.json({
       success: true,
       analysis: aiStudentAssignment,
-      submission: submission,
+      submission,
     });
   } catch (err: any) {
     console.error(err);
