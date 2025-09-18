@@ -69,8 +69,9 @@ if (parsedDueDate) {
         <div>
           <h4 className="text-xl font-semibold text-gray-900">{title}</h4>
           <p className="text-gray-600 font-medium mt-1">{description}</p>
+          
         </div>
-        {/* <div className="text-xs text-gray-500">{submissions} submission(s)</div> */}
+        <div className="text-xs text-gray-500">submission({submissions})</div>
       </div>
     </div>
   );
