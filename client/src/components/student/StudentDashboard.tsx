@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Upload, ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import AssignmentCard from "./AssignmentCard";
-import { Separator } from "../ui/separator";
 import { useRouter } from "next/navigation";
 import { Assignment } from "@/types";
-
-
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -26,30 +23,6 @@ export default function StudentDashboard() {
     title: "9a ",
   };
 
-  // const assignments: Assignment[] = [
-  //   {
-  //     id: "assign_1",
-  //     roomId: "mockRoom123",
-  //     title: "Алтан ургын товч танилцуулга",
-  //     instruction: "Номны 23-25р хуудсыг ашиглан тайлбарла",
-  //     createdAt: "10/26/2025",
-  //   },
-  //   {
-  //     id: "assign_2",
-  //     roomId: "mockRoom123",
-  //     title: "Монголын нууц товчоо",
-  //     instruction: "500 үгтэй эсээ бичнэ үү..",
-  //     createdAt: "10/25/2025",
-  //   },
-  //   {
-  //     id: "assign_3",
-  //     roomId: "mockRoom123",
-  //     title: "Монголын нууц товчоо",
-  //     instruction: "500 үгтэй эсээ бичнэ үү..",
-  //     createdAt: "10/25/2025",
-  //   },
-  // ];
-  
   useEffect(() => {
     const fetchAssignments = async () => {
       setLoading(true);
@@ -70,6 +43,35 @@ export default function StudentDashboard() {
 
   const handleGoBack = () => {
     router.push("/");
+  };
+
+  const groupedAssignments = assignments.reduce(
+    (acc: Record<string, Assignment[]>, assignment) => {
+      const dateObj = new Date(assignment.createdAt);
+      const dateKey = `${dateObj.getFullYear()}-${
+        dateObj.getMonth() + 1
+      }-${dateObj.getDate()}`;
+
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(assignment);
+
+      return acc;
+    },
+    {}
+  );
+
+  const sortedDates = Object.keys(groupedAssignments).sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  );
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("mn-MN", options);
   };
 
   return (
@@ -94,17 +96,27 @@ export default function StudentDashboard() {
 
         <main className="space-y-8">
           <h3 className="text-2xl ">Ирсэн даалгавар</h3>
-          <Separator />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {assignments.map((assignment, index) => (
-              <div key={assignment.id} className="flex flex-col">
-                <AssignmentCard
-                  assignment={assignment}
-                  onSelect={setSelectedAssignment}
-                />
+
+          {sortedDates.map((date, index) => (
+            <div key={date} className="space-y-4">
+              <div className="flex items-center space-x-4 my-2">
+                <p className="text-sm text-gray-500 whitespace-nowrap">
+                  {formatDate(date)}
+                </p>
+                <div className="flex-1 border-t border-gray-300" />
               </div>
-            ))}
-          </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {groupedAssignments[date].map((assignment) => (
+                  <AssignmentCard
+                    key={assignment.id}
+                    assignment={assignment}
+                    onSelect={setSelectedAssignment}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </main>
       </div>
 

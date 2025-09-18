@@ -31,7 +31,7 @@ export const SubmissionsAssignments: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-900">Suragchiin ner</h2>
         <h1>Suragchiin daalgavar ilgeesen on sar</h1>
       </div>
-      <div className="flex gap-10 pt-5">
+      <div className="flex flex-col md:flex-row gap-10 pt-5">
         <div className="flex flex-col items-center gap-3">
           <h1>Илгээсэн даалгавар</h1>
           <SubmissionCarousel />
