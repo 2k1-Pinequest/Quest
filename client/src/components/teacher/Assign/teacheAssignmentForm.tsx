@@ -69,7 +69,7 @@ export function TeacherAssignmentForm({
       setLoading(false);
     }
   };
-
+  
   return (
     <Dialog>
       <DialogTrigger asChild>

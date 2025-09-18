@@ -4,19 +4,30 @@ import { Assignment } from "@/types";
 import { BookOpen, Upload } from "lucide-react";
 
 interface AssignmentCardProps {
-  assignment: {
-    id: string;
-    title: string;
-    instruction: string;
-    createdAt: string;
-    roomId: string
-  };
+  assignment: Assignment; 
   onSelect: (assignment: Assignment) => void;
 }
 
 export default function AssignmentCard({ assignment, onSelect }: AssignmentCardProps) {
+  const parsedDueDate = assignment.dueDate ? new Date(assignment.dueDate) : null;
+
+  const dueDateStr = parsedDueDate
+    ? (() => {
+        const localDate = new Date(parsedDueDate.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+        const y = localDate.getFullYear();
+        const m = String(localDate.getMonth() + 1).padStart(2, "0");
+        const d = String(localDate.getDate()).padStart(2, "0");
+        const h = String(localDate.getHours()).padStart(2, "0");
+        const min = String(localDate.getMinutes()).padStart(2, "0");
+        return `${y}.${m}.${d} ${h}:${min}`;
+      })()
+    : "No date";
+
+  const now = new Date();
+  const isPastDue = parsedDueDate ? parsedDueDate.getTime() < now.getTime() : false;
+
   return (
-    <div className="bg-white  p-4 hover:shadow-xl transition flex flex-col  w-full">
+    <div className={"p-4 hover:shadow-xl transition flex flex-col w-full max-h-[300px] overflow-auto rounded-2xl border"}>
       <div className="flex items-center space-x-2 mb-2">
         <BookOpen size={20} className="text-blue-500" />
         <h4 className="font-semibold text-md line-clamp-2">{assignment.title}</h4>
@@ -33,16 +44,21 @@ export default function AssignmentCard({ assignment, onSelect }: AssignmentCardP
         {assignment.instruction}
       </div>
 
-      <div className="mt-auto flex flex-col">
-        <span className="text-xs text-gray-500 mb-1">
-          Ирсэн хугацаа: {assignment.createdAt}
-        </span>
-        <button
-          onClick={() => onSelect(assignment)}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-xl flex items-center justify-center space-x-2"
-        >
-          <Upload size={16} /> <span>Даалгавар илгээх</span>
-        </button>
+      <div className="mt-auto flex flex-col gap-2">
+        <span className="text-xs text-gray-500">Дуусах хугацаа: {dueDateStr}</span>
+
+        {isPastDue ? (
+          <span className="text-white font-semibold text-center py-2 rounded-xl border border-[1px] bg-gray-400">
+            Хугацаа дууссан
+          </span>
+        ) : (
+          <button
+            onClick={() => onSelect(assignment)}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-xl flex items-center justify-center space-x-2"
+          >
+            <Upload size={16} /> <span>Даалгавар илгээх</span>
+          </button>
+        )}
       </div>
     </div>
   );

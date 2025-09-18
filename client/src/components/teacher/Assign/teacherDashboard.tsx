@@ -202,11 +202,10 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                     key={c.id}
                     onClick={() => setActiveClassroomId(c.id)}
                     className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition
-    ${
-      activeClassroomId === c.id
-        ? "bg-blue-700" // сонгогдсон үед
-        : "bg-blue-500 hover:bg-blue-600"
-    }  // энгийн үед
+    ${activeClassroomId === c.id
+                        ? "bg-blue-700" // сонгогдсон үед
+                        : "bg-blue-500 hover:bg-blue-600"
+                      }  // энгийн үед
   `}
                   >
                     <span className="font-semibold text-white">
@@ -250,19 +249,18 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
                 <TeacherAssignmentForm roomId={1} teacherId={1} />
               </div>
-              <div className="border mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="mb-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {assignments.map((dayBlock) => (
                   <div key={dayBlock.createdAt}>
-                    {/* {dayBlock.assignments.map((a) => ( */}
-
                     <AssignmentItem
                       key={dayBlock.createdAt}
                       id={dayBlock.id}
                       title={dayBlock.title}
                       description={dayBlock.description}
                       submissions={6}
+                      createdAt={dayBlock.createdAt}
+                      dueDate={dayBlock.dueDate}
                     />
-                    {/* ))} */}
                   </div>
                 ))}
               </div>

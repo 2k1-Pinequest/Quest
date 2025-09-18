@@ -42,6 +42,6 @@ export interface Assignment {
   roomId: string;
   title: string;
   instruction: string;
-  createdAt: string;
+  dueDate: string;
   
 }
