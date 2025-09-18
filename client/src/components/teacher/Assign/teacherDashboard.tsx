@@ -188,7 +188,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
               {/* Header */}
               <div className="flex justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  My Classrooms
+                  Миний ангиуд
                 </h3>
                 <AddClass addClassroom={addClassroom} />
               </div>
@@ -201,11 +201,12 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   <div
                     key={c.id}
                     onClick={() => setActiveClassroomId(c.id)}
-                    className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition
-    ${activeClassroomId === c.id
-                        ? "bg-blue-700" // сонгогдсон үед
-                        : "bg-blue-500 hover:bg-blue-600"
-                      }  // энгийн үед
+                    className={`group flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition
+    ${
+      activeClassroomId === c.id
+        ? "bg-blue-700" // сонгогдсон үед
+        : "bg-blue-500 hover:bg-blue-600"
+    }  // энгийн үед
   `}
                   >
                     <span className="font-semibold text-white">
@@ -217,7 +218,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                         e.stopPropagation(); // delete дээр дарахад сонголт өөрчлөгдөхгүй
                         deleteClassroom(c.id, c.roomName);
                       }}
-                      className="p-1 rounded-full text-gray-200 hover:text-red-400 transition"
+                      className="p-1 rounded-full text-gray-200 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:scale-110 transition-all duration-200"
                     >
                       <Trash2 size={18} />
                     </button>
