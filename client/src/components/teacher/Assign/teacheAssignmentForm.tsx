@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import axios, { AxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ export function TeacherAssignmentForm({
   const [description, setDescription] = useState("");
   const [textContent, setTextContent] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,7 +70,7 @@ export function TeacherAssignmentForm({
       setLoading(false);
     }
   };
-  
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -87,7 +88,6 @@ export function TeacherAssignmentForm({
         </DialogHeader>
 
         <form className="space-y-4 mt-2" onSubmit={handleSubmit}>
-          {/* Гарчиг */}
           <div className="flex flex-col gap-1">
             <label>Даалгаврын гарчиг</label>
             <Input
@@ -97,7 +97,6 @@ export function TeacherAssignmentForm({
             />
           </div>
 
-          {/* Тайлбар */}
           <div className="flex flex-col gap-1">
             <label>Тайлбар</label>
             <Textarea
@@ -109,7 +108,6 @@ export function TeacherAssignmentForm({
             />
           </div>
 
-          {/* Текст оруулах */}
           <div className="flex flex-col gap-1">
             <label>Даалгаврын текст</label>
             <Textarea
@@ -120,10 +118,9 @@ export function TeacherAssignmentForm({
             />
           </div>
 
-          {/* Дуусах хугацаа */}
           <div className="flex flex-col gap-1">
             <label>Дуусах хугацаа</label>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -137,7 +134,20 @@ export function TeacherAssignmentForm({
                 <Calendar
                   mode="single"
                   selected={dueDate}
-                  onSelect={setDueDate}
+                  onSelect={(date) => {
+                    if (
+                      date &&
+                      isBefore(startOfDay(date), startOfDay(new Date()))
+                    ) {
+                      return;
+                    }
+                    setDueDate(date || undefined);
+                    setOpen(false);
+                  }}
+                  fromDate={new Date()}
+                  disabled={(date) =>
+                    isBefore(startOfDay(date), startOfDay(new Date()))
+                  }
                 />
               </PopoverContent>
             </Popover>
