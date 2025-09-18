@@ -6,6 +6,7 @@ import studentRouter from "./routes/student-routes";
 import assignmentRouter from "./routes/StudentAssignment.router";
 
 import { Request, Response } from "express";
+import router from "./routes/assigment.router";
 
 const app = express();
 
@@ -49,10 +50,14 @@ app.get("/hi", (req:Request, res:Response)=>{
 })
 
 app.use("/room", roomRouter);
+
 app.use("/teacher", teacherRouter);
+
 app.use("/student", studentRouter);
 
 app.use("/studentAssign", assignmentRouter)
+
+app.use("/", router)
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
