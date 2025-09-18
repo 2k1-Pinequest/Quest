@@ -51,7 +51,7 @@ export function AddClass({ addClassroom }: AddClassProps) {
             <DialogTitle>Анги нэмэх</DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-4">
+          <div className="grid gap-4 p-4">
             <Input
               id="name-1"
               name="name"
