@@ -15,14 +15,15 @@ import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
 import { Toaster } from "../ui/sonner";
 import { toast } from "sonner";
+import { Assignment } from "@/types";
 
-interface Assignment {
-  id: string;
-  roomId: string;
-  title: string;
-  instruction: string;
-  createdAt: string;
-}
+// interface Assignment {
+//   id: number;
+//   roomId: string;
+//   title: string;
+//   instruction: string;
+//   createdAt: string;
+// }
 
 interface JwtPayload {
   id: string;
@@ -116,7 +117,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       alert("Assignment ID олдсонгүй!");
       return;
     }
-    formData.append("assignmentId", assignment?.id);
+    formData.append("assignmentId", assignment?.id.toString());
 
     console.log("formData", formData);
 
