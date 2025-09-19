@@ -6,14 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, CheckCircle, AlertCircle, X } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, X } from "lucide-react";
 
 import axios from "axios";
 
-import TextareaAutosize from "react-textarea-autosize";
-import { Toaster } from "../ui/sonner";
 import { toast } from "sonner";
 
 interface Assignment {
@@ -44,7 +40,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   // const [imageFile, setImageFile] = useState<File | null>(null);
   const [textContent, setTextContent] = useState("");
-  const [teacherQuestion, setTeacherQuestion] = useState("");
+
   const [submitted, setSubmitted] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,16 +49,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       setFiles((prev) => [...prev, ...newFiles]);
     }
   };
-
-  // const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-  //   e.preventDefault();
-
-  //   setIsDragging(false);
-  //   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-  //     setFile(e.dataTransfer.files[0]);
-  //     console.log("e.dataTransfer.files[0]", e.dataTransfer.files[0]);
-  //   }
-  // };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();

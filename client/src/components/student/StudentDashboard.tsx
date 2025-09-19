@@ -16,20 +16,54 @@ export default function StudentDashboard() {
     useState<Assignment | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
+  const [studentName, setStudentName] = useState<string>("");
+  const [room, setRoom] = useState<{
+    id: number;
+    roomName: string;
+    code: string;
+  } | null>(null);
+  useEffect(() => {
+    localStorage.setItem("studentId", "3");
+  }, []);
+  useEffect(() => {
+    const fetchRoomInfo = async () => {
+      const studentId = localStorage.getItem("studentId");
+      console.log("Student ID from localStorage:", studentId); // debug
+      if (!studentId) return;
 
-  const room = {
-    id: "mockRoom123",
-    roomCode: "7MGL3M",
-    title: "9a ",
-  };
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/student/room/${studentId}`
+        );
+        console.log("Room API response:", res.data);
+        setStudentName(res.data.studentName);
+        setRoom({
+          id: res.data.room.id,
+          roomName: res.data.room.title,
+          code: res.data.room.code,
+        });
+      } catch (err) {
+        console.error("Failed to fetch student room info:", err);
+      }
+    };
+
+    fetchRoomInfo();
+  }, []);
 
   useEffect(() => {
+    if (!room?.id) {
+      console.log("Room not loaded yet, skipping assignments fetch"); // debug
+      return;
+    }
+
     const fetchAssignments = async () => {
       setLoading(true);
       try {
+        console.log("Fetching assignments for room:", room.id); // debug
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/1`
+          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/${room.id}`
         );
+        console.log("Assignments response:", res.data); // debug
         setAssignments(res.data);
       } catch (err) {
         console.error("Failed to fetch assignments:", err);
@@ -39,7 +73,7 @@ export default function StudentDashboard() {
     };
 
     fetchAssignments();
-  }, [room.id]);
+  }, [room]);
 
   const handleGoBack = () => {
     router.push("/");
@@ -86,37 +120,45 @@ export default function StudentDashboard() {
               <ChevronLeft size={28} />
             </button>
             <div>
-              <h1 className="text-3xl ">{room.title}</h1>
+              <h1 className="text-3xl">
+                {studentName} - {room?.roomName}
+              </h1>
               <p className="text-sm text-gray-500 mt-1">
-                Ангийн код: {room.roomCode}
+                Ангийн код: {room?.code || "---"}
               </p>
             </div>
           </div>
         </header>
 
         <main className="space-y-8">
-          <h3 className="text-2xl ">Ирсэн даалгавар</h3>
+          <h3 className="text-2xl">Ирсэн даалгавар</h3>
 
-          {sortedDates.map((date, index) => (
-            <div key={date} className="space-y-4">
-              <div className="flex items-center space-x-4 my-2">
-                <p className="text-sm text-gray-500 whitespace-nowrap">
-                  {formatDate(date)}
-                </p>
-                <div className="flex-1 border-t border-gray-300" />
-              </div>
+          {loading ? (
+            <p className="text-gray-500">Дээж даалгавруудыг ачаалж байна...</p>
+          ) : assignments.length === 0 ? (
+            <p className="text-gray-500">Ямар ч даалгавар ирээгүй байна.</p>
+          ) : (
+            sortedDates.map((date) => (
+              <div key={date} className="space-y-4">
+                <div className="flex items-center space-x-4 my-2">
+                  <p className="text-sm text-gray-500 whitespace-nowrap">
+                    {formatDate(date)}
+                  </p>
+                  <div className="flex-1 border-t border-gray-300" />
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {groupedAssignments[date].map((assignment) => (
-                  <AssignmentCard
-                    key={assignment.id}
-                    assignment={assignment}
-                    onSelect={setSelectedAssignment}
-                  />
-                ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {groupedAssignments[date].map((assignment) => (
+                    <AssignmentCard
+                      key={assignment.id}
+                      assignment={assignment}
+                      onSelect={setSelectedAssignment}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </main>
       </div>
 
