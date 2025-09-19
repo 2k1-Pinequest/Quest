@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { CirclePlus, Trash2 } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { AssignmentItem } from "./assignmentItem";
 import { useEffect, useState } from "react";
@@ -36,7 +36,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
-  
   useEffect(() => {
     if (!teacherId) return;
 
@@ -47,14 +46,10 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       })
       .then((data: Classroom[]) => {
         setClassrooms(data);
-        if (data.length > 0 && activeClassroomId === null) {
-          setActiveClassroomId(data[0].id);
-        }
       })
       .catch((err) => console.error(err));
   }, [teacherId]);
 
-  
   const addClassroom = (roomName: string) => {
     if (!teacherId || !roomName.trim()) return;
 
@@ -69,7 +64,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       .catch((err) => console.error(err));
   };
 
-  
   const deleteClassroom = async (roomId: number, roomName: string) => {
     const confirmDelete = window.confirm(
       `Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`
@@ -88,7 +82,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     }
   };
 
-  
   useEffect(() => {
     if (!activeClassroomId) return;
 
@@ -112,10 +105,11 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
-  
   const groupedAssignments = assignments.reduce(
     (acc: Record<string, Assignment[]>, assignment) => {
-      const dateKey = new Date(assignment.createdAt).toISOString().split("T")[0]; // YYYY-MM-DD
+      const dateKey = new Date(assignment.createdAt)
+        .toISOString()
+        .split("T")[0]; // YYYY-MM-DD
       if (!acc[dateKey]) acc[dateKey] = [];
       acc[dateKey].push(assignment);
       return acc;
@@ -141,7 +135,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       <TeacherClassRoomHeader />
       <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
         <div className="flex gap-10 w-full">
-          
           <div className="w-[233px] flex-shrink-0">
             <div className="border p-6 rounded-xl flex flex-col">
               <div className="flex justify-between items-center mb-4">
@@ -157,7 +150,10 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 {classrooms.map((c) => (
                   <div
                     key={c.id}
-                    onClick={() => setActiveClassroomId(c.id)}
+                    onClick={() => {
+                      setActiveClassroomId(c.id);
+                      localStorage.setItem("activeClassroomId", String(c.id));
+                    }}
                     className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
                       activeClassroomId === c.id
                         ? "bg-blue-700"
@@ -182,7 +178,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
             </div>
           </div>
 
-          
           <div className="flex-1 min-h-[400px]">
             <div className="border rounded-2xl p-6 h-full flex flex-col">
               <div className="flex justify-between items-start mb-4">
@@ -203,24 +198,27 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 <TeacherAssignmentForm
                   roomId={activeClassroom ? activeClassroom.id : 0}
                   teacherId={teacherId}
+                  disabled={!activeClassroom}
+                  onAssignmentCreated={(newAssignment) => {
+                    if (newAssignment.roomId === activeClassroomId) {
+                      setAssignments((prev) => [newAssignment, ...prev]);
+                    }
+                  }}
                 />
               </div>
 
-              
               <div className="flex-1 min-h-[200px] overflow-y-auto">
                 {loading ? (
                   <p>Даалгавруудыг ачаалж байна...</p>
                 ) : assignments.length > 0 ? (
                   sortedDates.map((date) => (
-                  <div key={date} className="mb-8">
-                      
-                    <div className="flex items-center space-x-4 my-6">
-                      <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-                        {formatDate(date)}
-                       </span>
-                     <div className="flex-1 border-t border-gray-300" />
-                  </div>
-
+                    <div key={date} className="mb-8">
+                      <div className="flex items-center space-x-4 my-6">
+                        <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                          {formatDate(date)}
+                        </span>
+                        <div className="flex-1 border-t border-gray-300" />
+                      </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {groupedAssignments[date].map((a) => (
@@ -229,7 +227,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                             id={a.id}
                             title={a.title}
                             description={a.description || ""}
-                            submissions={a._count.submissions}
+                            submissions={a._count?.submissions ?? 0}
                             createdAt={a.createdAt}
                             dueDate={a.dueDate || ""}
                           />
@@ -238,7 +236,25 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                     </div>
                   ))
                 ) : (
-                  <p>Даалгавар байхгүй байна</p>
+                  <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
+                    {!activeClassroomId ? (
+                      <>
+                        <p className="text-lg font-medium">
+                          Эхлээд ангиа сонгоно уу 
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <CirclePlus size={48} className="mb-4 text-gray-400" />
+                        <p className="text-lg font-medium">
+                          Одоогоор даалгавар байхгүй байна
+                        </p>
+                        <p className="text-sm">
+                          Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
+                        </p>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
