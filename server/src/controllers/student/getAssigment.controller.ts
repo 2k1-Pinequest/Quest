@@ -3,7 +3,7 @@ import prisma from "../../utils/prisma";
 
 export const GetAssignment = async (req: Request, res: Response) => {
   try {
-    const { roomId } = req.params; 
+    const { roomId } = req.params;
 
     if (!roomId) {
       return res.status(400).json({ error: "roomId шаардлагатай" });
