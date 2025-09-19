@@ -19,8 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import axios from "axios";
 
-import TextareaAutosize from "react-textarea-autosize";
-import { Toaster } from "../ui/sonner";
 import { toast } from "sonner";
 import { Assignment } from "@/types";
 
@@ -52,7 +50,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   // const [imageFile, setImageFile] = useState<File | null>(null);
   const [textContent, setTextContent] = useState("");
-  const [teacherQuestion, setTeacherQuestion] = useState("");
+
   const [submitted, setSubmitted] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,16 +59,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       setFiles((prev) => [...prev, ...newFiles]);
     }
   };
-
-  // const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-  //   e.preventDefault();
-
-  //   setIsDragging(false);
-  //   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-  //     setFile(e.dataTransfer.files[0]);
-  //     console.log("e.dataTransfer.files[0]", e.dataTransfer.files[0]);
-  //   }
-  // };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -166,7 +154,9 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/50 backdrop-blur-[1px]">
           <div className="flex flex-col items-center space-y-3">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            <p className="text-gray-700 font-medium">Багш руу илгээж байна...</p>
+            <p className="text-gray-700 font-medium">
+              Багш руу илгээж байна...
+            </p>
           </div>
         </div>
       )}
