@@ -7,7 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, CheckCircle, AlertCircle, X } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  X,
+  Loader2,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import axios from "axios";
@@ -154,6 +161,14 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   return (
     <div className=" p-6 bg-gray-50 flex justify-center">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/50 backdrop-blur-[1px]">
+          <div className="flex flex-col items-center space-y-3">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            <p className="text-gray-700 font-medium">Багш руу илгээж байна...</p>
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-2xl space-y-6">
         {/* Даалгаврын нэр */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
@@ -245,13 +260,8 @@ export default function Student({ assignment }: { assignment: Assignment }) {
             <Button
               onClick={handleSubmit}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-sm font-medium mt-4"
-              disabled={loading || submitted}
             >
-              {loading
-                ? "Илгээж байна..."
-                : submitted
-                ? "Даалгавар илгээгдсэн ✅"
-                : "Даалгавар илгээх"}
+              Даалгавар илгээх
             </Button>
           </CardContent>
         </Card>
