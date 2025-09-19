@@ -49,7 +49,7 @@ export const AssignmentTab = () => {
   const description = "Тест тайлбар";
 
   return (
-    <div className="min-h-screen flex justify-center py-8">
+    <div className="min-h-screen flex justify-center">
       <div className="w-full max-w-[1200px] px-4 sm:px-6  bg-white rounded-2xl ">
         {/* Tabs */}
         <nav className="flex bg-gray-100 rounded-lg  ">

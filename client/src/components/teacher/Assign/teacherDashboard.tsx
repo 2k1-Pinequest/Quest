@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { AddClass } from "./addDeleteRoom";
 import axios from "axios";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
+import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 
 interface Assignment {
   id: number;
@@ -151,7 +152,11 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   {classrooms.map((c) => (
                     <div
                       key={c.id}
-                      onClick={() => setActiveClassroomId(c.id)}
+                       onClick={() => {
+                      setActiveClassroomId(c.id);
+                      localStorage.setItem("activeClassroomId", String(c.id));
+                    }}
+                      
                       className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
                         activeClassroomId === c.id
                           ? "bg-blue-700"
@@ -177,7 +182,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
             </div>
 
             <div className="flex-1 min-h-[400px]">
-              <div className="border rounded-2xl p-6 h-full flex flex-col">
+              <div className="">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">
@@ -196,12 +201,18 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   <TeacherAssignmentForm
                     roomId={activeClassroom ? activeClassroom.id : 0}
                     teacherId={teacherId}
+                    disabled={!activeClassroom}
+                  onAssignmentCreated={(newAssignment) => {
+                    if (newAssignment.roomId === activeClassroomId) {
+                      setAssignments((prev) => [newAssignment, ...prev]);
+                    }
+                  }}
                   />
                 </div>
 
                 <div className="flex-1 min-h-[200px] overflow-y-auto">
                   {loading ? (
-                    <p>Даалгавруудыг ачаалж байна...</p>
+                    <LoadingSpinner/>
                   ) : assignments.length > 0 ? (
                     sortedDates.map((date) => (
                       <div key={date} className="mb-8">
@@ -219,7 +230,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                               id={a.id}
                               title={a.title}
                               description={a.description || ""}
-                              submissions={a._count.submissions}
+                              submissions={a._count?.submissions ?? 0}
                               createdAt={a.createdAt}
                               dueDate={a.dueDate || ""}
                             />
@@ -228,7 +239,25 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                       </div>
                     ))
                   ) : (
-                    <p>Даалгавар байхгүй байна</p>
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
+                    {!activeClassroomId ? (
+                      <>
+                        <p className="text-lg font-medium">
+                          Эхлээд ангиа сонгоно уу 
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <CirclePlus size={48} className="mb-4 text-gray-400" />
+                        <p className="text-lg font-medium">
+                          Одоогоор даалгавар байхгүй байна
+                        </p>
+                        <p className="text-sm">
+                          Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
+                        </p>
+                      </>
+                    )}
+                  </div>
                   )}
                 </div>
               </div>
