@@ -25,17 +25,22 @@ import {
 interface TeacherAssignmentFormProps {
   teacherId: number;
   roomId: number;
+  onAssignmentCreated?: (assignment: any) => void;
+  disabled?: boolean;
 }
 
 export function TeacherAssignmentForm({
   teacherId,
   roomId,
+  
+  onAssignmentCreated,
 }: TeacherAssignmentFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [textContent, setTextContent] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,10 +64,16 @@ export function TeacherAssignmentForm({
       console.log(data);
       alert("Даалгавар амжилттай үүслээ!");
 
+      if (onAssignmentCreated) {
+        onAssignmentCreated(data.assignment || data);
+      }
+
       setTitle("");
       setDescription("");
       setTextContent("");
       setDueDate(undefined);
+
+      setOpen(false);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       alert("Алдаа: " + (error.response?.data?.message || error.message));
@@ -72,7 +83,7 @@ export function TeacherAssignmentForm({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
           <CirclePlus />
@@ -120,7 +131,7 @@ export function TeacherAssignmentForm({
 
           <div className="flex flex-col gap-1">
             <label>Дуусах хугацаа</label>
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -142,7 +153,7 @@ export function TeacherAssignmentForm({
                       return;
                     }
                     setDueDate(date || undefined);
-                    setOpen(false);
+                    setCalendarOpen(false);
                   }}
                   fromDate={new Date()}
                   disabled={(date) =>
@@ -153,7 +164,6 @@ export function TeacherAssignmentForm({
             </Popover>
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
@@ -163,6 +173,7 @@ export function TeacherAssignmentForm({
                 setDescription("");
                 setTextContent("");
                 setDueDate(undefined);
+                setOpen(false);
               }}
             >
               Болих
