@@ -45,6 +45,8 @@ export const AssignmentTab = () => {
       },
     ],
   };
+  const title = "Тест гарчиг";
+  const description = "Тест тайлбар";
 
   return (
     <div className="min-h-screen flex justify-center py-8">
@@ -78,7 +80,7 @@ export const AssignmentTab = () => {
         {/* Content */}
         <div className="mt-4 p-6">
           {selectedTab === "submissions" ? (
-            <SubmissionsAssignments />
+            <SubmissionsAssignments title={title} description={description} />
           ) : (
             <div className="flex flex-col gap-6">
               <OverviewCarts submissions={currentRoom?.submissions} />
