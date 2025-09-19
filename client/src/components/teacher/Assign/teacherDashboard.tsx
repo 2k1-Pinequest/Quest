@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { CirclePlus, Trash2 } from "lucide-react";
 import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
 import { AssignmentItem } from "./assignmentItem";
 import { useEffect, useState } from "react";
@@ -46,9 +46,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       })
       .then((data: Classroom[]) => {
         setClassrooms(data);
-        if (data.length > 0 && activeClassroomId === null) {
-          setActiveClassroomId(data[0].id);
-        }
       })
       .catch((err) => console.error(err));
   }, [teacherId]);

@@ -143,7 +143,7 @@ export default function StudentDashboard() {
                 <X className="h-4 w-4 mr-1" />
               </button>
 
-              <div className="overflow-y-auto">
+              <div className="overflow-y-auto scrollbar-none">
                 <Student assignment={selectedAssignment} />
               </div>
             </motion.div>
