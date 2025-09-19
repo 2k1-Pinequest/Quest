@@ -30,7 +30,7 @@ interface JwtPayload {
 }
 
 export default function Student({ assignment }: { assignment: Assignment }) {
-  console.log("assignment", assignment?.id);
+  console.log("assignment", assignment);
 
   const [loading, setLoading] = useState(false);
 
@@ -158,7 +158,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         {/* Даалгаврын нэр */}
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            📝 Алгебарын даалгавар номны 23-с 24-р хуудсыг бод
+            {assignment.title}
           </h2>
         </div>
 
