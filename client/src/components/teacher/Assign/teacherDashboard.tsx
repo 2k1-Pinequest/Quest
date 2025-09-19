@@ -150,11 +150,10 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 {classrooms.map((c) => (
                   <div
                     key={c.id}
-                    onClick={() => {
-                      setActiveClassroomId(c.id);
-                      localStorage.setItem("activeClassroomId", String(c.id));
-                    }}
-                    className={`flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
+
+                    onClick={() => setActiveClassroomId(c.id)}
+                    className={`group flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
+
                       activeClassroomId === c.id
                         ? "bg-blue-700"
                         : "bg-blue-500 hover:bg-blue-600"
@@ -168,7 +167,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                         e.stopPropagation();
                         deleteClassroom(c.id, c.roomName);
                       }}
-                      className="p-1 rounded-full text-gray-200 hover:text-red-400 hover:scale-110 transition-all duration-200"
+                      className="p-1 rounded-full text-gray-200 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:scale-110 transition-all duration-200"
                     >
                       <Trash2 size={18} />
                     </button>

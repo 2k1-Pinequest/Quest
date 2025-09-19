@@ -48,7 +48,7 @@ export default function AssignmentCard({ assignment, onSelect }: AssignmentCardP
         <span className="text-xs text-gray-500">Дуусах хугацаа: {dueDateStr}</span>
 
         {isPastDue ? (
-          <span className="text-white font-semibold text-center py-2 rounded-xl border border-[1px] bg-gray-400">
+          <span className="text-white font-semibold text-center py-2 rounded-xl border  bg-gray-400">
             Хугацаа дууссан
           </span>
         ) : (
