@@ -8,20 +8,21 @@ import { AddClass } from "./addDeleteRoom";
 import axios from "axios";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
+import { Assignment } from "@/types";
 
-interface Assignment {
-  id: number;
-  roomId: number;
-  title: string;
-  description: string | null;
-  textContent: string | null;
-  dueDate: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _count: {
-    submissions: number;
-  };
-}
+// interface Assignment {
+//   id: number;
+//   roomId: number;
+//   title: string;
+//   description: string | null;
+//   textContent: string | null;
+//   dueDate: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+//   _count: {
+//     submissions: number;
+//   };
+// }
 
 interface Classroom {
   id: number;

@@ -21,11 +21,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Assignment } from "@/types";
 
 interface TeacherAssignmentFormProps {
   teacherId: number;
   roomId: number;
-  onAssignmentCreated?: (assignment: any) => void;
+  onAssignmentCreated?: (assignment: Assignment) => void;
   disabled?: boolean;
 }
 
