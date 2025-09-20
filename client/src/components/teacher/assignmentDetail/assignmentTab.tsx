@@ -2,8 +2,9 @@ import { useState } from "react";
 import {  BarChart3 } from "lucide-react";
 import { OverviewCarts } from "./Stats/overviewCarts";
 import { Distribution } from "./Stats/distribution";
-import { SubmissionsAssignments } from "./Submissions/SubmissionAssignments";
+
 import { Submission } from "@/types";
+import SubmissionsAssignments from "./Submissions/SubmissionAssignments";
 
 interface AssignmentTabProps {
   title: string;
@@ -83,7 +84,7 @@ export const AssignmentTab = ({ title, description }: AssignmentTabProps) => {
         {/* Content */}
         <div className="mt-4 p-6">
           {selectedTab === "submissions" ? (
-            <SubmissionsAssignments title={title} description={description} />
+            <SubmissionsAssignments />
           ) : (
             <div className="flex flex-col gap-6">
               <OverviewCarts submissions={currentRoom?.submissions} />
