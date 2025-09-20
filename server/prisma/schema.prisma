@@ -116,4 +116,3 @@ model StudentAssignmentAi {
 
   @@unique([studentId, assignmentId]) // нэг даалгаварт 1 удаа л дүгнэлт
 }
-

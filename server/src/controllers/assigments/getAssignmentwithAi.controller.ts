@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import prisma from "../../utils/prisma";
 
-export const getStudentsSubmissionById = async (req: Request, res: Response) => {
+export const getStudentsSubmissionById = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { assignmentId, studentId } = req.params;
 
@@ -10,11 +13,13 @@ export const getStudentsSubmissionById = async (req: Request, res: Response) => 
         assignmentId: Number(assignmentId),
         studentId: Number(studentId),
       },
-      orderBy: { submittedAt: "desc" }, // Хамгийн сүүлд илгээсэн submission-г авна
+      orderBy: { submittedAt: "desc" },
     });
 
+    console.log("submisiion by id", submission);
+
     if (!submission) {
-      return res.status(404).json({ message: "Submission олдсонгүй" });
+      return res.json({ submission: null });
     }
 
     res.json({ submission });
