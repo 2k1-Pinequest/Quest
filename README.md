@@ -1,13 +1,4 @@
 # 📚 Edusnap
-**Team 2k1** 
-- 🧑‍💻 [Koko] https://github.com/Koko-seg
-- 🧑‍💻 [Budaa] https://github.com/budaa1234
-- 🧑‍💻 [Boloroo] https://github.com/L-era67
-- 🧑‍💻 [Zolo] https://github.com/zolomoloko
-- 🧑‍💻 [Otgoo] https://github.com/otgooo55
-- 🧑‍💻 [Duluu] https://github.com/Dulbadrah
-- 🧑‍💻 [Odkhuu] https://github.com/Odkhuu06
-## 🚀 About EduSnap
 
 **Background:**  
 For mathematics teachers in general education schools, the task of reviewing students’ homework and notebooks is notably time-consuming. Research indicates that mathematics teachers spend an average of **3–4 minutes assessing each student’s written solutions**. Given the volume of students and the frequency of assignments, this significantly amplifies teachers’ daily workload. Consequently, teachers have limited opportunity to provide personalized feedback, which is essential for enhancing students’ mathematical understanding and skills.
