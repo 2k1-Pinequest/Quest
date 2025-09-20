@@ -5,7 +5,11 @@ import { Distribution } from "./Stats/distribution";
 import { SubmissionsAssignments } from "./Submissions/SubmissionAssignments";
 import { Submission } from "@/types";
 
-export const AssignmentTab = () => {
+interface AssignmentTabProps {
+  title: string;
+  description: string;
+}
+export const AssignmentTab = ({ title, description }: AssignmentTabProps) => {
   const [selectedTab, setSelectedTab] = useState("submissions");
 
   const currentRoom: { submissions: Submission[] } = {
@@ -45,8 +49,7 @@ export const AssignmentTab = () => {
       },
     ],
   };
-  const title = "Тест гарчиг";
-  const description = "Тест тайлбар";
+  
 
   return (
     <div className="min-h-screen flex justify-center">
