@@ -52,14 +52,14 @@ export const AssignmentItem = ({
       })()
     : "No date";
 
-  // dateColor-г бүх div-д ашиглах
+  
   const now = new Date();
-  let dateColor = "bg-white"; // default: хугацаа дуусаагүй
+  let dateColor = "bg-white"; 
 
   if (parsedDueDate) {
     const diff = parsedDueDate.getTime() - now.getTime();
     if (diff < 0) {
-      dateColor = "bg-gray-200"; // хугацаа дууссан
+      dateColor = "bg-gray-200"; 
     }
   }
 

@@ -8,6 +8,7 @@ import axios from "axios";
 import AssignmentCard from "./AssignmentCard";
 import { useRouter } from "next/navigation";
 import { Assignment } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -74,18 +75,18 @@ export default function StudentDashboard() {
     router.push("/");
   };
 
+  const now = new Date();
 
-const now = new Date();
+  const incompleteAssignments = assignments.filter(a => {
+    if (!a.dueDate) return true; 
+    return new Date(a.dueDate) >= now; 
+  });
 
-const incompleteAssignments = assignments.filter(a => {
-  if (!a.dueDate) return true; 
-  return new Date(a.dueDate) >= now; 
-});
+  const completedAssignments = assignments.filter(a => {
+    if (!a.dueDate) return false; 
+    return new Date(a.dueDate) < now; 
+  });
 
-const completedAssignments = assignments.filter(a => {
-  if (!a.dueDate) return false; 
-  return new Date(a.dueDate) < now; 
-});
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-8 py-8 bg-gray-50">
       <div className="w-full max-w-[1000px] mx-auto flex flex-col">
@@ -99,11 +100,12 @@ const completedAssignments = assignments.filter(a => {
             </button>
             <div>
               <h1 className="text-3xl font-normal text-gray-800">
-                {studentName} - {room?.roomName}
+                {studentName || <Skeleton className="h-8 w-64 rounded" />}
+                {!studentName && room?.roomName && <Skeleton className="h-6 w-32 mt-2 rounded" />}
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Ангийн код: {room?.code || "---"}
-              </p>
+              <div className="text-sm text-gray-500 mt-1">
+                Ангийн код: {room?.code || <Skeleton className="h-4 w-20 rounded inline-block" />}
+              </div>
             </div>
           </div>
         </header>
@@ -112,12 +114,22 @@ const completedAssignments = assignments.filter(a => {
           <h3 className="text-2xl font-normal text-gray-800">Ирсэн даалгавар</h3>
 
           {loading ? (
-            <p className="text-gray-500">Дээж даалгавруудыг ачаалж байна...</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array(6)
+                .fill(0)
+                .map((_, idx) => (
+                  <div key={idx} className="space-y-2 p-4 border rounded-xl bg-white">
+                    <Skeleton className="h-6 w-3/4 rounded" />
+                    <Skeleton className="h-4 w-full rounded" />
+                    <Skeleton className="h-4 w-5/6 rounded" />
+                    <Skeleton className="h-8 w-full rounded" />
+                  </div>
+                ))}
+            </div>
           ) : assignments.length === 0 ? (
             <p className="text-gray-500">Ямар ч даалгавар ирээгүй байна.</p>
           ) : (
             <>
-              
               {incompleteAssignments.length > 0 && (
                 <div>
                   <h4 className="text-xl font-normal text-gray-800 mb-2 flex items-center">
