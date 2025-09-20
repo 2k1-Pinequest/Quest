@@ -6,16 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import {
-  Upload,
-  FileText,
-  CheckCircle,
-  AlertCircle,
-  X,
-  Loader2,
-} from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, X, Loader2 } from "lucide-react";
 
 import axios from "axios";
 
@@ -37,6 +28,8 @@ interface JwtPayload {
 
 export default function Student({ assignment }: { assignment: Assignment }) {
   console.log("assignment", assignment);
+
+  const [submission, setSubmission] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -70,6 +63,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     }
   };
 
+  /////////////////////////////
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -92,58 +86,55 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     }
   }, []);
 
-  const handleSubmit = async () => {
-    console.log("textContent", textContent);
-    console.log("file upload", files);
+  /////////////////////////////
+  // useEffect(() => {
+  //   if (!assignment?.id) return;
 
+  //   axios
+  //     .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/1`)
+  //     .then((res) => {
+  //       if (res.data?.submissions && res.data.submissions.length > 0) {
+  //         setSubmission(res.data.submissions[0]); // Хүүхэд нэг л удаа илгээх эрхтэй
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Submission fetch error:", err);
+  //     });
+  // }, [assignment?.id]);
+
+  const handleSubmit = async () => {
     if (!textContent.trim() && files.length === 0) {
       alert("Та даалгавраа бичвэрээр эсвэл зураг хэлбэрээр оруулна уу!");
       return;
     }
 
     const formData = new FormData();
-    if (files) {
-      files.forEach((f) => formData.append("files", f));
-    }
-
-    // formData.append("assignmentId", assignment.id);
-
-    if (!assignment?.id) {
-      alert("Assignment ID олдсонгүй!");
-      return;
-    }
-    formData.append("assignmentId", assignment?.id.toString());
-
-    console.log("formData", formData);
+    files.forEach((f) => formData.append("files", f));
+    formData.append("assignmentId", assignment.id.toString());
 
     try {
       setLoading(true);
-      const response = axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/2`, // 1 нь studentId жишээ
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/1`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      console.log("response", response);
-      const data = (await response).status;
-
-      if (data === 200) {
-        toast.success("Багш руу амжилттай илгээгдлээ");
+      // submission байгаа эсэхийг шалгана
+      if (response.data?.submission) {
+        toast.success("Гэрийн даалгавар амжилттай илгээгдлээ ✅");
+        setSubmitted(true);
+      } else {
+        toast.error("Даалгавар хадгалах явцад алдаа гарлаа");
       }
-
-      console.log("data", data);
-
-      setSubmitted(true);
     } catch (error) {
       console.error("Upload алдаа:", error);
+      toast.error("Сервертэй холбогдоход алдаа гарлаа");
     } finally {
-      setLoading(false); // ← дуусахад loading false
+      setLoading(false);
     }
   };
+
   console.log("fiel", files);
 
   if (!studentData) return <div>Ачааллаж байна...</div>;
