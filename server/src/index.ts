@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import roomRouter from "./routes/room-routes";
-import teacherRouter from "./routes/createTeacher";
+import teacherRouter from "./routes/teacher";
 import studentRouter from "./routes/student-routes";
 import assignmentRouter from "./routes/StudentAssignment.router";
 
