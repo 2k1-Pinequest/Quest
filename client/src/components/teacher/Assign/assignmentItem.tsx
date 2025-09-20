@@ -66,7 +66,7 @@ export const AssignmentItem = ({
   return (
     <div
       className={`rounded-2xl p-6 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition ${dateColor}`}
-      onClick={() => router.push(`/teacherAssignmentDetail/${id}`)}
+      onClick={() => router.push(`/teacherAssignmentDetail/${id}?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`)}
     >
       <div className="flex flex-col gap-2">
         <h3 className="text-sm text-gray-800">Үүсгэсэн: {createdDateStr}</h3>
@@ -85,7 +85,7 @@ export const AssignmentItem = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/teacherAssignmentDetail/${id}`);
+              router.push(`/teacherAssignmentDetail/${id}?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`);
             }}
           >
             <ChevronRight />
