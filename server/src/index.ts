@@ -7,6 +7,7 @@ import assignmentRouter from "./routes/StudentAssignment.router";
 
 import { Request, Response } from "express";
 import router from "./routes/assigment.router";
+import getAssignmentRouter from "./routes/allSub.router";
 
 const app = express();
 
@@ -42,6 +43,8 @@ app.use("/teacher", teacherRouter);
 app.use("/student", studentRouter);
 
 app.use("/studentAssign", assignmentRouter);
+
+app.use("/assignments", getAssignmentRouter);
 
 app.use("/", router);
 
