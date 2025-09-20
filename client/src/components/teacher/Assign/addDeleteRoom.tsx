@@ -14,18 +14,11 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 
 interface AddClassProps {
-  addClassroom: (roomName: string) => void; // parent function-д нэр дамжуулах
+  addClassroom: (roomName: string) => void; 
 }
 
 export function AddClass({ addClassroom }: AddClassProps) {
   const [addClass, setAddClass] = useState("");
-
-  // const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault(); // page reload зогсоох
-  //   if (!addClass.trim()) return;
-  //   addClassroom(addClass.trim());
-  //   setAddClass(""); // input-г цэвэрлэх
-  // };
 
   return (
     <Dialog>
@@ -44,7 +37,7 @@ export function AddClass({ addClassroom }: AddClassProps) {
             e.preventDefault();
             if (!addClass.trim()) return;
             addClassroom(addClass.trim());
-            setAddClass(""); // input-г цэвэрлэх
+            setAddClass(""); 
           }}
         >
           <DialogHeader>
@@ -66,7 +59,6 @@ export function AddClass({ addClassroom }: AddClassProps) {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
 
-            {/* Save товч дарсны дараа dialog хаагдах */}
             <DialogClose asChild>
               <Button type="submit">Save changes</Button>
             </DialogClose>

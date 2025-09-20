@@ -7,22 +7,8 @@ import { useEffect, useState } from "react";
 import { AddClass } from "./addDeleteRoom";
 import axios from "axios";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
-import { LoadingSpinner } from "@/components/ui/loadingSpinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Assignment } from "@/types";
-
-// interface Assignment {
-//   id: number;
-//   roomId: number;
-//   title: string;
-//   description: string | null;
-//   textContent: string | null;
-//   dueDate: string | null;
-//   createdAt: string;
-//   updatedAt: string;
-//   _count: {
-//     submissions: number;
-//   };
-// }
 
 interface Classroom {
   id: number;
@@ -32,12 +18,11 @@ interface Classroom {
 
 export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
-    null
-  );
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Ангийн мэдээлэл ачаалах
   useEffect(() => {
     if (!teacherId) return;
 
@@ -46,9 +31,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
         if (!res.ok) throw new Error("Network response not ok");
         return res.json();
       })
-      .then((data: Classroom[]) => {
-        setClassrooms(data);
-      })
+      .then((data: Classroom[]) => setClassrooms(data))
       .catch((err) => console.error(err));
   }, [teacherId]);
 
@@ -84,6 +67,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     }
   };
 
+  // Даалгавар ачаалах
   useEffect(() => {
     if (!activeClassroomId) return;
 
@@ -109,9 +93,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
   const groupedAssignments = assignments.reduce(
     (acc: Record<string, Assignment[]>, assignment) => {
-      const dateKey = new Date(assignment.createdAt)
-        .toISOString()
-        .split("T")[0]; // YYYY-MM-DD
+      const dateKey = new Date(assignment.createdAt).toISOString().split("T")[0];
       if (!acc[dateKey]) acc[dateKey] = [];
       acc[dateKey].push(assignment);
       return acc;
@@ -134,16 +116,15 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
   return (
     <div className="min-h-screen flex justify-center py-8">
-      <div className="w-full max-w-[1200px] px-4 sm:px-6  bg-white rounded-2xl ">
+      <div className="w-full max-w-[1200px] px-4 sm:px-6 bg-white rounded-2xl">
         <TeacherClassRoomHeader />
         <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
           <div className="flex gap-10 w-full">
+            {/* Ангийн жагсаалт */}
             <div className="w-[233px] flex-shrink-0">
               <div className="border p-6 rounded-xl flex flex-col">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Миний ангиуд
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Миний ангиуд</h3>
                   <AddClass addClassroom={addClassroom} />
                 </div>
 
@@ -153,20 +134,17 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                   {classrooms.map((c) => (
                     <div
                       key={c.id}
-                       onClick={() => {
-                      setActiveClassroomId(c.id);
-                      localStorage.setItem("activeClassroomId", String(c.id));
-                    }}
-                      
+                      onClick={() => {
+                        setActiveClassroomId(c.id);
+                        localStorage.setItem("activeClassroomId", String(c.id));
+                      }}
                       className={`group flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
                         activeClassroomId === c.id
                           ? "bg-blue-700"
                           : "bg-blue-500 hover:bg-blue-600"
                       }`}
                     >
-                      <span className="font-semibold text-white">
-                        {c.roomName} анги
-                      </span>
+                      <span className="font-semibold text-white">{c.roomName} анги</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -182,14 +160,13 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
               </div>
             </div>
 
+            {/* Даалгаврууд */}
             <div className="flex-1 min-h-[400px]">
               <div className="">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">
-                      {activeClassroom
-                        ? `${activeClassroom.roomName} Анги`
-                        : "Анги сонгоно уу"}
+                      {activeClassroom ? `${activeClassroom.roomName} Анги` : "Анги сонгоно уу"}
                     </h2>
                     <p className="text-gray-600">
                       Ангийн код{" "}
@@ -203,17 +180,37 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                     roomId={activeClassroom ? activeClassroom.id : 0}
                     teacherId={teacherId}
                     disabled={!activeClassroom}
-                  onAssignmentCreated={(newAssignment) => {
-                    if (newAssignment.roomId === activeClassroomId) {
-                      setAssignments((prev) => [newAssignment, ...prev]);
-                    }
-                  }}
+                    onAssignmentCreated={(newAssignment) => {
+                      if (newAssignment.roomId === activeClassroomId) {
+                        setAssignments((prev) => [newAssignment, ...prev]);
+                      }
+                    }}
                   />
                 </div>
 
                 <div className="flex-1 min-h-[200px] overflow-y-auto">
                   {loading ? (
-                    <LoadingSpinner/>
+                    <div className="space-y-8">
+                      {Array(3).fill(0).map((_, dateIdx) => (
+                        <div key={dateIdx}>
+                          <div className="flex items-center space-x-4 my-6">
+                            <Skeleton className="h-4 w-32 rounded" />
+                            <div className="flex-1 border-t border-gray-300" />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {Array(3).fill(0).map((_, idx) => (
+                              <div key={idx} className="space-y-2 p-4 border rounded-xl bg-white">
+                                <Skeleton className="h-6 w-3/4 rounded" />
+                                <Skeleton className="h-4 w-full rounded" />
+                                <Skeleton className="h-4 w-5/6 rounded" />
+                                <Skeleton className="h-8 w-full rounded" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   ) : assignments.length > 0 ? (
                     sortedDates.map((date) => (
                       <div key={date} className="mb-8">
@@ -241,24 +238,16 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                     ))
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
-                    {!activeClassroomId ? (
-                      <>
-                        <p className="text-lg font-medium">
-                          Эхлээд ангиа сонгоно уу 
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <CirclePlus size={48} className="mb-4 text-gray-400" />
-                        <p className="text-lg font-medium">
-                          Одоогоор даалгавар байхгүй байна
-                        </p>
-                        <p className="text-sm">
-                          Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
-                        </p>
-                      </>
-                    )}
-                  </div>
+                      {!activeClassroomId ? (
+                        <p className="text-lg font-medium">Эхлээд ангиа сонгоно уу</p>
+                      ) : (
+                        <>
+                          <CirclePlus size={48} className="mb-4 text-gray-400" />
+                          <p className="text-lg font-medium">Одоогоор даалгавар байхгүй байна</p>
+                          <p className="text-sm">Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй</p>
+                        </>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
