@@ -13,13 +13,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Assignment, studentAssignment } from "@/types";
 
-// interface Assignment {
-//   id: number;
-//   roomId: string;
-//   title: string;
-//   instruction: string;
-//   createdAt: string;
-// }
 
 interface JwtPayload {
   id: string;
@@ -39,7 +32,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   } | null>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
+  
 
   // const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -54,7 +47,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDragging(false);
+    
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFiles = Array.from(e.dataTransfer.files);
@@ -206,7 +199,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
             <div
               onDrop={handleDrop}
-              onDragLeave={() => setIsDragging(false)}
               className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center bg-gray-50"
             >
               {files.length === 0 ? (
