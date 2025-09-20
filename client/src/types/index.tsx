@@ -6,6 +6,32 @@ export interface Room {
   createdAt: Date;
 }
 
+// {
+//     "id": 1,
+//     "assignmentId": 1,
+//     "studentId": 1,
+//     "status": "APPROVED",
+//     "answerText": null,
+//     "fileUrl": "uploads/1758345976471-IMG_7057.PNG,uploads/1758345976482-IMG_7056.PNG",
+//     "score": 100,
+//     "feedback": null,
+//     "aiAnalysis": null,
+//     "submittedAt": "2025-09-20T05:26:16.991Z"
+// }
+
+export interface studentAssignment {
+  id:number,
+  assignmentId:number,
+  studentId:number,
+  status:string,
+  answerText:string,
+  fileUrl:string,
+  score:number,
+  feedback:string,
+  aiAnalysis:string,
+  submittedAt:string
+}
+
 export interface Student {
   id: string;
   name: string;

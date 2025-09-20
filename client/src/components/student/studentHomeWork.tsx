@@ -11,7 +11,7 @@ import { AlertCircle, X, Loader2 } from "lucide-react";
 import axios from "axios";
 
 import { toast } from "sonner";
-import { Assignment } from "@/types";
+import { Assignment, studentAssignment } from "@/types";
 
 // interface Assignment {
 //   id: number;
@@ -29,7 +29,7 @@ interface JwtPayload {
 export default function Student({ assignment }: { assignment: Assignment }) {
   console.log("assignment", assignment);
 
-  const [submission, setSubmission] = useState(null);
+  const [submission, setSubmission] = useState<studentAssignment | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   const [isDragging, setIsDragging] = useState(false);
 
   // const [imageFile, setImageFile] = useState<File | null>(null);
-  const [textContent, setTextContent] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -87,23 +86,30 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   }, []);
 
   /////////////////////////////
-  // useEffect(() => {
-  //   if (!assignment?.id) return;
+  useEffect(() => {
+    if (!assignment?.id) return;
 
-  //   axios
-  //     .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/1`)
-  //     .then((res) => {
-  //       if (res.data?.submissions && res.data.submissions.length > 0) {
-  //         setSubmission(res.data.submissions[0]); // Хүүхэд нэг л удаа илгээх эрхтэй
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error("Submission fetch error:", err);
-  //     });
-  // }, [assignment?.id]);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/1`)
+      .then((res) => {
+        console.log("resss", res.data.submission);
+
+        if (res.data?.submission) {
+          setSubmission(res.data.submission); // Хүүхэд нэг л удаа илгээх эрхтэй
+        } else {
+          setSubmission(null);
+        }
+      })
+      .catch((err) => {
+        console.error("Submission fetch error:", err);
+        setSubmission(null); // 404 үед null болгож хадгална
+      });
+  }, [assignment?.id]);
+
+  console.log("submission", submission);
 
   const handleSubmit = async () => {
-    if (!textContent.trim() && files.length === 0) {
+    if (files.length === 0) {
       alert("Та даалгавраа бичвэрээр эсвэл зураг хэлбэрээр оруулна уу!");
       return;
     }
@@ -229,14 +235,49 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                   ))}
                 </div>
               )}
-              <Input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleFileChange}
-              />
+
+              {submission ? (
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-sm">
+                    Та өмнө нь даалгавраа илгээсэн байна. Давхар илгээх
+                    боломжгүй ✅
+                  </p>
+
+                  {submission.fileUrl ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      {submission.fileUrl
+                        .split(",")
+                        .filter((url: string) => url.trim() !== "")
+                        .map((url: string, idx: number) => (
+                          <img
+                            key={idx}
+                            src={`${process.env.NEXT_PUBLIC_API_URL}/${url}`}
+                            alt={`Даалгаврын зураг ${idx + 1}`}
+                            className="w-full rounded-lg shadow"
+                          />
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm">
+                      Даалгаврын зураг байхгүй байна.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <Input
+                  id="imageUpload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-700
+               file:mr-4 file:py-2 file:px-4
+               file:rounded-lg file:border-0
+               file:text-sm file:font-semibold
+               file:bg-blue-50 file:text-blue-600
+               hover:file:bg-blue-100"
+                />
+              )}
             </div>
 
             <Button
