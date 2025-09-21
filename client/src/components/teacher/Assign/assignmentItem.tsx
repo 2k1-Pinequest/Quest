@@ -8,8 +8,10 @@ interface AssignmentItemProps {
   title: string;
   description: string;
   submissions: number;
+  approvedSubmissions?: number;
   createdAt: string;
   dueDate: string;
+  isChecked?: boolean;
 }
 
 export const AssignmentItem = ({
@@ -19,6 +21,8 @@ export const AssignmentItem = ({
   submissions,
   createdAt,
   dueDate,
+  isChecked,
+  approvedSubmissions
 }: AssignmentItemProps) => {
   const router = useRouter();
 
@@ -64,12 +68,9 @@ export const AssignmentItem = ({
 
   return (
     <div
-      className={`rounded-2xl p-8 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition ${dateColor}`}
-      onClick={() =>
-        router.push(
-          `/teacherAssignmentDetail/${id}`
-        )
-      }
+      className={`rounded-2xl p-8 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition
+    ${isChecked ? "border-gray-400 bg-gray-50" : "border-gray-200 bg-white"}`}
+      onClick={() => router.push(`/teacherAssignmentDetail/${id}`)}
     >
       <div className="flex flex-col gap-2">
         <h3 className="text-sm text-gray-800 flex items-center gap-1.5">
@@ -82,7 +83,7 @@ export const AssignmentItem = ({
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-gray-500">
-            ирсэн даалгаварууд({submissions})
+            {approvedSubmissions}/{submissions} шалгасан
           </div>
           <button
             onClick={(e) => {

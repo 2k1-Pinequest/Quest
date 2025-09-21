@@ -15,11 +15,12 @@ interface Classroom {
 
 export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
+    null
+  );
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [classroomsLoading, setClassroomsLoading] = useState(false);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
-
 
   useEffect(() => {
     if (!teacherId) return;
@@ -31,7 +32,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
         setClassrooms(data);
         setTimeout(() => {
           setClassroomsLoading(false);
-        }, 500); 
+        }, 500);
       })
       .catch((err) => {
         console.error(err);
@@ -39,7 +40,6 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
       });
   }, [teacherId]);
 
-  
   useEffect(() => {
     const savedId = localStorage.getItem("activeClassroomId");
     if (savedId) setActiveClassroomId(Number(savedId));
@@ -48,7 +48,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const addClassroom = (roomName: string) => {
     if (!teacherId || !roomName.trim()) return;
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, { roomName })
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, {
+        roomName,
+      })
       .then((res) => res.data)
       .then((data) => {
         if (data.room) setClassrooms((prev) => [...prev, data.room]);
@@ -57,7 +59,8 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   };
 
   const deleteClassroom = async (roomId: number, roomName: string) => {
-    if (!window.confirm(`Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`)) return;
+    if (!window.confirm(`Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`))
+      return;
     try {
       await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/room/${roomId}`);
       setClassrooms((prev) => prev.filter((c) => c.id !== roomId));
@@ -70,14 +73,34 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     }
   };
 
- 
+  // useEffect(() => {
+  //   if (!activeClassroomId) return;
+  //   setAssignmentsLoading(true);
+
+  //   axios
+  //     .get(`${process.env.NEXT_PUBLIC_API_URL}/room/${activeClassroomId}/assignments`)
+  //     .then((res) => setAssignments(res.data))
+  //     .catch((err) => {
+  //       console.error(err);
+  //       setAssignments([]);
+  //     })
+  //     .finally(() => {
+  //       setTimeout(() => setAssignmentsLoading(false), 500);
+  //     });
+  // }, [activeClassroomId]);
+
   useEffect(() => {
     if (!activeClassroomId) return;
     setAssignmentsLoading(true);
 
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/room/${activeClassroomId}/assignments`)
-      .then((res) => setAssignments(res.data))
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/teacher/isChecked/${activeClassroomId}`
+      )
+      .then((res) => {
+        console.log("resssssssssyayay", res);
+        setAssignments(res.data);
+      })
       .catch((err) => {
         console.error(err);
         setAssignments([]);
@@ -101,7 +124,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
               setActiveClassroomId={setActiveClassroomId}
               deleteClassroom={deleteClassroom}
               addClassroom={addClassroom}
-              loading={classroomsLoading} 
+              loading={classroomsLoading}
             />
 
             {/* Assignment Section */}
@@ -109,7 +132,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {activeClassroom ? `${activeClassroom.roomName} Анги` : "Анги сонгоно уу"}
+                    {activeClassroom
+                      ? `${activeClassroom.roomName} Анги`
+                      : "Анги сонгоно уу"}
                   </h2>
                   <p className="text-gray-600">
                     Ангийн код{" "}

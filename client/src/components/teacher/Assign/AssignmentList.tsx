@@ -11,10 +11,16 @@ interface Props {
   activeClassroomId: number | null;
 }
 
-export const AssignmentList = ({ loading, assignments, activeClassroomId }: Props) => {
+export const AssignmentList = ({
+  loading,
+  assignments,
+  activeClassroomId,
+}: Props) => {
   const groupedAssignments = assignments.reduce(
     (acc: Record<string, Assignment[]>, assignment) => {
-      const dateKey = new Date(assignment.createdAt).toISOString().split("T")[0];
+      const dateKey = new Date(assignment.createdAt)
+        .toISOString()
+        .split("T")[0];
       if (!acc[dateKey]) acc[dateKey] = [];
       acc[dateKey].push(assignment);
       return acc;
@@ -40,49 +46,117 @@ export const AssignmentList = ({ loading, assignments, activeClassroomId }: Prop
 
   // Empty state
   if (assignments.length === 0) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[600px] text-gray-500 text-center">
-      {!activeClassroomId ? (
-        <p className="text-lg font-medium">Эхлээд ангиа сонгоно уу</p>
-      ) : (
-        <>
-          <CirclePlus size={48} className="mb-4 text-gray-400" />
-          <p className="text-lg font-medium">Одоогоор даалгавар байхгүй байна</p>
-          <p className="text-sm">Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй</p>
-        </>
-      )}
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[600px] text-gray-500 text-center">
+        {!activeClassroomId ? (
+          <p className="text-lg font-medium">Эхлээд ангиа сонгоно уу</p>
+        ) : (
+          <>
+            <CirclePlus size={48} className="mb-4 text-gray-400" />
+            <p className="text-lg font-medium">
+              Одоогоор даалгавар байхгүй байна
+            </p>
+            <p className="text-sm">
+              Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
+            </p>
+          </>
+        )}
+      </div>
+    );
+  }
 
+  const checkedAssignments = assignments.filter((a) => a.isChecked);
+  const uncheckedAssignments = assignments.filter((a) => !a.isChecked);
 
-  // Assignment list
   return (
-    <>
-      {sortedDates.map((date) => (
-        <div key={date} className="mb-8">
+    <div className="flex flex-col gap-8">
+      {/* Шалгаагүй */}
+      {uncheckedAssignments.length > 0 && (
+        <div>
           <div className="flex items-center space-x-4 my-6">
             <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-              {formatDate(date)}
+              {" "}
+              Шалгаагүй{" "}
             </span>
             <div className="flex-1 border-t border-gray-300" />
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {groupedAssignments[date].map((a) => (
+            {uncheckedAssignments.map((a) => (
               <AssignmentItem
                 key={a.id}
                 id={a.id}
                 title={a.title}
                 description={a.description || ""}
-                submissions={a._count?.submissions ?? 0}
+                submissions={a.totalSubmissions ?? 0}
                 createdAt={a.createdAt}
                 dueDate={a.dueDate || ""}
+                isChecked={a?.isChecked}
+                approvedSubmissions={a?.approvedSubmissions}
               />
             ))}
           </div>
         </div>
-      ))}
-    </>
+      )}
+      {/* Шалгасан */}
+      {checkedAssignments.length > 0 && (
+        <div>
+          {/* <h3 className="text-lg font-semibold text-green-600 mb-4">
+            Шалгасан ✅
+          </h3> */}
+          <div className="flex items-center space-x-4 my-6">
+            <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+              {" "}
+              Шалгасан{" "}
+            </span>
+            <div className="flex-1 border-t border-gray-300" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {checkedAssignments.map((a) => (
+              <AssignmentItem
+                key={a.id}
+                id={a.id}
+                title={a.title}
+                description={a.description || ""}
+                submissions={a.totalSubmissions ?? 0}
+                createdAt={a.createdAt}
+                dueDate={a.dueDate || ""}
+                isChecked={a?.isChecked}
+                approvedSubmissions={a?.approvedSubmissions}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
+
+  // Assignment list
+  // return (
+  //   <>
+  //     {sortedDates.map((date) => (
+  //       <div key={date} className="mb-8">
+  //         <div className="flex items-center space-x-4 my-6">
+  //           <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+  //             {formatDate(date)}
+  //           </span>
+  //           <div className="flex-1 border-t border-gray-300" />
+  //         </div>
+
+  //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  //           {groupedAssignments[date].map((a) => (
+  //             <AssignmentItem
+  //               key={a.id}
+  //               id={a.id}
+  //               title={a.title}
+  //               description={a.description || ""}
+  //               submissions={a.totalSubmissions ?? 0}
+  //               createdAt={a.createdAt}
+  //               dueDate={a.dueDate || ""}
+  //             />
+  //           ))}
+  //         </div>
+  //       </div>
+  //     ))}
+  //   </>
+  // );
 };
