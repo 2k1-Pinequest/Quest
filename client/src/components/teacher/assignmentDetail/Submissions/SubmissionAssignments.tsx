@@ -12,14 +12,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { useParams } from "next/navigation";
 
+// Interface definitions (unchanged)
 interface Student {
   id: number;
   studentName: string;
@@ -30,22 +25,6 @@ interface Assignment {
   id: number;
   title: string;
 }
-
-// interface AIAnalysis {
-//   score: number;
-//   summary: string;
-//   mistakes: string[];
-//   suggestions: string[];
-//   overall: string;
-// }
-
-// interface Submission {
-//   id: number;
-//   fileUrl: string[];
-//   student: Student;
-//   assignment: Assignment;
-//   aiAnalysis: AIAnalysis | null;
-// }
 
 interface AiAnalysis {
   id: number;
@@ -64,35 +43,29 @@ interface AssignmentSubmission {
   studentId: number;
   status: "APPROVED" | "PENDING" | "REJECTED";
   answerText: string | null;
-  fileUrl: string | null; // олон файл байж болох тул массив болговол илүү зөв
+  fileUrl: string | null;
   score: number | null;
   feedback: string | null;
   aiAnalysis: AiAnalysis | null;
-  submittedAt: string; // ISO date string
+  submittedAt: string;
+  student: Student;
+  assignment: Assignment;
 }
 
 export default function SubmissionsAssignments() {
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
-
-  const [selectedSubmission, setSelectedSubmission] = useState(null);
-
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const params = useParams();
 
-  console.log("params", params.assignId);
-
   useEffect(() => {
     axios
       .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
-      .then((res) => setSubmissions(res.data.submissions))
+      .then((res) => {
+        setSubmissions(res.data.submissions);
+      })
       .catch((err) => console.error(err));
-  }, []);
-
-  console.log("submissions", submissions);
-  // console.log("submissions", submissions.su);
-
-  // return <div></div>
+  }, [params.assignId]);
 
   return (
     <div className="p-6">
@@ -103,10 +76,8 @@ export default function SubmissionsAssignments() {
           key={s.id}
           className="mb-6 p-4 border rounded-lg shadow flex flex-col md:flex-row gap-6"
         >
-          {/* Зурагнуудын карусель */}
           <div className="w-full md:w-1/3">
-            {/* <h2 className="font-semibold mb-30">{s.studentName}</h2>
-            <p className="text-gray-600">{s.assignment.title}</p> */}
+            <h2 className="font-semibold mb-3">{s.student?.studentName}</h2>
 
             {s.fileUrl ? (
               <Carousel className="w-full h-110 relative">
@@ -119,10 +90,7 @@ export default function SubmissionsAssignments() {
                       <CarouselItem
                         key={i}
                         className="w-full h-110 relative cursor-pointer"
-                        onClick={() => {
-                          setSelectedSubmission(s);
-                          setSelectedImage(imageUrl);
-                        }}
+                        onClick={() => setSelectedImage(imageUrl)}
                       >
                         <Image
                           src={imageUrl}
@@ -130,9 +98,6 @@ export default function SubmissionsAssignments() {
                           fill
                           style={{ objectFit: "cover", borderRadius: "8px" }}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          onError={() =>
-                            console.log("Image load error:", imageUrl)
-                          }
                         />
                       </CarouselItem>
                     );
@@ -158,16 +123,11 @@ export default function SubmissionsAssignments() {
                 <p>
                   <strong>Оноо:</strong> {s.aiAnalysis.score}
                 </p>
-                <p>
-                  <strong>Дүгнэлт:</strong> {s.aiAnalysis.summary}
-                </p>
+
                 <p>
                   <strong>Алдаанууд:</strong> {s.aiAnalysis.mistakes.join(", ")}
                 </p>
-                <p>
-                  <strong>Зөвлөгөө:</strong>{" "}
-                  {s.aiAnalysis.suggestions.join(", ")}
-                </p>
+
                 <p>
                   <strong>Ерөнхий үнэлгээ:</strong> {s.aiAnalysis.overall}
                 </p>
@@ -183,6 +143,43 @@ export default function SubmissionsAssignments() {
           </div>
         </div>
       ))}
+
+      {/* --- Full-screen Image Modal (Blur background, no white box) --- */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 backdrop-blur-sm" // Blur background
+          onClick={() => setSelectedImage(null)} // Close modal when clicking outside
+        >
+          <div
+            className="relative w-[90vw] h-[90vh] flex items-center justify-center" // No white background, padding, or shadow here
+            onClick={(e) => e.stopPropagation()} // Prevent click from closing modal if clicked on image area
+          >
+            {/* Close Button (X icon) - now slightly adjusted for contrast */}
+            <button
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white" // Adjust button for dark/blur background
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(null);
+              }}
+            >
+              <X size={24} />
+            </button>
+
+            {/* Image */}
+            <div className="relative w-full h-full">
+              {" "}
+              {/* Inner div for image */}
+              <Image
+                src={selectedImage}
+                alt="Full-screen submission"
+                fill
+                style={{ objectFit: "contain" }}
+                className="rounded-lg" // Keep rounded corners for the image itself
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
