@@ -1,58 +1,78 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, X, MessageSquare } from "lucide-react";
+import { Check } from "lucide-react";
+import axios from "axios";
 
-import { Input } from "@/components/ui/input";
+interface ZuwUildelProps {
+  submissionId: number;
+  aiAnalysis: {
+    score: number;
+    summary: string;
+    mistakes: string[];
+    suggestions: string[];
+    overall: string;
+  } | null;
+  onSubmissionUpdated: () => void;
+}
 
-export const GurvanUildel = () => {
-  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
-  const [feedback, setFeedback] = useState("");
+export const ZuwUildel: React.FC<ZuwUildelProps> = ({
+  submissionId,
+  aiAnalysis,
+  onSubmissionUpdated,
+}) => {
+  const [score, setScore] = useState<number | undefined>(aiAnalysis?.score);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmitFeedback = (action: "approve" | "reject") => {
-    console.log(`Action: ${action}, Feedback:`, feedback);
-    setFeedback("");
-    setShowFeedbackInput(false);
+  const handleSubmitFeedback = async () => {
+    try {
+      const validScore = score !== undefined && !isNaN(score) ? score : 0;
+
+      const payload = {
+        teacherScore: validScore,
+      };
+
+      await axios.put(
+        `http://localhost:4200/teacher/approvedSub/${submissionId}`,
+        payload
+      );
+
+      setShowSuccess(true);
+
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+
+      onSubmissionUpdated();
+    } catch (err) {
+      console.error("Алдаа гарлаа:", err);
+    }
   };
 
   return (
     <div className="flex flex-col items-end gap-2 relative">
+      {showSuccess && (
+        <div className="p-2 text-sm text-white bg-green-500 rounded-lg">
+          Даалгавар амжилттай батлагдлаа! 🎉
+        </div>
+      )}
+
+      <input
+        type="number"
+        className="w-24 border rounded-lg p-2"
+        placeholder="Оноо"
+        value={score || ""}
+        onChange={(e) => setScore(Number(e.target.value))}
+      />
+
       <div className="flex gap-2">
         <button
-          className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+          className="p-2 text-green-600 hover:bg-green-50 rounded-lg border-2"
           title="Approve"
-          onClick={() => handleSubmitFeedback("approve")}
+          onClick={handleSubmitFeedback}
         >
           <Check size={20} />
         </button>
-
-        <button
-          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-          title="Reject"
-          onClick={() => handleSubmitFeedback("reject")}
-        >
-          <X size={20} />
-        </button>
-
-        <div className="relative">
-          <button
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-            title="View Feedback"
-            onClick={() => setShowFeedbackInput((prev) => !prev)}
-          >
-            <MessageSquare size={20} />
-          </button>
-
-          {showFeedbackInput && (
-            <div className="absolute bottom-full left-0 -translate-x-[260px] mb-2 w-80 p-4 bg-white shadow-lg rounded-lg z-50">
-              <Input
-                placeholder="Санал хүсэлтээ явуулна уу"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-              />
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
