@@ -12,8 +12,7 @@ export default function ActionButton() {
             Edu<span className="text-blue-700">Snap</span>
           </h1>
           <p className="text-base md:text-xl text-gray-500  max-w-xl mx-auto">
-            AI-аар гэрийн даалгавар үнэлэх, санал хүсэлт өгөх, ахиц дэвшлийг
-            хянах ухаалаг систем
+            AI-аар гэрийн даалгавар үнэлэх, багшид туслах ухаалаг систем
           </p>
         </div>
 
@@ -25,7 +24,7 @@ export default function ActionButton() {
               </div>
               <div>
                 <h2 className="text-2xl font-medium text-black">Багш</h2>
-                <div className="font-normal text-md text-gray-500 ">  
+                <div className="font-normal text-md text-gray-500 ">
                   Даалгавар үүсгэх, өрөө удирдах, AI үнэлгээ авах
                 </div>
               </div>
@@ -40,14 +39,13 @@ export default function ActionButton() {
               </div>
               <div>
                 <h2 className="text-2xl font-medium text-black">Сурагч</h2>
-                <div className="font-normal text-md text-gray-500 ">  
-                 Гэрийн даалгавар илгээх
+                <div className="font-normal text-md text-gray-500 ">
+                  Гэрийн даалгавар илгээх
                 </div>
               </div>
               <Button variant="secondary">Дэлгэрэнгүй</Button>
             </div>
           </Link>
-          
         </div>
         <div className="text-center mt-50 text-md md:text-sm text-gray-700">
           Боловсролыг хиймэл оюун ухаанаар шинэчилж байна
