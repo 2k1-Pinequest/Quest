@@ -67,9 +67,7 @@ export const AssignmentItem = ({
       className={`rounded-2xl p-8 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition ${dateColor}`}
       onClick={() =>
         router.push(
-          `/teacherAssignmentDetail/${id}?title=${encodeURIComponent(
-            title
-          )}&description=${encodeURIComponent(description)}`
+          `/teacherAssignmentDetail/${id}`
         )
       }
     >
