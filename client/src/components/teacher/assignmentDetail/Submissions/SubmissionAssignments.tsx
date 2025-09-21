@@ -25,7 +25,7 @@ interface AIAnalysis {
 
 interface Submission {
   id: number;
-  fileUrl: string[][]; // массивын массив байна гэж тэмдэглэсэн
+  fileUrl: string[]; // массивын массив биш, string-ийн массив гэж зассан
   student: Student;
   assignment: Assignment;
   aiAnalysis: AIAnalysis | null;
@@ -40,10 +40,6 @@ export default function SubmissionsAssignments() {
       .then((res) => setSubmissions(res.data.submissions))
       .catch((err) => console.error(err));
   }, []);
-  console.log(
-    "+++++++++",
-    submissions.map((s) => s.fileUrl)
-  );
 
   return (
     <div className="p-6">
@@ -61,16 +57,24 @@ export default function SubmissionsAssignments() {
 
             {s.fileUrl.length > 0 ? (
               <div className="flex gap-2 flex-wrap">
-                {s.fileUrl.flat().map((url, i) => (
-                  <div key={i} className="w-24 h-24 relative">
-                    <Image
-                      src={`http://localhost:4200/${url}`}
-                      alt="submission"
-                      fill
-                      style={{ objectFit: "cover", borderRadius: "8px" }}
-                    />
-                  </div>
-                ))}
+                {s.fileUrl.map((url, i) => {
+                  // URL-ийн эхлэлийг шалгаж, бүрэн URL үүсгэх
+                  const imageUrl = url.startsWith("http")
+                    ? url // Cloudinary URL бол шууд ашиглана
+                    : `http://localhost:4200/${url}`; // Локал бол localhost-ын хаяг нэмнэ
+
+                  return (
+                    <div key={i} className="w-24 h-24 relative">
+                      <Image
+                        src={imageUrl} // Зассан URL-ийг ашиглах
+                        alt="submission"
+                        fill
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <p>Зураг ирээгүй байна</p>
