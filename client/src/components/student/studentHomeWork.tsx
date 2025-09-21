@@ -79,25 +79,25 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   }, []);
 
   /////////////////////////////
-  // useEffect(() => {
-  //   if (!assignment?.id) return;
+  useEffect(() => {
+    if (!assignment?.id) return;
 
-  //   axios
-  //     .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/2`)
-  //     .then((res) => {
-  //       console.log("resss", res.data.submission);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/2`)
+      .then((res) => {
+        console.log("resss", res.data.submission);
 
-  //       if (res.data?.submission) {
-  //         setSubmission(res.data.submission); // Хүүхэд нэг л удаа илгээх эрхтэй
-  //       } else {
-  //         setSubmission(null);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error("Submission fetch error:", err);
-  //       setSubmission(null); // 404 үед null болгож хадгална
-  //     });
-  // }, [assignment?.id]);
+        if (res.data?.submission) {
+          setSubmission(res.data.submission); // Хүүхэд нэг л удаа илгээх эрхтэй
+        } else {
+          setSubmission(null);
+        }
+      })
+      .catch((err) => {
+        console.error("Submission fetch error:", err);
+        setSubmission(null); // 404 үед null болгож хадгална
+      });
+  }, [assignment?.id]);
 
   console.log("submission", submission);
 
