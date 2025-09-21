@@ -29,6 +29,36 @@ export interface StudentSubmission {
   submittedAt: string; // Он цагийн төрөл нь ихэвчлэн string байдаг
 }
 
+export interface studentAssignment {
+  id:number,
+  assignmentId:number,
+  studentId:number,
+  status:string,
+  answerText:string,
+  fileUrl:string,
+  score:number,
+  feedback:string,
+  aiAnalysis:string,
+  submittedAt:string
+}
+
+export interface Submission {
+  id: string;
+  studentName: string;
+  roomCode: string;
+  content: string;
+  type: "upload" | "text";
+  aiScore: number;
+  aiFeedback: string;
+  aiSuggestions: string[];
+  teacherReview?: {
+    status: "approved" | "rejected" | "pending";
+    comment: string;
+    finalScore?: number;
+  };
+  submittedAt: Date;
+}
+
 // Даалгавар
 export interface Assignment {
   id: number;
