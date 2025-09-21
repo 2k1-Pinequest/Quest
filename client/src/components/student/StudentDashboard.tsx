@@ -1,3 +1,4 @@
+// components/StudentDashboard.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -43,6 +44,7 @@ export default function StudentDashboard() {
           roomName: res.data.room.title,
           code: res.data.room.code,
         });
+        console.log("Room and Student Info:", res.data);
       } catch (err) {
         console.error("Failed to fetch student room info:", err);
       }
@@ -57,10 +59,17 @@ export default function StudentDashboard() {
     const fetchAssignments = async () => {
       setLoading(true);
       try {
+        const studentId = localStorage.getItem("studentId");
+        if (!studentId) {
+          setLoading(false);
+          return;
+        }
+
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/${room.id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/student/assignments/${room.id}?studentId=${studentId}`
         );
         setAssignments(res.data);
+        console.log("Fetched Assignments:", res.data);
       } catch (err) {
         console.error("Failed to fetch assignments:", err);
       } finally {
@@ -75,16 +84,17 @@ export default function StudentDashboard() {
     router.push("/");
   };
 
-  const now = new Date();
-
   const incompleteAssignments = assignments.filter((a) => {
-    if (!a.dueDate) return true;
-    return new Date(a.dueDate) >= now;
+    const submission = a.studentSubmission;
+    // Хэрэв хариулт байхгүй эсвэл хариулт нь APPROVED статусгүй бол дуусаагүй гэж үзнэ.
+    return !submission || submission.status !== "APPROVED";
   });
 
+  // Дууссан даалгаврууд
   const completedAssignments = assignments.filter((a) => {
-    if (!a.dueDate) return false;
-    return new Date(a.dueDate) < now;
+    const submission = a.studentSubmission;
+    // Зөвхөн хариулт нь APPROVED статус болон оноотой байвал дууссан гэж үзнэ.
+    return submission?.status === "APPROVED" && submission.score !== null;
   });
 
   return (
@@ -169,6 +179,7 @@ export default function StudentDashboard() {
                       <AssignmentCard
                         key={assignment.id}
                         assignment={assignment}
+                        score={assignment.studentSubmission?.score}
                         onSelect={setSelectedAssignment}
                       />
                     ))}

@@ -5,11 +5,13 @@ import { BookOpen, Upload } from "lucide-react";
 
 interface AssignmentCardProps {
   assignment: Assignment;
+  score?: number | null; // Багшийн өгсөн оноог хүлээн авах проп
   onSelect: (assignment: Assignment) => void;
 }
 
 export default function AssignmentCard({
   assignment,
+  score, // Пропоо задлаж авна
   onSelect,
 }: AssignmentCardProps) {
   const parsedDueDate = assignment.dueDate
@@ -49,10 +51,11 @@ export default function AssignmentCard({
           </h4>
         </div>
 
-        {/* Оноо баруун талд */}
+        {/* Оноог динамикаар харуулах */}
         <span className="text-gray-700 text-xs font-medium px-1 py-0.5 rounded">
-          {/* {assignment.score ?? "-"} оноо */}
-          100/76 
+          {score !== null && score !== undefined
+            ? `${score}/100 оноо`
+            : `Оноогүй`}
         </span>
       </div>
 

@@ -1,79 +1,75 @@
-export interface Room {
-  id: string;
-  code: string;
-  homeworkTitle: string;
-  submissions: Submission[];
-  createdAt: Date;
+// src/types.ts
+
+// Сурагчийн хариулт
+export interface StudentSubmission {
+  id: string; // ID should match your database type (e.g., string for MongoDB, number for Postgres)
+  assignmentId: number;
+  studentId: number;
+
+  // Даалгаврын статус
+  status: "PENDING" | "ANALYZING" | "ANALYZED" | "APPROVED";
+
+  // Хариултын агуулга
+  answerText?: string | null;
+  fileUrl?: string | null;
+
+  // Багшийн болон AI-ийн үнэлгээ
+  score?: number | null; // Багш эсвэл AI-ийн өгсөн оноо
+  feedback?: string | null; // Багшийн санал
+
+  // AI-ийн дэлгэрэнгүй анализ (AI-н оноо, алдаа, санал г.м)
+  aiAnalysis?: {
+    score: number;
+    summary: string;
+    mistakes: string[];
+    suggestions: string[];
+    overall: string;
+  } | null;
+
+  submittedAt: string; // Он цагийн төрөл нь ихэвчлэн string байдаг
 }
 
-// {
-//     "id": 1,
-//     "assignmentId": 1,
-//     "studentId": 1,
-//     "status": "APPROVED",
-//     "answerText": null,
-//     "fileUrl": "uploads/1758345976471-IMG_7057.PNG,uploads/1758345976482-IMG_7056.PNG",
-//     "score": 100,
-//     "feedback": null,
-//     "aiAnalysis": null,
-//     "submittedAt": "2025-09-20T05:26:16.991Z"
-// }
-
-export interface studentAssignment {
-  id:number,
-  assignmentId:number,
-  studentId:number,
-  status:string,
-  answerText:string,
-  fileUrl:string,
-  score:number,
-  feedback:string,
-  aiAnalysis:string,
-  submittedAt:string
-}
-
-export interface Student {
-  id: string;
-  name: string;
-  roomCode: string;
-  submissions: Submission[];
-  badges: string[];
-  totalScore: number;
-  progress: ProgressPoint[];
-}
-
-export interface Submission {
-  id: string;
-  studentName: string;
-  roomCode: string;
-  content: string;
-  type: "upload" | "text";
-  aiScore: number;
-  aiFeedback: string;
-  aiSuggestions: string[];
-  teacherReview?: {
-    status: "approved" | "rejected" | "pending";
-    comment: string;
-    finalScore?: number;
-  };
-  submittedAt: Date;
-}
-
-export interface ProgressPoint {
-  date: Date;
-  score: number;
-}
- export interface Assignment {
+// Даалгавар
+export interface Assignment {
   id: number;
   roomId: number;
   title: string;
-  description: string | null;
-  textContent: string | null;
-  dueDate: string | null;
-  instruction: string;
+  description?: string | null;
+  textContent?: string | null;
+  dueDate?: string | null;
+  instruction: string; // Үүнийг нэмсэн нь зөв
   createdAt: string;
   updatedAt: string;
   _count: {
     submissions: number;
   };
+
+  // Энэ талбарыг нэмснээр холбоотой Submission мэдээлэл ирнэ
+  studentSubmission?: StudentSubmission | null;
+}
+
+// Сурагч
+export interface Student {
+  id: string;
+  name: string;
+  roomCode: string; // Room-той холбох
+  submissions: StudentSubmission[]; // Загварт нийцүүлсэн
+  badges: string[];
+  totalScore: number;
+  progress: ProgressPoint[];
+}
+
+// Анги
+export interface Room {
+  id: string;
+  code: string;
+  roomName: string; // homeworkTitle гэдгийг roomName болгож өөрчиллөө
+  submissions: StudentSubmission[]; // Загварт нийцүүлсэн
+  createdAt: string;
+}
+
+// Явц
+export interface ProgressPoint {
+  date: string;
+  score: number;
 }
