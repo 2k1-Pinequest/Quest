@@ -9,28 +9,17 @@ import cloudinary from "../../utils/cloudinary";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
-function fileToGenerativePart(filePath: string, mimeType: string): Part {
+async function urlToGenerativePart(url: string, mimeType: string): Promise<Part> {
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+  const base64 = Buffer.from(response.data).toString("base64");
   return {
     inlineData: {
-      data: fs.readFileSync(filePath).toString("base64"),
+      data: base64,
       mimeType,
     },
   };
 }
 
-// async function urlToGenerativePart(
-//   url: string,
-//   mimeType: string
-// ): Promise<Part> {
-//   const response = await axios.get(url, { responseType: "arraybuffer" });
-//   const base64 = Buffer.from(response.data).toString("base64");
-//   return {
-//     inlineData: {
-//       data: base64,
-//       mimeType,
-//     },
-//   };
-// }
 
 export const analyzeAssignment = async (req: Request, res: Response) => {
   try {
@@ -80,9 +69,18 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
     // --- AI nalyze async-r ajiluulan ---
     (async () => {
       try {
-        const parts = files.map((f) =>
-          fileToGenerativePart(f.path, f.mimetype)
+
+        console.log("ai analyze starteddd");
+
+        console.log("uploadedUrls", uploadedUrls);
+        
+        
+        const parts = await Promise.all(
+          uploadedUrls.map((url) => urlToGenerativePart(url, "image/png"))
         );
+
+        // console.log("partssss", parts);
+        
 
         const model = genAI.getGenerativeModel({
           model: "gemini-2.5-flash",
@@ -132,6 +130,9 @@ JSON бүтэц:
           return;
         }
 
+        console.log("parsedddd", parsed);
+        
+
         const aiStident = await prisma.studentAssignmentAi.upsert({
           where: {
             studentId_assignmentId: {
@@ -157,18 +158,19 @@ JSON бүтэц:
           },
         });
 
-        console.log("AI analysis saved for:", aiStident);
+        // console.log("AI analysis saved for:", aiStident);
 
         // --- Temporary files устгах ---
-        files.forEach((f) => {
-          fs.unlink(f.path, (err) => {
-            if (err) console.error("File delete error:", err);
-          });
-        });
+        // files.forEach((f) => {
+        //   fs.unlink(f.path, (err) => {
+        //     if (err) console.error("File delete error:", err);
+        //   });
+        // });
       } catch (aiErr) {
         console.error("AI анализ алдаа:", aiErr);
       }
     })();
+
   } catch (err: any) {
     console.error(err);
     res.status(500).json({
