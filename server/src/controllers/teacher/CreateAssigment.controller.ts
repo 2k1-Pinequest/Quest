@@ -39,15 +39,6 @@ export const createAssignmentForRoom = async (req: Request, res: Response) => {
       },
     });
 
-    const studentSubmissions = room.students.map((student) => ({
-      assignmentId: assignment.id,
-      studentId: student.id,
-    }));
-
-    if (studentSubmissions.length > 0) {
-      await prisma.studentSubmission.createMany({ data: studentSubmissions });
-    }
-
     res.status(201).json({ assignment });
   } catch (error: any) {
     console.error("Даалгавар үүсгэхэд алдаа:", error);
