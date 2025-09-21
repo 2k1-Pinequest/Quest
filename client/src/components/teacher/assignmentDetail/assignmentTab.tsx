@@ -5,6 +5,7 @@ import { Distribution } from "./Stats/distribution";
 
 import { Submission } from "@/types";
 import SubmissionsAssignments from "./Submissions/SubmissionAssignments";
+import { useParams } from "next/navigation";
 
 interface AssignmentTabProps {
   title: string;
@@ -12,6 +13,7 @@ interface AssignmentTabProps {
 }
 export const AssignmentTab = ({ title, description }: AssignmentTabProps) => {
   const [selectedTab, setSelectedTab] = useState("submissions");
+
 
   const currentRoom: { submissions: Submission[] } = {
     submissions: [
@@ -50,6 +52,8 @@ export const AssignmentTab = ({ title, description }: AssignmentTabProps) => {
       },
     ],
   };
+  
+
   
 
   return (

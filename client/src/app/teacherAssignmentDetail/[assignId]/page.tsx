@@ -1,17 +1,27 @@
 "use client";
+
 import React from "react";
 import { AssignmentDetails } from "./assignmentSubAnalyze";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 export default function TeacherAssignDetail() {
-   const searchParams = useSearchParams();
-  const title = searchParams.get("title") || "No title";
-  const description = searchParams.get("description") || "No description";
-  console.log("pls",title)
+  // URL динамик segment-аас авах (жишээ нь: /teacher/[id])
+  const params = useParams();
+
+  // URL query string-ээс авах (жишээ нь: ?subject=math&level=10)
+  const searchParams = useSearchParams();
+
+  console.log("params 👉", params);
+  console.log("searchParams 👉", searchParams.toString());
+  console.log("subject 👉", searchParams.get("subject"));
+
   return (
     <div className="min-h-screen flex justify-center">
       <div className="w-full max-w-[1200px]">
-        <AssignmentDetails title={title} description={description} />
+        <AssignmentDetails
+          title={searchParams.get("subject") || "math"}
+          description="tailbar"
+        />
       </div>
     </div>
   );
