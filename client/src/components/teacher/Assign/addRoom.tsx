@@ -18,27 +18,29 @@ interface AddClassProps {
 
 export function AddClass({ addClassroom }: AddClassProps) {
   const [addClass, setAddClass] = useState("");
+   const [open, setOpen] = useState(false);
+
+   const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addClass.trim()) return;
+    addClassroom(addClass.trim());
+    setAddClass("");
+    setOpen(false); 
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          className="bg-blue-500 text-white hover:text-black"
+          className="bg-blue-600 text-white hover:bg-blue-700"
         >
           <Plus />
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!addClass.trim()) return;
-            addClassroom(addClass.trim());
-            setAddClass(""); 
-          }}
-        >
+        <form onSubmit={handleSubmit} >
           <DialogHeader>
             <DialogTitle>Анги нэмэх</DialogTitle>
           </DialogHeader>
@@ -55,11 +57,11 @@ export function AddClass({ addClassroom }: AddClassProps) {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">Гарах</Button>
             </DialogClose>
 
             <DialogClose asChild>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm font-medium ">Хадгалах</Button>
             </DialogClose>
           </DialogFooter>
         </form>

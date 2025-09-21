@@ -1,14 +1,11 @@
 "use client";
 
-import { CirclePlus, Trash2 } from "lucide-react";
-import { TeacherClassRoomHeader } from "./teacherClassroomHeader";
-import { AssignmentItem } from "./assignmentItem";
 import { useEffect, useState } from "react";
-import { AddClass } from "./addDeleteRoom";
 import axios from "axios";
 import { TeacherAssignmentForm } from "./teacheAssignmentForm";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Assignment } from "@/types";
+import { ClassroomList } from "./ClassroomList";
+import { AssignmentList } from "./AssignmentList";
 
 interface Classroom {
   id: number;
@@ -18,32 +15,40 @@ interface Classroom {
 
 export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
-    null
-  );
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [classroomsLoading, setClassroomsLoading] = useState(false);
+  const [assignmentsLoading, setAssignmentsLoading] = useState(false);
 
-  // Ангийн мэдээлэл ачаалах
+
   useEffect(() => {
     if (!teacherId) return;
+    setClassroomsLoading(true);
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response not ok");
-        return res.json();
+      .then((res) => res.json())
+      .then((data: Classroom[]) => {
+        setClassrooms(data);
+        setTimeout(() => {
+          setClassroomsLoading(false);
+        }, 500); 
       })
-      .then((data: Classroom[]) => setClassrooms(data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setClassroomsLoading(false);
+      });
   }, [teacherId]);
+
+  
+  useEffect(() => {
+    const savedId = localStorage.getItem("activeClassroomId");
+    if (savedId) setActiveClassroomId(Number(savedId));
+  }, []);
 
   const addClassroom = (roomName: string) => {
     if (!teacherId || !roomName.trim()) return;
-
     axios
-      .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, {
-        roomName: roomName.trim(),
-      })
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/room/${teacherId}`, { roomName })
       .then((res) => res.data)
       .then((data) => {
         if (data.room) setClassrooms((prev) => [...prev, data.room]);
@@ -52,11 +57,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   };
 
   const deleteClassroom = async (roomId: number, roomName: string) => {
-    const confirmDelete = window.confirm(
-      `Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`
-    );
-    if (!confirmDelete) return;
-
+    if (!window.confirm(`Та "${roomName}" ангийг устгахдаа итгэлтэй байна уу?`)) return;
     try {
       await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/room/${roomId}`);
       setClassrooms((prev) => prev.filter((c) => c.id !== roomId));
@@ -69,219 +70,73 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     }
   };
 
-  // Даалгавар ачаалах
+ 
   useEffect(() => {
     if (!activeClassroomId) return;
+    setAssignmentsLoading(true);
 
-    const fetchAssignments = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/room/${activeClassroomId}/assignments`
-        );
-        setAssignments(res.data);
-      } catch (err) {
-        console.error("Failed to fetch assignments:", err);
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/room/${activeClassroomId}/assignments`)
+      .then((res) => setAssignments(res.data))
+      .catch((err) => {
+        console.error(err);
         setAssignments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAssignments();
+      })
+      .finally(() => {
+        setTimeout(() => setAssignmentsLoading(false), 500);
+      });
   }, [activeClassroomId]);
 
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
-  // **Student dashboard шиг ангилж харуулах**
-  const uncheckedAssignments = assignments.filter(
-    (a) => !(a._count?.submissions > 0)
-  );
-  const checkedAssignments = assignments.filter(
-    (a) => a._count?.submissions > 0
-  );
-
   return (
-    <div className="min-h-screen flex justify-center py-8">
+    <div className="flex justify-center">
       <div className="w-full max-w-[1200px] px-4 sm:px-6 bg-white rounded-2xl">
-        <TeacherClassRoomHeader />
         <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
           <div className="flex gap-10 w-full">
-            {/* Ангийн жагсаалт */}
-            <div className="w-[233px] flex-shrink-0">
-              <div className="border p-6 rounded-xl flex flex-col">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Миний ангиуд
-                  </h3>
-                  <AddClass addClassroom={addClassroom} />
-                </div>
+            {/* Classroom List */}
+            <ClassroomList
+              classrooms={classrooms}
+              activeClassroomId={activeClassroomId}
+              setActiveClassroomId={setActiveClassroomId}
+              deleteClassroom={deleteClassroom}
+              addClassroom={addClassroom}
+              loading={classroomsLoading} 
+            />
 
-                <div className="border mb-5"></div>
-
-                <div className="flex flex-col gap-2">
-                  {classrooms.map((c) => (
-                    <div
-                      key={c.id}
-                      onClick={() => {
-                        setActiveClassroomId(c.id);
-                        localStorage.setItem("activeClassroomId", String(c.id));
-                      }}
-                      className={`group flex justify-between items-center border rounded-lg px-3 py-2 cursor-pointer transition ${
-                        activeClassroomId === c.id
-                          ? "bg-blue-700"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    >
-                      <span className="font-semibold text-white">
-                        {c.roomName} анги
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteClassroom(c.id, c.roomName);
-                        }}
-                        className="p-1 rounded-full text-gray-200 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:scale-110 transition-all duration-200"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Даалгаврууд */}
+            {/* Assignment Section */}
             <div className="flex-1 min-h-[400px]">
-              <div className="">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                      {activeClassroom
-                        ? `${activeClassroom.roomName} Анги`
-                        : "Анги сонгоно уу"}
-                    </h2>
-                    <p className="text-gray-600">
-                      Ангийн код{" "}
-                      <span className="font-mono font-semibold">
-                        {activeClassroom ? activeClassroom.code : "---"}
-                      </span>
-                    </p>
-                  </div>
-
-                  <TeacherAssignmentForm
-                    roomId={activeClassroom ? activeClassroom.id : 0}
-                    teacherId={teacherId}
-                    disabled={!activeClassroom}
-                    onAssignmentCreated={(newAssignment) => {
-                      if (newAssignment.roomId === activeClassroomId) {
-                        setAssignments((prev) => [newAssignment, ...prev]);
-                      }
-                    }}
-                  />
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {activeClassroom ? `${activeClassroom.roomName} Анги` : "Анги сонгоно уу"}
+                  </h2>
+                  <p className="text-gray-600">
+                    Ангийн код{" "}
+                    <span className="font-mono font-semibold">
+                      {activeClassroom ? activeClassroom.code : "---"}
+                    </span>
+                  </p>
                 </div>
 
-                <div className="flex-1 min-h-[200px] overflow-y-auto">
-                  {loading ? (
-                    <div className="space-y-8">
-                      {Array(3)
-                        .fill(0)
-                        .map((_, dateIdx) => (
-                          <div key={dateIdx}>
-                            <div className="flex items-center space-x-4 my-6">
-                              <Skeleton className="h-4 w-32 rounded" />
-                              <div className="flex-1 border-t border-gray-300" />
-                            </div>
+                <TeacherAssignmentForm
+                  roomId={activeClassroom ? activeClassroom.id : 0}
+                  teacherId={teacherId}
+                  disabled={!activeClassroom}
+                  onAssignmentCreated={(newAssignment) => {
+                    if (newAssignment.roomId === activeClassroomId) {
+                      setAssignments((prev) => [newAssignment, ...prev]);
+                    }
+                  }}
+                />
+              </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                              {Array(3)
-                                .fill(0)
-                                .map((_, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="space-y-2 p-4 border rounded-xl bg-white"
-                                  >
-                                    <Skeleton className="h-6 w-3/4 rounded" />
-                                    <Skeleton className="h-4 w-full rounded" />
-                                    <Skeleton className="h-4 w-5/6 rounded" />
-                                    <Skeleton className="h-8 w-full rounded" />
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  ) : (
-                    <>
-                      {uncheckedAssignments.length > 0 && (
-                        <div className="mb-8">
-                          <h4 className="text-xl font-normal text-gray-800 mb-4 flex items-center">
-                            Дуусаагүй
-                            <span className="flex-1 border-t border-gray-300 ml-4" />
-                          </h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {uncheckedAssignments.map((a) => (
-                              <AssignmentItem
-                                key={a.id}
-                                id={a.id}
-                                title={a.title}
-                                description={a.description || ""}
-                                submissions={a._count?.submissions ?? 0}
-                                createdAt={a.createdAt}
-                                dueDate={a.dueDate || ""}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {checkedAssignments.length > 0 && (
-                        <div className="mb-8">
-                          <h4 className="text-xl font-normal text-gray-800 mb-4 flex items-center">
-                            Дууссан
-                            <span className="flex-1 border-t border-gray-300 ml-4" />
-                          </h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {checkedAssignments.map((a) => (
-                              <AssignmentItem
-                                key={a.id}
-                                id={a.id}
-                                title={a.title}
-                                description={a.description || ""}
-                                submissions={a._count?.submissions ?? 0}
-                                createdAt={a.createdAt}
-                                dueDate={a.dueDate || ""}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {assignments.length === 0 && (
-                        <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
-                          {!activeClassroomId ? (
-                            <p className="text-lg font-medium">
-                              Эхлээд ангиа сонгоно уу
-                            </p>
-                          ) : (
-                            <>
-                              <CirclePlus
-                                size={48}
-                                className="mb-4 text-gray-400"
-                              />
-                              <p className="text-lg font-medium">
-                                Одоогоор даалгавар байхгүй байна
-                              </p>
-                              <p className="text-sm">
-                                Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
+              <div className="flex-1 min-h-[200px] overflow-y-auto">
+                <AssignmentList
+                  loading={assignmentsLoading}
+                  assignments={assignments}
+                  activeClassroomId={activeClassroomId}
+                />
               </div>
             </div>
           </div>
