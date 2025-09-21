@@ -30,9 +30,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   const [files, setFiles] = useState<File[]>([]);
 
-  // const [imageFile, setImageFile] = useState<File | null>(null);
-
-  const [submitted, setSubmitted] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {

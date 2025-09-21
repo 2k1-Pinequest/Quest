@@ -30,16 +30,16 @@ export interface StudentSubmission {
 }
 
 export interface studentAssignment {
-  id:number,
-  assignmentId:number,
-  studentId:number,
-  status:string,
-  answerText:string,
-  fileUrl:string,
-  score:number,
-  feedback:string,
-  aiAnalysis:string,
-  submittedAt:string
+  id: number;
+  assignmentId: number;
+  studentId: number;
+  status: string;
+  answerText: string;
+  fileUrl: string;
+  score: number;
+  feedback: string;
+  aiAnalysis: string;
+  submittedAt: string;
 }
 
 export interface Submission {
@@ -60,6 +60,18 @@ export interface Submission {
 }
 
 // Даалгавар
+// {
+//         "id": 16,
+//         "title": "geometry",
+//         "description": "budaa",
+//         "createdAt": "2025-09-21T05:43:08.109Z",
+//         "updatedAt": "2025-09-21T05:43:08.109Z",
+//         "textContent": "budaa",
+//         "dueDate": "2025-09-26T16:00:00.000Z",
+//         "totalSubmissions": 2,
+//         "approvedSubmissions": 1,
+//         "isChecked": false
+// }
 export interface Assignment {
   id: number;
   roomId: number;
@@ -70,9 +82,9 @@ export interface Assignment {
   instruction: string; // Үүнийг нэмсэн нь зөв
   createdAt: string;
   updatedAt: string;
-  _count: {
-    submissions: number;
-  };
+  totalSubmissions: number;
+  approvedSubmissions: number;
+  isChecked: boolean;
 
   // Энэ талбарыг нэмснээр холбоотой Submission мэдээлэл ирнэ
   studentSubmission?: StudentSubmission | null;
