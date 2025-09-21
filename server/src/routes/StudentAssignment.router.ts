@@ -18,7 +18,7 @@ const upload = multer({ storage });
 // POST endpoint – олон зураг upload хийж анализ хийх
 assignmentRouter.post(
   "/analyzeAssignment/:studentId",
-  upload.array("files", 3), // ← "files" гэдэг нэрээр 10 хүртэл зураг upload хийнэ
+  upload.array("files", 4),
   analyzeAssignment
 );
 
