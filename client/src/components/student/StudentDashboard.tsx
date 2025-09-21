@@ -25,7 +25,7 @@ export default function StudentDashboard() {
   } | null>(null);
 
   useEffect(() => {
-    localStorage.setItem("studentId", "1");
+    localStorage.setItem("studentId", "2");
   }, []);
 
   useEffect(() => {

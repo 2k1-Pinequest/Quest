@@ -79,25 +79,25 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   }, []);
 
   /////////////////////////////
-  useEffect(() => {
-    if (!assignment?.id) return;
+  // useEffect(() => {
+  //   if (!assignment?.id) return;
 
-    axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/1`)
-      .then((res) => {
-        console.log("resss", res.data.submission);
+  //   axios
+  //     .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/2`)
+  //     .then((res) => {
+  //       console.log("resss", res.data.submission);
 
-        if (res.data?.submission) {
-          setSubmission(res.data.submission); // Хүүхэд нэг л удаа илгээх эрхтэй
-        } else {
-          setSubmission(null);
-        }
-      })
-      .catch((err) => {
-        console.error("Submission fetch error:", err);
-        setSubmission(null); // 404 үед null болгож хадгална
-      });
-  }, [assignment?.id]);
+  //       if (res.data?.submission) {
+  //         setSubmission(res.data.submission); // Хүүхэд нэг л удаа илгээх эрхтэй
+  //       } else {
+  //         setSubmission(null);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Submission fetch error:", err);
+  //       setSubmission(null); // 404 үед null болгож хадгална
+  //     });
+  // }, [assignment?.id]);
 
   console.log("submission", submission);
 
@@ -114,7 +114,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/1`,
+        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/2`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -243,7 +243,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
                         .map((url: string, idx: number) => (
                           <img
                             key={idx}
-                            src={`${process.env.NEXT_PUBLIC_API_URL}/${url}`}
+                            src={url}
                             alt={`Даалгаврын зураг ${idx + 1}`}
                             className="w-full rounded-lg shadow"
                           />
