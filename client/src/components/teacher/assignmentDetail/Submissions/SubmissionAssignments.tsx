@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { ZuwUildel } from "./GurvanUildel";
 
 interface Student {
   id: number;
@@ -106,6 +107,11 @@ export default function SubmissionsAssignments() {
             ) : (
               <p>AI analysis байхгүй</p>
             )}
+            <ZuwUildel
+              submissionId={s.id}
+              aiAnalysis={s.aiAnalysis}
+              onSubmissionUpdated={() => {}}
+            />
           </div>
         </div>
       ))}
