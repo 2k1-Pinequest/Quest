@@ -3,6 +3,10 @@ import fs from "fs";
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import prisma from "../../utils/prisma";
 
+import axios from "axios";
+
+import cloudinary from "../../utils/cloudinary";
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
 function fileToGenerativePart(filePath: string, mimeType: string): Part {
@@ -13,6 +17,20 @@ function fileToGenerativePart(filePath: string, mimeType: string): Part {
     },
   };
 }
+
+// async function urlToGenerativePart(
+//   url: string,
+//   mimeType: string
+// ): Promise<Part> {
+//   const response = await axios.get(url, { responseType: "arraybuffer" });
+//   const base64 = Buffer.from(response.data).toString("base64");
+//   return {
+//     inlineData: {
+//       data: base64,
+//       mimeType,
+//     },
+//   };
+// }
 
 export const analyzeAssignment = async (req: Request, res: Response) => {
   try {
@@ -26,17 +44,33 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[];
 
     // --- DB-d hadagalah suragchiin daalgawar (submission) ---
+    // Cloudinary ruu upload hiine
+    const uploadedUrls: string[] = [];
+
+    for (const f of files) {
+      const result = await cloudinary.uploader.upload(f.path, {
+        folder: "assignments", // Cloudinary "assignments" folder-r uuseneee
+      });
+      uploadedUrls.push(result.secure_url);
+      // local deer hadgalsan file-g ustganaa
+      fs.unlinkSync(f.path);
+    }
+
+    console.log("uploadedUrls", uploadedUrls);
+
+    // DB-d zuwhun cloudanry url hadaglagdan
     const submission = await prisma.studentSubmission.create({
       data: {
         studentId: Number(studentId),
         assignmentId: Number(assignmentId),
-        fileUrl: files.map((f) => f.path).join(","), // olon zurag oruulah uchiraasss
+        fileUrl: uploadedUrls.join(","),
         status: "PENDING",
       },
     });
 
-    console.log("Submission created:", submission);
+    console.log("submission", submission);
 
+    // return res.json({ submission });
 
     res.json({
       success: true,
@@ -98,7 +132,7 @@ JSON бүтэц:
           return;
         }
 
-        const aiStident =  await prisma.studentAssignmentAi.upsert({
+        const aiStident = await prisma.studentAssignmentAi.upsert({
           where: {
             studentId_assignmentId: {
               studentId: Number(studentId),
