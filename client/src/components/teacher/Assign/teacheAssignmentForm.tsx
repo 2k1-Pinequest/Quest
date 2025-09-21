@@ -33,7 +33,7 @@ interface TeacherAssignmentFormProps {
 export function TeacherAssignmentForm({
   teacherId,
   roomId,
-  
+
   onAssignmentCreated,
 }: TeacherAssignmentFormProps) {
   const [title, setTitle] = useState("");
