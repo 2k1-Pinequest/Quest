@@ -18,7 +18,9 @@ interface Classroom {
 
 export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
-  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(null);
+  const [activeClassroomId, setActiveClassroomId] = useState<number | null>(
+    null
+  );
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,28 +93,13 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
 
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
-  const groupedAssignments = assignments.reduce(
-    (acc: Record<string, Assignment[]>, assignment) => {
-      const dateKey = new Date(assignment.createdAt).toISOString().split("T")[0];
-      if (!acc[dateKey]) acc[dateKey] = [];
-      acc[dateKey].push(assignment);
-      return acc;
-    },
-    {}
+  // **Student dashboard шиг ангилж харуулах**
+  const uncheckedAssignments = assignments.filter(
+    (a) => !(a._count?.submissions > 0)
   );
-
-  const sortedDates = Object.keys(groupedAssignments).sort(
-    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  const checkedAssignments = assignments.filter(
+    (a) => a._count?.submissions > 0
   );
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("mn-MN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   return (
     <div className="min-h-screen flex justify-center py-8">
@@ -124,7 +111,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
             <div className="w-[233px] flex-shrink-0">
               <div className="border p-6 rounded-xl flex flex-col">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Миний ангиуд</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Миний ангиуд
+                  </h3>
                   <AddClass addClassroom={addClassroom} />
                 </div>
 
@@ -144,7 +133,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                           : "bg-blue-500 hover:bg-blue-600"
                       }`}
                     >
-                      <span className="font-semibold text-white">{c.roomName} анги</span>
+                      <span className="font-semibold text-white">
+                        {c.roomName} анги
+                      </span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -166,7 +157,9 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">
-                      {activeClassroom ? `${activeClassroom.roomName} Анги` : "Анги сонгоно уу"}
+                      {activeClassroom
+                        ? `${activeClassroom.roomName} Анги`
+                        : "Анги сонгоно уу"}
                     </h2>
                     <p className="text-gray-600">
                       Ангийн код{" "}
@@ -191,63 +184,102 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
                 <div className="flex-1 min-h-[200px] overflow-y-auto">
                   {loading ? (
                     <div className="space-y-8">
-                      {Array(3).fill(0).map((_, dateIdx) => (
-                        <div key={dateIdx}>
-                          <div className="flex items-center space-x-4 my-6">
-                            <Skeleton className="h-4 w-32 rounded" />
-                            <div className="flex-1 border-t border-gray-300" />
-                          </div>
+                      {Array(3)
+                        .fill(0)
+                        .map((_, dateIdx) => (
+                          <div key={dateIdx}>
+                            <div className="flex items-center space-x-4 my-6">
+                              <Skeleton className="h-4 w-32 rounded" />
+                              <div className="flex-1 border-t border-gray-300" />
+                            </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              {Array(3)
+                                .fill(0)
+                                .map((_, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="space-y-2 p-4 border rounded-xl bg-white"
+                                  >
+                                    <Skeleton className="h-6 w-3/4 rounded" />
+                                    <Skeleton className="h-4 w-full rounded" />
+                                    <Skeleton className="h-4 w-5/6 rounded" />
+                                    <Skeleton className="h-8 w-full rounded" />
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <>
+                      {uncheckedAssignments.length > 0 && (
+                        <div className="mb-8">
+                          <h4 className="text-xl font-normal text-gray-800 mb-4 flex items-center">
+                            Дуусаагүй
+                            <span className="flex-1 border-t border-gray-300 ml-4" />
+                          </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {Array(3).fill(0).map((_, idx) => (
-                              <div key={idx} className="space-y-2 p-4 border rounded-xl bg-white">
-                                <Skeleton className="h-6 w-3/4 rounded" />
-                                <Skeleton className="h-4 w-full rounded" />
-                                <Skeleton className="h-4 w-5/6 rounded" />
-                                <Skeleton className="h-8 w-full rounded" />
-                              </div>
+                            {uncheckedAssignments.map((a) => (
+                              <AssignmentItem
+                                key={a.id}
+                                id={a.id}
+                                title={a.title}
+                                description={a.description || ""}
+                                submissions={a._count?.submissions ?? 0}
+                                createdAt={a.createdAt}
+                                dueDate={a.dueDate || ""}
+                              />
                             ))}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : assignments.length > 0 ? (
-                    sortedDates.map((date) => (
-                      <div key={date} className="mb-8">
-                        <div className="flex items-center space-x-4 my-6">
-                          <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
-                            {formatDate(date)}
-                          </span>
-                          <div className="flex-1 border-t border-gray-300" />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {groupedAssignments[date].map((a) => (
-                            <AssignmentItem
-                              key={a.id}
-                              id={a.id}
-                              title={a.title}
-                              description={a.description || ""}
-                              submissions={a._count?.submissions ?? 0}
-                              createdAt={a.createdAt}
-                              dueDate={a.dueDate || ""}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
-                      {!activeClassroomId ? (
-                        <p className="text-lg font-medium">Эхлээд ангиа сонгоно уу</p>
-                      ) : (
-                        <>
-                          <CirclePlus size={48} className="mb-4 text-gray-400" />
-                          <p className="text-lg font-medium">Одоогоор даалгавар байхгүй байна</p>
-                          <p className="text-sm">Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй</p>
-                        </>
                       )}
-                    </div>
+
+                      {checkedAssignments.length > 0 && (
+                        <div className="mb-8">
+                          <h4 className="text-xl font-normal text-gray-800 mb-4 flex items-center">
+                            Дууссан
+                            <span className="flex-1 border-t border-gray-300 ml-4" />
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {checkedAssignments.map((a) => (
+                              <AssignmentItem
+                                key={a.id}
+                                id={a.id}
+                                title={a.title}
+                                description={a.description || ""}
+                                submissions={a._count?.submissions ?? 0}
+                                createdAt={a.createdAt}
+                                dueDate={a.dueDate || ""}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {assignments.length === 0 && (
+                        <div className="flex flex-col items-center justify-center h-full text-gray-500 py-10">
+                          {!activeClassroomId ? (
+                            <p className="text-lg font-medium">
+                              Эхлээд ангиа сонгоно уу
+                            </p>
+                          ) : (
+                            <>
+                              <CirclePlus
+                                size={48}
+                                className="mb-4 text-gray-400"
+                              />
+                              <p className="text-lg font-medium">
+                                Одоогоор даалгавар байхгүй байна
+                              </p>
+                              <p className="text-sm">
+                                Шинэ даалгавар үүсгэх товчийг дарж эхлүүлээрэй
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

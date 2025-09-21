@@ -2,7 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import { CalendarDays } from "lucide-react";
 interface AssignmentItemProps {
   id: number;
   title: string;
@@ -52,31 +52,35 @@ export const AssignmentItem = ({
       })()
     : "No date";
 
-  
   const now = new Date();
-  let dateColor = "bg-white"; 
+  let dateColor = "bg-white";
 
   if (parsedDueDate) {
     const diff = parsedDueDate.getTime() - now.getTime();
     if (diff < 0) {
-      dateColor = "bg-gray-200"; 
+      dateColor = "bg-gray-200";
     }
   }
 
   return (
     <div
-      className={`rounded-2xl p-6 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition ${dateColor}`}
-      onClick={() => router.push(`/teacherAssignmentDetail/${id}?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`)}
+      className={`rounded-2xl p-8 border-[1px] cursor-pointer hover:shadow-xl overflow-hidden max-h-[150px] min-h-[150px] transition ${dateColor}`}
+      onClick={() =>
+        router.push(
+          `/teacherAssignmentDetail/${id}?title=${encodeURIComponent(
+            title
+          )}&description=${encodeURIComponent(description)}`
+        )
+      }
     >
       <div className="flex flex-col gap-2">
-        <h3 className="text-sm text-gray-800">Үүсгэсэн: {createdDateStr}</h3>
+        <h3 className="text-sm text-gray-800 flex items-center gap-1.5">
+          <CalendarDays /> {createdDateStr}
+        </h3>
         <div>
           <h4 className="text-l font-semibold text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis">
             {title}
           </h4>
-          <p className="text-gray-600 font-medium mt-1 line-clamp-1">
-            {description}
-          </p>
         </div>
         <div className="flex items-center justify-between">
           <div className="text-xs text-gray-500">
@@ -85,7 +89,11 @@ export const AssignmentItem = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/teacherAssignmentDetail/${id}?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`);
+              router.push(
+                `/teacherAssignmentDetail/${id}?title=${encodeURIComponent(
+                  title
+                )}&description=${encodeURIComponent(description)}`
+              );
             }}
           >
             <ChevronRight />

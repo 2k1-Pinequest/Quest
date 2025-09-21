@@ -77,14 +77,14 @@ export default function StudentDashboard() {
 
   const now = new Date();
 
-  const incompleteAssignments = assignments.filter(a => {
-    if (!a.dueDate) return true; 
-    return new Date(a.dueDate) >= now; 
+  const incompleteAssignments = assignments.filter((a) => {
+    if (!a.dueDate) return true;
+    return new Date(a.dueDate) >= now;
   });
 
-  const completedAssignments = assignments.filter(a => {
-    if (!a.dueDate) return false; 
-    return new Date(a.dueDate) < now; 
+  const completedAssignments = assignments.filter((a) => {
+    if (!a.dueDate) return false;
+    return new Date(a.dueDate) < now;
   });
 
   return (
@@ -101,24 +101,34 @@ export default function StudentDashboard() {
             <div>
               <h1 className="text-3xl font-normal text-gray-800">
                 {studentName || <Skeleton className="h-8 w-64 rounded" />}
-                {!studentName && room?.roomName && <Skeleton className="h-6 w-32 mt-2 rounded" />}
+                {!studentName && room?.roomName && (
+                  <Skeleton className="h-6 w-32 mt-2 rounded" />
+                )}
               </h1>
               <div className="text-sm text-gray-500 mt-1">
-                Ангийн код: {room?.code || <Skeleton className="h-4 w-20 rounded inline-block" />}
+                Ангийн код:{" "}
+                {room?.code || (
+                  <Skeleton className="h-4 w-20 rounded inline-block" />
+                )}
               </div>
             </div>
           </div>
         </header>
 
         <main className="space-y-8">
-          <h3 className="text-2xl font-normal text-gray-800">Ирсэн даалгавар</h3>
+          <h3 className="text-2xl font-normal text-gray-800">
+            Ирсэн даалгавар
+          </h3>
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array(6)
                 .fill(0)
                 .map((_, idx) => (
-                  <div key={idx} className="space-y-2 p-4 border rounded-xl bg-white">
+                  <div
+                    key={idx}
+                    className="space-y-2 p-4 border rounded-xl bg-white"
+                  >
                     <Skeleton className="h-6 w-3/4 rounded" />
                     <Skeleton className="h-4 w-full rounded" />
                     <Skeleton className="h-4 w-5/6 rounded" />
