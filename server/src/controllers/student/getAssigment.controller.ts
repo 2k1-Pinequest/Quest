@@ -1,22 +1,33 @@
+// src/controllers/student/getAssignments.controller.ts
+
 import { Request, Response } from "express";
 import prisma from "../../utils/prisma";
 
-export const GetAssignment = async (req: Request, res: Response) => {
+export const getAssignmentsForStudent = async (req: Request, res: Response) => {
   try {
     const { roomId } = req.params;
-
-    if (!roomId) {
-      return res.status(400).json({ error: "roomId шаардлагатай" });
-    }
+    const studentId = req.query.studentId;
 
     const assignments = await prisma.assignment.findMany({
       where: { roomId: Number(roomId) },
-      orderBy: { createdAt: "desc" },
+      include: {
+        // Энэ мөр нь хамгийн чухал өөрчлөлт юм.
+        submissions: {
+          where: { studentId: Number(studentId) },
+        },
+      },
     });
 
-    res.json(assignments);
-  } catch (err) {
-    console.error("GetAssignment error:", err);
-    res.status(500).json({ error: "Failed to fetch assignments" });
+    // Фронтендад илүү хялбар байлгахын тулд мэдээллийг хэлбэржүүлж байна.
+    const formattedAssignments = assignments.map((a) => ({
+      ...a,
+      studentSubmission: a.submissions[0] || null,
+      submissions: undefined,
+    }));
+
+    res.json(formattedAssignments);
+  } catch (err: any) {
+    console.error("Error fetching student assignments:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
