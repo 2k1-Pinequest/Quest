@@ -5,6 +5,7 @@ import { createTeacher } from "../controllers/teacher/sign-up.controller";
 import { createAssignmentForRoom } from "../controllers/teacher/CreateAssigment.controller";
 import { getStudentAssignmentsByAssignmentId } from "../controllers/GeminiStudent/getStudentAssignmentsByAssignmentId.controller";
 import { approveByTeacher } from "../controllers/teacher/approveAssignment.controller";
+import { getAssignmentsWithStatus } from "../controllers/teacher/TeacherisChecked.controller";
 
 
 
@@ -17,6 +18,8 @@ teacherRouter.post("/createAssignment", createAssignmentForRoom)
 
 teacherRouter.get("/aiAssigments/:assignmentId", getStudentAssignmentsByAssignmentId)
 
-teacherRouter.put("/approvedSub/:submissionId", approveByTeacher)
+teacherRouter.put("/approvedSub/:submissionId", approveByTeacher);
+
+teacherRouter.get("/isChecked/:roomId", getAssignmentsWithStatus)
 
 export default teacherRouter;

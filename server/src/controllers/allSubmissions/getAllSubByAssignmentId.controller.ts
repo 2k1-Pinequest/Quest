@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../../utils/prisma";
 
-export const getSubmissionsByAssignmentId = async (
+export const getAllStudentsSubmissionsWithAI = async (
   req: Request,
   res: Response
 ) => {
@@ -39,8 +39,8 @@ export const getSubmissionsByAssignmentId = async (
     };
 
     res.json(result);
-  } catch (err) {
-    console.error("Error fetching submissions:", err);
-    res.status(500).json({ error: "Failed to fetch submissions" });
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 };

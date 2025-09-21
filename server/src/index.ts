@@ -46,7 +46,7 @@ app.use("/student", studentRouter);
 app.use("/studentAssign", assignmentRouter);
 
 app.use("/assignments", getAssignmentRouter);
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use("/", router);
 
