@@ -13,7 +13,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Assignment, studentAssignment } from "@/types";
 
-
 interface JwtPayload {
   id: string;
   studentName: string;
@@ -32,7 +31,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   } | null>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  
 
   // const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -47,7 +45,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFiles = Array.from(e.dataTransfer.files);
@@ -78,7 +75,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     }
   }, []);
 
-  /////////////////////////////
+  ///////////////////////////// SUBMISSION BAIGAA ESEH
   useEffect(() => {
     if (!assignment?.id) return;
 
@@ -119,10 +116,11 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // submission байгаа эсэхийг шалгана
       if (response.data?.submission) {
         toast.success("Гэрийн даалгавар амжилттай илгээгдлээ ✅");
-        setSubmitted(true);
+        // шууд submission-ийг шинэчилнэ
+        setSubmission(response.data.submission);
+        setFiles([]); // сонгосон файлуудыг цэвэрлэж болно
       } else {
         toast.error("Даалгавар хадгалах явцад алдаа гарлаа");
       }
@@ -164,9 +162,19 @@ export default function Student({ assignment }: { assignment: Assignment }) {
             <AlertCircle className="h-4 w-4" />
             Даалгавар оруулахдаа анхаарах зүйлс:
           </p>
-          <ul className="pl-4 list-disc text-gray-700 space-y-1">
-            <li>📸 Зургаа тод, төвлөрсөн, уншиж болохуйц байлгаарай</li>
-            <li>🤖 AI анхны үнэлгээ хийх ба багш эцсийн үнэлгээ өгнө</li>
+          <ul className="pl-5 space-y-2 text-sm text-gray-600">
+            <li className="flex items-start gap-2">
+              <span>📸</span>
+              <span>Зургаа тод дарна уу</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span>🤖</span>
+              <span>AI анхны үнэлгээ хийх ба багш эцсийн үнэлгээ өгнө</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span>⚠️</span>
+              <span>Нэг л удаа явуулах учир анхааралтай явуулна уу</span>
+            </li>
           </ul>
         </div>
 
@@ -174,110 +182,106 @@ export default function Student({ assignment }: { assignment: Assignment }) {
         <Card className="bg-white shadow-sm border border-gray-200 rounded-2xl">
           <CardHeader>
             <CardTitle className="text-lg font-medium">
-              {submitted
+              {submission
                 ? "Даалгавар илгээгдсэн ✅"
+                : files.length > 0
+                ? "Даалгавар бэлэн, илгээхэд бэлэн"
                 : "Гэрийн даалгавраа оруулах"}
             </CardTitle>
           </CardHeader>
+
           <CardContent className="space-y-4">
-            <Label
-              htmlFor="imageUpload"
-              className="text-sm font-medium text-gray-700"
-            >
-              Даалгаврын зураг оруулах
-            </Label>
-
-            {/* Upload button дээр дарж зураг нэмэх */}
-            <div className="flex justify-end mb-2">
-              <button
-                onClick={() => document.getElementById("imageUpload")?.click()}
-                className="text-blue-600 text-sm font-medium hover:underline"
-              >
-                Зураг нэмэх
-              </button>
-            </div>
-
-            <div
-              onDrop={handleDrop}
-              className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center bg-gray-50"
-            >
-              {files.length === 0 ? (
-                <p className="text-gray-500 text-sm">
-                  Зургаа чирж эсвэл энд харагдахгүй upload хийнэ үү
-                </p>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {files.map((f, idx) => (
-                    <div key={idx} className="relative">
-                      <img
-                        src={URL.createObjectURL(f)}
-                        alt={`Зураг ${idx + 1}`}
-                        className="w-full h-32 object-cover rounded border"
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setFiles((prev) => prev.filter((_, i) => i !== idx));
-                        }}
-                        className="absolute top-1 right-1 bg-white text-red-500 rounded-full shadow p-1 hover:bg-red-500 hover:text-white"
+            {!submission ? (
+              // Хэрэв submission байхгүй бол upload хэсэг
+              <div className="space-y-4">
+                {files.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {files.map((f, idx) => (
+                      <div
+                        key={idx}
+                        className="relative w-full h-28 rounded-lg overflow-hidden border shadow-sm"
                       >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+                        <img
+                          src={URL.createObjectURL(f)}
+                          alt={`Зураг ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFiles((prev) =>
+                              prev.filter((_, i) => i !== idx)
+                            );
+                          }}
+                          className="absolute top-1 right-1 bg-white/90 text-red-500 rounded-full p-1 hover:bg-red-500 hover:text-white shadow transition"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* Upload Button */}
+                <div
+                  onDrop={handleDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                  className="flex justify-center"
+                >
+                  <label
+                    htmlFor="imageUpload"
+                    className="w-full flex justify-center items-center gap-2 py-1 rounded-xl text-sm font-medium cursor-pointer rounded-xl border border-dashed border-gray-400 text-gray-600 hover:bg-gray-50 cursor-pointer transition"
+                  >
+                    <span className="text-lg font-medium">➕</span>
+                    <span className="text-sm font-medium">Зураг нэмэх</span>
+                  </label>
+                  <input
+                    id="imageUpload"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </div>
-              )}
 
-              {submission ? (
-                <div className="space-y-4">
+                {/* Preview images (just below upload) */}
+
+                {/* Submit Button */}
+                <Button
+                  onClick={handleSubmit}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-sm font-medium"
+                >
+                  Даалгавар илгээх
+                </Button>
+              </div>
+            ) : (
+              // Хэрэв submission байгаа бол preview хэсэг
+              <div className="space-y-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                <p className="text-gray-600 text-sm font-medium flex items-center gap-1">
+                  ✅ Та өмнө нь даалгавраа илгээсэн байна. Давхар илгээх
+                  боломжгүй
+                </p>
+                {submission.fileUrl && submission.fileUrl.trim() !== "" ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    {submission.fileUrl
+                      .split(",")
+                      .filter((url: string) => url.trim() !== "")
+                      .map((url: string, idx: number) => (
+                        <img
+                          key={idx}
+                          src={url}
+                          alt={`Даалгаврын зураг ${idx + 1}`}
+                          className="w-full h-32 object-cover rounded-lg shadow-sm border"
+                        />
+                      ))}
+                  </div>
+                ) : (
                   <p className="text-gray-500 text-sm">
-                    Та өмнө нь даалгавраа илгээсэн байна. Давхар илгээх
-                    боломжгүй ✅
+                    Даалгаврын зураг байхгүй байна.
                   </p>
-
-                  {submission.fileUrl ? (
-                    <div className="grid grid-cols-2 gap-4">
-                      {submission.fileUrl
-                        .split(",")
-                        .filter((url: string) => url.trim() !== "")
-                        .map((url: string, idx: number) => (
-                          <img
-                            key={idx}
-                            src={url}
-                            alt={`Даалгаврын зураг ${idx + 1}`}
-                            className="w-full rounded-lg shadow"
-                          />
-                        ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm">
-                      Даалгаврын зураг байхгүй байна.
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <Input
-                  id="imageUpload"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  className="block w-full text-sm text-gray-700
-               file:mr-4 file:py-2 file:px-4
-               file:rounded-lg file:border-0
-               file:text-sm file:font-semibold
-               file:bg-blue-50 file:text-blue-600
-               hover:file:bg-blue-100"
-                />
-              )}
-            </div>
-
-            <Button
-              onClick={handleSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-sm font-medium mt-4"
-            >
-              Даалгавар илгээх
-            </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
