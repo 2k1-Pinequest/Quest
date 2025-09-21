@@ -4,10 +4,13 @@ import prisma from "../../utils/prisma";
 export const approveByTeacher = async (req: Request, res: Response) => {
   try {
     const { submissionId } = req.params;
-    const {teacherFeedback, teacherScore} = req.body
+    const { teacherFeedback, teacherScore } = req.body;
 
-   const approvedSubmissionByTeacher =  await prisma.studentSubmission.update({
-      where: { id: Number(submissionId) },
+    // Correctly structured update call with the 'id' in the 'where' clause
+    const approvedSubmissionByTeacher = await prisma.studentSubmission.update({
+      where: {
+        id: Number(submissionId),
+      },
       data: {
         status: "APPROVED",
         feedback: teacherFeedback,
@@ -16,7 +19,7 @@ export const approveByTeacher = async (req: Request, res: Response) => {
     });
 
     res.json(approvedSubmissionByTeacher);
-  } catch (err) {
+  } catch (err: any) {
     console.error("Error fetching assignments by roomId:", err);
     res.status(500).json({ message: "Internal server error" });
   }
