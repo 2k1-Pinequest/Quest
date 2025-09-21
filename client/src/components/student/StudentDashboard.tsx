@@ -86,6 +86,8 @@ export default function StudentDashboard() {
 
   const incompleteAssignments = assignments.filter((a) => {
     const submission = a.studentSubmission;
+    console.log("submission incompleted", submission);
+    
     // Хэрэв хариулт байхгүй эсвэл хариулт нь APPROVED статусгүй бол дуусаагүй гэж үзнэ.
     return !submission || submission.status !== "APPROVED";
   });
