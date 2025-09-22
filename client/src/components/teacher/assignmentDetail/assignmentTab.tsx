@@ -7,11 +7,8 @@ import { Submission } from "@/types";
 import SubmissionsAssignments from "./Submissions/SubmissionAssignments";
 import { useParams } from "next/navigation";
 
-interface AssignmentTabProps {
-  title: string;
-  description: string;
-}
-export const AssignmentTab = ({ title, description }: AssignmentTabProps) => {
+
+export const AssignmentTab = () => {
   const [selectedTab, setSelectedTab] = useState("submissions");
 
 

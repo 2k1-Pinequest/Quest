@@ -6,7 +6,6 @@ import { CalendarDays } from "lucide-react";
 interface AssignmentItemProps {
   id: number;
   title: string;
-  description: string;
   submissions: number;
   approvedSubmissions?: number;
   createdAt: string;
@@ -17,13 +16,13 @@ interface AssignmentItemProps {
 export const AssignmentItem = ({
   id,
   title,
-  description,
   submissions,
   createdAt,
   dueDate,
   isChecked,
-  approvedSubmissions
+  approvedSubmissions,
 }: AssignmentItemProps) => {
+  
   const router = useRouter();
 
   const parsedCreatedAt = createdAt ? new Date(createdAt) : null;
@@ -89,9 +88,7 @@ export const AssignmentItem = ({
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/teacherAssignmentDetail/${id}?title=${encodeURIComponent(
-                  title
-                )}&description=${encodeURIComponent(description)}`
+                `/teacherAssignmentDetail/${id}`
               );
             }}
           >

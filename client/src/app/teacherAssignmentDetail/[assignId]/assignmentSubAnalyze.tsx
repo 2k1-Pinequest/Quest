@@ -2,17 +2,27 @@
 
 import { TeacherAssignDetailHeader } from "@/components/teacher/assignmentDetail/assignmentdetailHeader";
 import { AssignmentTab } from "@/components/teacher/assignmentDetail/assignmentTab";
-interface AssignmentDetailsProps {
-  title: string;
-  description: string;
-}
-export const AssignmentDetails = ({ title, description }: AssignmentDetailsProps) => {
-  console.log("test", title)
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export const AssignmentDetails = () => {
+  const params = useParams();
+   const [assignmentData, setAssignmentData] = useState<any>(null);
+   useEffect(() => {
+    if (!params.assignId) return;
+
+    axios
+      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .then((res) => setAssignmentData(res.data))
+      .catch((err) => console.error(err));
+  }, [params.assignId]);
+
   return (
     <div className="min-h-screen flex justify-center px-4">
       <div className="w-full max-w-[1200px]">
-        <TeacherAssignDetailHeader />
-        <AssignmentTab title={title} description={description} />
+        <TeacherAssignDetailHeader assignment={assignmentData?.assignment}/>
+        <AssignmentTab />
       </div>
     </div>
   );

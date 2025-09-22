@@ -1,4 +1,5 @@
 "use client";
+import { Trash2 } from "lucide-react";
 import { AddClass } from "./addRoom";
 import { ClassroomSkeleton } from "./ClassroomSkeleton";
 
@@ -14,7 +15,7 @@ interface Props {
   setActiveClassroomId: (id: number) => void;
   deleteClassroom: (id: number, name: string) => void;
   addClassroom: (roomName: string) => void;
-  loading?: boolean; 
+  loading?: boolean;
 }
 
 export const ClassroomList = ({
@@ -22,9 +23,10 @@ export const ClassroomList = ({
   activeClassroomId,
   setActiveClassroomId,
   addClassroom,
+  deleteClassroom,
   loading = false,
 }: Props) => {
-  if (loading) return <ClassroomSkeleton />; 
+  if (loading) return <ClassroomSkeleton />;
 
   return (
     <div className="w-[233px] flex-shrink-0">
@@ -50,7 +52,19 @@ export const ClassroomList = ({
                   : "bg-blue-400 hover:bg-blue-600"
               }`}
             >
-              <span className="font-semibold text-white">{c.roomName} анги</span>
+              <span className="font-semibold text-white">
+                {c.roomName} анги
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteClassroom(c.id, c.roomName);
+                }}
+                className="p-1 rounded-full text-gray-200 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:scale-110 transition-all duration-200"
+                title="Delete"
+              >
+                <Trash2 size={18} />
+              </button>
             </div>
           ))}
         </div>
