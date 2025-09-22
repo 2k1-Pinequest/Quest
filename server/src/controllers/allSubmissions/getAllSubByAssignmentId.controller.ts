@@ -13,10 +13,11 @@ export const getAllStudentsSubmissionsWithAI = async (
       include: {
         submissions: {
           include: {
-            student: true, // student info-г оруулж байна
+            student: true,
           },
         },
         aiAnalyses: true,
+         room: true, 
       },
     });
 
@@ -24,22 +25,38 @@ export const getAllStudentsSubmissionsWithAI = async (
       return res.status(404).json({ message: "Assignment not found" });
     }
 
-    // Submissions + AI анализыг studentId дээр тулгаж нэгтгэж байна
-    const merged = assignment.submissions.map((sub) => {
-      const ai = assignment.aiAnalyses.find(
-        (a) => a.studentId === sub.studentId
-      );
+    // Хамгийн сүүлийн submission-г сурагч бүрээр сонгох
+    const latestSubmissionsMap: Record<number, any> = {};
+    assignment.submissions.forEach(sub => {
+      const existing = latestSubmissionsMap[sub.studentId];
+      if (!existing || new Date(sub.submittedAt) > new Date(existing.submittedAt)) {
+        latestSubmissionsMap[sub.studentId] = sub;
+      }
+    });
+
+    // AI анализыг холбох
+    const merged = Object.values(latestSubmissionsMap).map(sub => {
+      const ai = assignment.aiAnalyses.find(a => a.studentId === sub.studentId);
       return {
         ...sub,
         aiAnalysis: ai || null,
       };
     });
 
-    // Assignment-ийг буцаахдаа submissions-ийг merged болгож байна
+    // Эцсийн JSON-д assignment object-ийг submissions-аас гадна оруулах
     const result = {
-      id: assignment.id,
-      title: assignment.title,
       submissions: merged,
+      assignment: {
+        id: assignment.id,
+        roomId: assignment.roomId,
+        roomName: assignment.room?.roomName || null,
+        title: assignment.title,
+        description: assignment.description,
+        textContent: assignment.textContent,
+        dueDate: assignment.dueDate,
+        createdAt: assignment.createdAt,
+        updatedAt: assignment.updatedAt,
+      },
     };
 
     res.json(result);
@@ -48,3 +65,4 @@ export const getAllStudentsSubmissionsWithAI = async (
     res.status(500).json({ error: err.message });
   }
 };
+
