@@ -19,7 +19,7 @@ model Teacher {
 
 model Student {
   id          Int    @id @default(autoincrement())
-  studentName String
+  studentName String 
   email       String @unique
   password    String
   roomId      Int?
