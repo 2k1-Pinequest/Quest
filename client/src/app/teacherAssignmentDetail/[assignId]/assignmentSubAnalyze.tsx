@@ -5,10 +5,24 @@ import { AssignmentTab } from "@/components/teacher/assignmentDetail/assignmentT
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+interface Assignment {
+  roomName?: string;
+  code?: string;
+  id: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  studentSubmissions?: {
+    id: number;
+    studentName: string;
+    score: number | null;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+  }[];
+}
 export const AssignmentDetails = () => {
   const params = useParams();
-   const [assignmentData, setAssignmentData] = useState<any>(null);
+   const [assignmentData, setAssignmentData] = useState<{ assignment: Assignment } | null>(null);
+  
    useEffect(() => {
     if (!params.assignId) return;
 
