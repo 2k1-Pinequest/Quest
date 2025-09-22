@@ -32,7 +32,7 @@ export default function ActionButton() {
             </div>
           </Link>
 
-          <Link href={"/studentRoom"}>
+          <Link href={"/studentJoinRoom"}>
             <div className="p-8 w-full bg-white h-[300px] rounded-2xl border transform hover:scale-105 transition-all duration-300 cursor-pointer group flex flex-col gap-7">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <Users className="w-10 h-10 text-white" />
