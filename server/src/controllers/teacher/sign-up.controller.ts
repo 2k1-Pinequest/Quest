@@ -22,26 +22,22 @@ export const createTeacher = async (req: Request, res: Response) => {
       },
     });
 
-    // ✅ JWT token үүсгэх
     const token = jwt.sign(
       { id: teacher.id, email: teacher.email },
       process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );
 
-    // ✅ Cookie-д хадгалах (optional)
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
-      // secure: process.env.NODE_ENV === "production", // HTTPS-д true
     });
 
-    // ✅ Response-д багш info + token буцаах
     res.status(201).json({
       message: "Teacher created successfully",
       teacher,
       token,
-      hasRoom: false, // dashboard руу ороход хэрэгтэй бол нэмнэ
+      hasRoom: false,
     });
   } catch (err: any) {
     res.status(500).json({ message: "Server error", error: err.message });
