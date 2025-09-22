@@ -49,7 +49,7 @@ export const AssignmentList = ({
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] text-gray-500 text-center">
         {!activeClassroomId ? (
-          <p className="text-lg font-medium">Эхлээд ангиа сонгоно уу</p>
+          <p className="text-lg font-medium">Эхлээд ангиа үүсгэнэ үү</p>
         ) : (
           <>
             <CirclePlus size={48} className="mb-4 text-gray-400" />

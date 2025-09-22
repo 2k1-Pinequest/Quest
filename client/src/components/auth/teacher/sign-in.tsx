@@ -11,15 +11,13 @@ interface FormInputs {
 
 interface TeacherLoginProps {
   onSuccess?: (teacherId: number, hasRoom: boolean) => void;
+  onSwitchToSignup?: () => void;
 }
 
-const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
+const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess, onSwitchToSignup }) => {
   const [message, setMessage] = useState<string | null>(null);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormInputs>();
+
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormInputs>();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
@@ -28,12 +26,17 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
         data,
         { withCredentials: true }
       );
+
       localStorage.setItem("token", res.data.token);
-      setMessage("Амжилттай нэвтэрлээ!");
-      setTimeout(() => onSuccess?.(res.data.teacher.id, res.data.hasRoom), 1000);
+
+      onSuccess?.(res.data.teacher.id, res.data.hasRoom);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-      setMessage(error.response?.data?.message || "Нэвтрэхэд алдаа гарлаа");
+      setMessage(
+        error.response?.data?.message ||
+        JSON.stringify(error.response?.data) ||
+        "Нэвтрэхэд алдаа гарлаа"
+      );
     }
   };
 
@@ -59,32 +62,22 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <input
-              {...register("email", {
-                required: "И-мэйл оруулах шаардлагатай",
-              })}
+              {...register("email", { required: "И-мэйл оруулах шаардлагатай" })}
               type="email"
               placeholder="И-мэйл"
               className="w-full border px-4 py-3 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
             <input
-              {...register("password", {
-                required: "Нууц үг оруулах шаардлагатай",
-              })}
+              {...register("password", { required: "Нууц үг оруулах шаардлагатай" })}
               type="password"
               placeholder="Нууц үг"
               className="w-full border px-4 py-3 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
           <button
@@ -98,12 +91,13 @@ const TeacherLogin: React.FC<TeacherLoginProps> = ({ onSuccess }) => {
 
         <p className="text-sm text-center mt-5 text-gray-600">
           Бүртгэлгүй бол{" "}
-          <a
-            href="/teacherRoom/sign-up"
+          <button
+            type="button"
+            onClick={onSwitchToSignup}
             className="text-blue-600 hover:underline font-medium"
           >
             энд дарж бүртгүүлнэ үү
-          </a>
+          </button>
         </p>
       </div>
     </div>

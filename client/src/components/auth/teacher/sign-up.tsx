@@ -11,10 +11,11 @@ interface FormInputs {
 }
 
 interface TeacherSignupProps {
-  onSuccess?: () => void;
+  onSuccess?: (teacherId: number, hasRoom: boolean) => void;
+  onSwitchToLogin?: () => void;
 }
 
-const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
+const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess, onSwitchToLogin }) => {
   const [message, setMessage] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormInputs>();
@@ -23,12 +24,24 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/teacher/sign-up`, data, { withCredentials: true });
-      setMessage("Амжилттай бүртгэгдлээ! Одоо нэвтрэх боломжтой.");
-      setTimeout(() => onSuccess?.(), 1500);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/teacher/sign-up`,
+        data,
+        { withCredentials: true }
+      );
+
+      // Token-г хадгалах
+      localStorage.setItem("token", res.data.token);
+
+      // Шууд dashboard руу оруулах
+      onSuccess?.(res.data.teacher.id, res.data.hasRoom);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
-      setMessage(error.response?.data?.message || "Бүртгэл хийхэд алдаа гарлаа");
+      setMessage(
+        error.response?.data?.message ||
+        JSON.stringify(error.response?.data) ||
+        "Бүртгэл хийхэд алдаа гарлаа"
+      );
     }
   };
 
@@ -41,10 +54,11 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
 
         {message && (
           <div
-            className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${message.includes("Амжилттай")
+            className={`mb-4 p-3 rounded-lg text-center text-sm font-medium ${
+              message.includes("Амжилттай")
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-700"
-              }`}
+            }`}
           >
             {message}
           </div>
@@ -100,9 +114,13 @@ const TeacherSignup: React.FC<TeacherSignupProps> = ({ onSuccess }) => {
 
         <p className="text-sm text-center mt-5 text-gray-600">
           Бүртгэлтэй бол{" "}
-          <a href="/teacherRoom/sign-in" className="text-blue-600 hover:underline font-medium">
+          <button
+            type="button"
+            onClick={onSwitchToLogin}
+            className="text-blue-600 hover:underline font-medium"
+          >
             энд дарж нэвтэрнэ үү
-          </a>
+          </button>
         </p>
       </div>
     </div>
