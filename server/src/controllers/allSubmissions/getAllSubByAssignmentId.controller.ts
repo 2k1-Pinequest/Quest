@@ -11,7 +11,11 @@ export const getAllStudentsSubmissionsWithAI = async (
     const assignment = await prisma.assignment.findUnique({
       where: { id: Number(assignmentId) },
       include: {
-        submissions: true,
+        submissions: {
+          include: {
+            student: true, // student info-г оруулж байна
+          },
+        },
         aiAnalyses: true,
       },
     });
@@ -33,9 +37,9 @@ export const getAllStudentsSubmissionsWithAI = async (
 
     // Assignment-ийг буцаахдаа submissions-ийг merged болгож байна
     const result = {
-      ...assignment,
+      id: assignment.id,
+      title: assignment.title,
       submissions: merged,
-      aiAnalyses: undefined, // хэрэггүй бол авч хаяж болно
     };
 
     res.json(result);
