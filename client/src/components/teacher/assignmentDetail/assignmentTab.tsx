@@ -1,57 +1,71 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { OverviewCarts } from "./Stats/overviewCarts";
 import { Distribution } from "./Stats/distribution";
-
-import { Submission } from "@/types";
 import SubmissionsAssignments from "./Submissions/SubmissionAssignments";
+import { useParams } from "next/navigation";
+import axios from "axios";
+import { Submission } from "@/types";
+
+interface SubmissionAPI {
+  id: number;
+  answerText: string | null;
+  fileUrl: string | null;
+  submittedAt: string;
+  student: {
+    studentName: string;
+    roomCode: string;
+  };
+  aiAnalysis?: {
+    score: number;
+    overall: string;
+    suggestions: string[];
+  } | null;
+}
 
 export const AssignmentTab = () => {
-  const [selectedTab, setSelectedTab] = useState("submissions");
+  const params = useParams();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true); // анх true
+  const [selectedTab, setSelectedTab] = useState<"submissions" | "stats">(
+    "submissions"
+  );
 
-  const currentRoom: { submissions: Submission[] } = {
-    submissions: [
-      {
-        id: "1",
-        studentName: "John",
-        roomCode: "AB123",
-        content: "My assignment text",
-        type: "text" as const,
-        aiScore: 85,
-        aiFeedback: "Good job",
-        aiSuggestions: ["approve"],
-        submittedAt: new Date(),
-      },
-      {
-        id: "2",
-        studentName: "Sara",
-        roomCode: "AB123",
-        content: "My assignment file",
-        type: "upload" as const,
-        aiScore: 92,
-        aiFeedback: "Excellent",
-        aiSuggestions: ["approve"],
-        submittedAt: new Date(),
-      },
-      {
-        id: "3",
-        studentName: "Boldoo",
-        roomCode: "AB123",
-        content: "Some text content",
-        type: "text" as const,
-        aiScore: 78,
-        aiFeedback: "Needs improvement",
-        aiSuggestions: ["review"],
-        submittedAt: new Date(),
-      },
-    ],
-  };
+  useEffect(() => {
+    if (!params.assignId) return;
+
+    setLoading(true);
+
+    axios
+      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .then((res) => {
+        const submissionsFromAPI: Submission[] = res.data.submissions.map(
+          (s: SubmissionAPI) => ({
+            id: s.id.toString(),
+            studentName: s.student.studentName,
+            roomCode: s.student.roomCode,
+            content: s.answerText || s.fileUrl || "",
+            type: s.fileUrl ? "upload" : "text",
+            aiScore: s.aiAnalysis?.score || 0,
+            aiFeedback: s.aiAnalysis?.overall || "",
+            aiSuggestions: s.aiAnalysis?.suggestions || [],
+            submittedAt: new Date(s.submittedAt),
+          })
+        );
+
+        setSubmissions(submissionsFromAPI);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, [params.assignId]);
 
   return (
     <div className="min-h-screen flex justify-center">
-      <div className="w-full max-w-[1200px] px-4 sm:px-6  bg-white rounded-2xl ">
+      <div className="w-full max-w-[1200px] px-4 sm:px-6 bg-white rounded-2xl">
         {/* Tabs */}
-        <nav className="flex bg-gray-100 rounded-lg  ">
+        <nav className="flex bg-gray-100 rounded-lg">
           <button
             onClick={() => setSelectedTab("submissions")}
             className={`flex items-center px-4 py-2 rounded-md transition-all duration-200 ${
@@ -60,7 +74,7 @@ export const AssignmentTab = () => {
                 : "text-gray-600 hover:text-gray-800"
             }`}
           >
-            Гэрийн Даалгавар ({currentRoom.submissions.length})
+            Гэрийн Даалгавар ({submissions.length})
           </button>
 
           <button
@@ -77,13 +91,17 @@ export const AssignmentTab = () => {
         </nav>
 
         {/* Content */}
-        <div className="mt-4 p-6">
-          {selectedTab === "submissions" ? (
+        <div className="mt-4 p-6 min-h-[200px]">
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-gray-500 text-lg">Уншиж байна...</p>
+            </div>
+          ) : selectedTab === "submissions" ? (
             <SubmissionsAssignments />
           ) : (
             <div className="flex flex-col gap-6">
-              <OverviewCarts submissions={currentRoom?.submissions} />
-              <Distribution submissions={currentRoom?.submissions} />
+              <OverviewCarts submissions={submissions} />
+              <Distribution submissions={submissions} />
             </div>
           )}
         </div>

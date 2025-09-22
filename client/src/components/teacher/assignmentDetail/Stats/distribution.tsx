@@ -5,6 +5,7 @@ interface ClassStatsProps {
 }
 
 export const Distribution = ({ submissions }: ClassStatsProps) => {
+  // 1. Score хуваарилалт
   const scoreDistribution = {
     excellent: submissions.filter((s) => s.aiScore >= 90).length,
     good: submissions.filter((s) => s.aiScore >= 80 && s.aiScore < 90).length,
@@ -13,6 +14,14 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
     needsWork: submissions.filter((s) => s.aiScore < 70).length,
   };
 
+  // 2. Дундаж оноо ба нийт submission
+  const totalSubmissions = submissions.length;
+  const averageScore =
+    submissions.length > 0
+      ? submissions.reduce((sum, s) => sum + s.aiScore, 0) / submissions.length
+      : 0;
+
+  // 3. Top AI зөвлөмжүүд
   const commonSuggestions = submissions
     .flatMap((s) => s.aiSuggestions)
     .reduce((acc, suggestion) => {
@@ -25,13 +34,20 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
     .slice(0, 5);
 
   return (
-    <div>
+    <div className="space-y-6">
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Score Distribution */}
         <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
             Онооны хуваарилалт
           </h3>
+
+          {/* Нийт submission ба дундаж оноо */}
+          <p className="text-sm text-gray-600 mb-4">
+            Нийт submission: {totalSubmissions} <br />
+            Дундаж оноо: {averageScore.toFixed(2)}
+          </p>
+
           <div className="space-y-4">
             {[
               {
@@ -62,11 +78,10 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
                     <div
                       className={`${color} h-4 rounded-full transition-all duration-300`}
                       style={{
-                        width: `${
-                          submissions.length > 0
-                            ? (count / submissions.length) * 100
-                            : 0
-                        }%`,
+                        width:
+                          totalSubmissions > 0
+                            ? (count / totalSubmissions) * 100 + "%"
+                            : "0%",
                       }}
                     ></div>
                   </div>
@@ -78,10 +93,11 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
             ))}
           </div>
         </div>
-        {/* Хамгийн нийтлэг AI зөвлөмжүүд */}
+
+        {/* Top AI зөвлөмжүүд */}
         <div className="bg-white rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">
-            Сурагчдаас ирж буй асуултууд
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            AI-аас ирж буй зөвлөмжүүд
           </h3>
           {topSuggestions.length > 0 ? (
             <ul className="space-y-2">
