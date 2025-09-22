@@ -1,4 +1,3 @@
-// components/StudentDashboard.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,9 +24,9 @@ export default function StudentDashboard() {
     code: string;
   } | null>(null);
 
-  useEffect(() => {
-    localStorage.setItem("studentId", "2");
-  }, []);
+  // useEffect(() => {
+  //   localStorage.setItem("studentId", "2");
+  // }, []);
 
   useEffect(() => {
     const fetchRoomInfo = async () => {
@@ -81,7 +80,7 @@ export default function StudentDashboard() {
   }, [room]);
 
   const handleGoBack = () => {
-    router.push("/");
+    router.push("/studentJoinRoom");
   };
 
   const incompleteAssignments = assignments.filter((a) => {
