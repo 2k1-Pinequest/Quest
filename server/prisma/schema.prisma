@@ -108,10 +108,12 @@ model StudentAssignmentAi {
   student    Student    @relation(fields: [studentId], references: [id])
   assignment Assignment @relation(fields: [assignmentId], references: [id])
 
+  uncertain String[]
+
   score       Int
   summary    String?
   mistakes    String[]
-  suggestions String[]
+  suggestions String[] //eniig alga bologh geheer database reset hiigdgchih geed bainaa iii iiii
   overall     String?
 
   @@unique([studentId, assignmentId]) // нэг даалгаварт 1 удаа л дүгнэлт
