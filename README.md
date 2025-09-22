@@ -63,8 +63,7 @@ This system reduces workload, enhances grading efficiency, ensures fair feedback
 - **PostgreSQL** – Store users, classrooms, submissions  
 
 ### ☁️ Deployment
-- **Vercel** – Frontend hosting  
-- **Railway / AWS** – Backend & database hosting  
+- **Vercel** – Frontend & backend & database hosting  
 
 ### 📂 Others
 - **PDF.js / Apache Tika** – Extract text from PDF/PPT  
