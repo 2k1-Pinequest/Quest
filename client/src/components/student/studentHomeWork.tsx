@@ -10,6 +10,7 @@ import axios from "axios";
 
 import { toast } from "sonner";
 import { Assignment, studentAssignment } from "@/types";
+import { number } from "framer-motion";
 
 interface JwtPayload {
   id: string;
@@ -22,6 +23,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   const [submission, setSubmission] = useState<studentAssignment | null>(null);
 
   const [loading, setLoading] = useState(false);
+  const [studentId, setStudentId] = useState<string | null>(null);
 
   const [studentData, setStudentData] = useState<{
     studentName: string;
@@ -29,7 +31,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   } | null>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -74,8 +75,13 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   useEffect(() => {
     if (!assignment?.id) return;
 
+    const studentId = localStorage.getItem("studentId");
+    if (!studentId) return;
+
+    setStudentId(studentId)
+
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/2`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/${studentId}`)
       .then((res) => {
         console.log("resss", res.data.submission);
 
@@ -106,7 +112,7 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/2`,
+        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/${studentId}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -128,6 +134,9 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   };
 
   console.log("fiel", files);
+
+  console.log("studentttt iddddd:", studentId);
+  
 
   if (!studentData) return <div>Ачааллаж байна...</div>;
 
