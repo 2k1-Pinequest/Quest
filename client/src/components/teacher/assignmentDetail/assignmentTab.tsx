@@ -1,16 +1,13 @@
 import { useState } from "react";
-import {  BarChart3 } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { OverviewCarts } from "./Stats/overviewCarts";
 import { Distribution } from "./Stats/distribution";
 
 import { Submission } from "@/types";
 import SubmissionsAssignments from "./Submissions/SubmissionAssignments";
-import { useParams } from "next/navigation";
-
 
 export const AssignmentTab = () => {
   const [selectedTab, setSelectedTab] = useState("submissions");
-
 
   const currentRoom: { submissions: Submission[] } = {
     submissions: [
@@ -49,9 +46,6 @@ export const AssignmentTab = () => {
       },
     ],
   };
-  
-
-  
 
   return (
     <div className="min-h-screen flex justify-center">

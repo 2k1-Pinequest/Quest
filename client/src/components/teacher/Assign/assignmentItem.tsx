@@ -22,7 +22,6 @@ export const AssignmentItem = ({
   isChecked,
   approvedSubmissions,
 }: AssignmentItemProps) => {
-  
   const router = useRouter();
 
   const parsedCreatedAt = createdAt ? new Date(createdAt) : null;
@@ -87,9 +86,7 @@ export const AssignmentItem = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                `/teacherAssignmentDetail/${id}`
-              );
+              router.push(`/teacherAssignmentDetail/${id}`);
             }}
           >
             <ChevronRight />

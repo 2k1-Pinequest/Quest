@@ -14,7 +14,6 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useParams } from "next/navigation";
 
-
 // Interface definitions (unchanged)
 interface Student {
   id: number;
@@ -74,12 +73,15 @@ export default function SubmissionsAssignments() {
   }, [params.assignId]);
 
   console.log("submissions", submissions);
-  
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">{assignment ? assignment.title : "Даалгавар"}</h1>
-      <h2>{assignment ? assignment.description : "Тайлбар байхгүй"}</h2>
+      <h1 className="text-2xl font-bold mb-4">
+        {assignment ? assignment.title : "Даалгавар"}
+      </h1>
+      <h2 className="mb-8">
+        {assignment ? assignment.description : "Тайлбар байхгүй"}
+      </h2>
 
       {submissions.map((s) => (
         <div
@@ -126,7 +128,7 @@ export default function SubmissionsAssignments() {
           </div>
 
           {/* AI анализ */}
-          <div className="flex-1 p-4 bg-gray-100 rounded">
+          <div className="flex-1 p-4 bg-gray-100 rounded-lg relative ">
             <h3 className="font-semibold mb-2">AI Analysis</h3>
             {s.aiAnalysis ? (
               <>
@@ -145,28 +147,28 @@ export default function SubmissionsAssignments() {
             ) : (
               <p>AI анализ байхгүй</p>
             )}
-            <ZuwUildel
-              submissionId={s.id}
-              aiAnalysis={s.aiAnalysis}
-              onSubmissionUpdated={() => {}}
-            />
+            <div className="absolute bottom-4 right-4">
+              <ZuwUildel
+                submissionId={s.id}
+                aiAnalysis={s.aiAnalysis}
+                onSubmissionUpdated={() => {}}
+              />
+            </div>
           </div>
         </div>
       ))}
 
-      {/* --- Full-screen Image Modal (Blur background, no white box) --- */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 backdrop-blur-sm" // Blur background
-          onClick={() => setSelectedImage(null)} // Close modal when clicking outside
+          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
         >
           <div
-            className="relative w-[90vw] h-[90vh] flex items-center justify-center" // No white background, padding, or shadow here
-            onClick={(e) => e.stopPropagation()} // Prevent click from closing modal if clicked on image area
+            className="relative w-[90vw] h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button (X icon) - now slightly adjusted for contrast */}
             <button
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white" // Adjust button for dark/blur background
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white"
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedImage(null);
@@ -175,17 +177,15 @@ export default function SubmissionsAssignments() {
               <X size={24} />
             </button>
 
-            {/* Image */}
             <div className="relative w-full h-full">
               {" "}
-              {/* Inner div for image */}
               <Image
                 src={selectedImage}
                 alt="Full-screen submission"
                 fill
                 priority={true}
                 style={{ objectFit: "contain" }}
-                className="rounded-lg" // Keep rounded corners for the image itself
+                className="rounded-lg"
               />
             </div>
           </div>
