@@ -14,6 +14,7 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useParams } from "next/navigation";
 
+
 // Interface definitions (unchanged)
 interface Student {
   id: number;
@@ -24,6 +25,7 @@ interface Student {
 interface Assignment {
   id: number;
   title: string;
+  description: string;
 }
 
 interface AiAnalysis {
@@ -54,22 +56,30 @@ interface AssignmentSubmission {
 
 export default function SubmissionsAssignments() {
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const params = useParams();
 
   useEffect(() => {
+    if (!params.assignId) return;
+
     axios
       .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
       .then((res) => {
         setSubmissions(res.data.submissions);
+        setAssignment(res.data.assignment);
       })
       .catch((err) => console.error(err));
   }, [params.assignId]);
 
+  console.log("submissions", submissions);
+  
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Сурагчдын Submissions</h1>
+      <h1 className="text-2xl font-bold mb-4">{assignment ? assignment.title : "Даалгавар"}</h1>
+      <h2>{assignment ? assignment.description : "Тайлбар байхгүй"}</h2>
 
       {submissions.map((s) => (
         <div
@@ -173,6 +183,7 @@ export default function SubmissionsAssignments() {
                 src={selectedImage}
                 alt="Full-screen submission"
                 fill
+                priority={true}
                 style={{ objectFit: "contain" }}
                 className="rounded-lg" // Keep rounded corners for the image itself
               />

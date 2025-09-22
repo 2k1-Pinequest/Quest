@@ -27,6 +27,7 @@ export const AssignmentList = ({
     },
     {}
   );
+  
 
   const sortedDates = Object.keys(groupedAssignments).sort(
     (a, b) => new Date(b).getTime() - new Date(a).getTime()
@@ -86,7 +87,6 @@ export const AssignmentList = ({
                 key={a.id}
                 id={a.id}
                 title={a.title}
-                description={a.description || ""}
                 submissions={a.totalSubmissions ?? 0}
                 createdAt={a.createdAt}
                 dueDate={a.dueDate || ""}
@@ -116,7 +116,6 @@ export const AssignmentList = ({
                 key={a.id}
                 id={a.id}
                 title={a.title}
-                description={a.description || ""}
                 submissions={a.totalSubmissions ?? 0}
                 createdAt={a.createdAt}
                 dueDate={a.dueDate || ""}
