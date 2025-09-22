@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
-
 
 export const StudentJoinRoomForm = () => {
   const router = useRouter();
@@ -37,17 +36,16 @@ export const StudentJoinRoomForm = () => {
         { studentName, roomCode }
       );
 
-      // Амжилттай нэвтэрсэн сурагчийн ID-г localStorage-д хадгалах
       localStorage.setItem("studentId", response.data.student.id);
 
-      // Амжилттай message-г харуулж, redirect хийх
       setMessage(response.data.message);
       setTimeout(() => {
         router.push("/studentRoom");
       }, 1000);
-    } catch (err: any) {
-      if (err.response) {
-        setError(err.response.data.message);
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      if (axiosError.response) {
+        setError(axiosError.response.data.message);
       } else {
         setError("Сервертэй холбогдох үед алдаа гарлаа");
       }
@@ -58,53 +56,61 @@ export const StudentJoinRoomForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-  <div className="w-full max-w-md p-6 border rounded-md bg-white shadow-lg">
-    <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">Сурагч ангид нэгдэх</h2>
+      <div className="w-full max-w-md p-6 border rounded-md bg-white shadow-lg">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+          Сурагч ангид нэгдэх
+        </h2>
 
-    <form onSubmit={handleJoinRoom} className="space-y-5">
-      <div className="space-y-3">
-        <Label htmlFor="studentName">Сурагчийн нэр</Label>
-        <Input
-          id="studentName"
-          type="text"
-          value={studentName}
-          onChange={(e) => setStudentName(e.target.value)}
-          placeholder="Таны нэр"
-        />
+        <form onSubmit={handleJoinRoom} className="space-y-5">
+          <div className="space-y-3">
+            <Label htmlFor="studentName">Сурагчийн нэр</Label>
+            <Input
+              id="studentName"
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="Таны нэр"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label htmlFor="roomCode">Ангийн код</Label>
+            <Input
+              id="roomCode"
+              type="text"
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value)}
+              placeholder="Багшаас өгсөн кодыг оруулна уу"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? <LoadingSpinner /> : "Ангид нэгдэх"}
+          </Button>
+        </form>
+
+        <div className="mt-4 space-y-2">
+          {message && (
+            <Alert
+              variant="default"
+              className="border-green-500 bg-green-50 text-green-800"
+            >
+              <AlertTitle>Амжилттай</AlertTitle>
+              <AlertDescription>{message}</AlertDescription>
+            </Alert>
+          )}
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Алдаа</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+        </div>
       </div>
-
-      <div className="space-y-3">
-        <Label htmlFor="roomCode">Ангийн код</Label>
-        <Input
-          id="roomCode"
-          type="text"
-          value={roomCode}
-          onChange={(e) => setRoomCode(e.target.value)}
-          placeholder="Багшаас өгсөн кодыг оруулна уу"
-        />
-      </div>
-
-      <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600" disabled={loading}>
-        {loading ? <LoadingSpinner /> : "Ангид нэгдэх"}
-      </Button>
-    </form>
-
-    <div className="mt-4 space-y-2">
-      {message && (
-        <Alert variant="default" className="border-green-500 bg-green-50 text-green-800">
-          <AlertTitle>Амжилттай</AlertTitle>
-          <AlertDescription>{message}</AlertDescription>
-        </Alert>
-      )}
-      {error && (
-        <Alert variant="destructive">
-          <AlertTitle>Алдаа</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
     </div>
-  </div>
-</div>
-
   );
 };
