@@ -65,7 +65,7 @@ export const AssignmentTab = () => {
     <div className="min-h-screen flex justify-center">
       <div className="w-full max-w-[1200px] px-4 sm:px-6 bg-white rounded-2xl">
         {/* Tabs */}
-        <nav className="flex bg-gray-100 rounded-lg">
+        <nav className="flex bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setSelectedTab("submissions")}
             className={`flex items-center px-4 py-2 rounded-md transition-all duration-200 ${
@@ -91,7 +91,7 @@ export const AssignmentTab = () => {
         </nav>
 
         {/* Content */}
-        <div className="mt-4 p-6 min-h-[200px]">
+        <div className="mt-8  min-h-[200px]">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500 text-lg">Уншиж байна...</p>

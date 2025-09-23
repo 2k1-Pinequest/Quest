@@ -84,7 +84,7 @@ export default function SubmissionsAssignments() {
   };
 
   return (
-    <div className="p-6">
+    <div className="">
       <h1 className="text-2xl font-bold">
         {assignment ? assignment.title : "Даалгавар"}
       </h1>
@@ -98,8 +98,6 @@ export default function SubmissionsAssignments() {
           className="mb-6 p-4 border rounded-lg shadow flex flex-col md:flex-row gap-6"
         >
           <div className="w-full md:w-1/3">
-            <h2 className="font-semibold mb-3">{s.student?.studentName}</h2>
-
             {s.fileUrl ? (
               <Carousel className="w-full h-110 relative">
                 <CarouselContent>
@@ -155,7 +153,10 @@ export default function SubmissionsAssignments() {
 
           {/* AI анализ */}
           <div className="flex-1 p-4 bg-gray-100 rounded-lg relative">
-            <h3 className="font-semibold mb-2">AI Analysis</h3>
+            <div className="flex justify-between">
+              <h2 className="font-semibold text-xl mb-3">{s.student?.studentName}</h2>
+              <h3 className="font-semibold mb-2">AI Analysis</h3>
+            </div>
             {s.aiAnalysis ? (
               <>
                 <p>
