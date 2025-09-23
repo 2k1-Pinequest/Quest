@@ -15,7 +15,7 @@ export interface AssignmentAnalysis {
   summary: string;
   mistakes: string[];
   uncertain: string[];
-  suggestions: string[];
+  suggest: string;
   overall: string;
 }
 
@@ -113,6 +113,7 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
 - uncertain-д зөвхөн будлиантай, ойлгомжгүй тэмдэгт, тоо орно.
 - correctTasks, score-г зөвхөн бодлогын үнэн байдал дээр үндэслэнэ.
 - overall-г ерөнхий багшийн дүгнэлт маягтай, товч, “энэ сурагч ийм л ажил хийсэн байна” гэсэн ойлголт төрүүлэх маягтай гаргана.
+- suggest-г заавал **богино, нэг өгүүлбэрийн зөвлөмж** болгож гаргана.
 
 **[TOTALTASKS]**
 - totalTasks = correctTasks + mistakes.length + uncertain.length
@@ -132,7 +133,8 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
   "mistakes": [string],
   "uncertain": [string],
   "summary": string,
-  "overall": string
+  "overall": string,
+  "suggest": string
 }
 
 **ЖИШЭЭ overall тайлбар:**
@@ -140,9 +142,10 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
 - "Ерөнхийд нь: хүүхэд бодлого ихэнхийг зөв хийсэн."
 - "Ерөнхийд нь: зарим бодлого будлиантай, дахин шалгах хэрэгтэй."
 
-**[Зөвлөмж]**
-- Mistakes болон uncertain-д орсон бодлогуудыг үндэслэж ерөнхий ойлголт гарга.
-- Ерөнхий дүгнэлт богино, ойлгомжтой, багш нэг хараад хүүхдийн ажил, алдаа, чадварыг төсөөлж чадахуйц байх ёстой.
+**ЖИШЭЭ suggest тайлбар:**
+- "Бутархай тоонууд дээр илүү анхаараарай."
+- "Үржүүлэлт, хуваалтыг дахин давтаарай."
+- "Будлиантай бодлогуудаа багштайгаа хамт нягтлаарай."
 `;
 
         const result = await model.generateContent([prompt, ...parts]);
@@ -188,9 +191,7 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
             summary: parsed.summary,
             mistakes: parsed.mistakes,
             uncertain: parsed.uncertain,
-            suggestions: [
-              "Ялангуяа бутархай тоог зэрэгт дэвшүүлэхдээ анхааралтай байх.",
-            ],
+            suggestions: [parsed.suggest],
             overall: parsed.overall,
           },
           create: {
@@ -200,9 +201,7 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
             summary: parsed.summary,
             mistakes: parsed.mistakes,
             uncertain: parsed.uncertain,
-            suggestions: [
-              "Ялангуяа бутархай тоог зэрэгт дэвшүүлэхдээ анхааралтай байх.",
-            ],
+            suggestions: [parsed.suggest],
             overall: parsed.overall,
           },
         });
