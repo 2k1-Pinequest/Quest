@@ -72,16 +72,17 @@ export const AssignmentItem = ({
     >
       <div className="flex flex-col gap-2">
         <h3 className="text-sm text-gray-800 flex items-center gap-1.5">
-          <CalendarDays /> {createdDateStr}
+          <CalendarDays size={15}/> {createdDateStr}
         </h3>
         <div>
-          <h4 className="text-l font-semibold text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis">
+          <h4 className="text-xl font-semibold text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis">
             {title}
           </h4>
         </div>
         <div className="flex items-center justify-between">
-          <div className="text-xs text-gray-500">
-            {approvedSubmissions}/{submissions} шалгасан
+          <div className="text-xs flex">
+            <p className="text-gray-500">{approvedSubmissions}</p>
+            <p className="font-medium">/{submissions} шалгасан</p>
           </div>
           <button
             onClick={(e) => {
