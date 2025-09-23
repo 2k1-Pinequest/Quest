@@ -121,7 +121,7 @@ export function TeacherAssignmentForm({
             />
           </div>
 
-          <div className="flex flex-col gap-1">
+          {/* <div className="flex flex-col gap-1">
             <label>Даалгаврын текст</label>
             <Textarea
               value={textContent}
@@ -129,7 +129,7 @@ export function TeacherAssignmentForm({
               placeholder="Даалгаврын текстээ энд бичнэ үү..."
               rows={5}
             />
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-1">
             <label>Дуусах хугацаа</label>
