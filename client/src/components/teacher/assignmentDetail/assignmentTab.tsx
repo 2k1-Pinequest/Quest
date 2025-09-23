@@ -39,7 +39,7 @@ export const AssignmentTab = () => {
     setLoading(true);
 
     axios
-      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`)
       .then((res) => {
         const submissionsFromAPI: Submission[] = res.data.submissions.map(
           (s: SubmissionAPI) => ({

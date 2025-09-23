@@ -64,7 +64,7 @@ export default function SubmissionsAssignments() {
     if (!params.assignId) return;
 
     axios
-      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`)
       .then((res) => {
         setSubmissions(res.data.submissions);
         setAssignment(res.data.assignment);
@@ -97,7 +97,7 @@ export default function SubmissionsAssignments() {
                   {s.fileUrl.split(",").map((url, i) => {
                     const imageUrl = url.startsWith("http")
                       ? url
-                      : `http://localhost:4200/${url}`;
+                      : `${process.env.NEXT_PUBLIC_API_URL}/${url}`;
                     return (
                       <CarouselItem
                         key={i}
