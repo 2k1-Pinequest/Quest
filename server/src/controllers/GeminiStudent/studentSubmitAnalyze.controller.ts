@@ -306,89 +306,135 @@ export const analyzeAssignment = [
       });
 
       // --- AI analysis async ---
-      // (async () => {
-      //   try {
-      //     console.log("ai analyze starteddd");
+      (async () => {
+        try {
+          console.log("ai analyze starteddd");
 
-      //     const genAI = new GoogleGenerativeAI(
-      //       process.env.GEMINI_API_KEY as string
-      //     );
+          const genAI = new GoogleGenerativeAI(
+            process.env.GEMINI_API_KEY as string
+          );
 
-      //     async function urlToGenerativePart(
-      //       url: string,
-      //       mimeType: string
-      //     ): Promise<Part> {
-      //       const response = await axios.get(url, { responseType: "arraybuffer" });
-      //       const base64 = Buffer.from(response.data).toString("base64");
-      //       return {
-      //         inlineData: { data: base64, mimeType },
-      //       };
-      //     }
+          async function urlToGenerativePart(
+            url: string,
+            mimeType: string
+          ): Promise<Part> {
+            const response = await axios.get(url, {
+              responseType: "arraybuffer",
+            });
+            const base64 = Buffer.from(response.data).toString("base64");
+            return {
+              inlineData: { data: base64, mimeType },
+            };
+          }
 
-      //     const parts = await Promise.all(
-      //       uploadedUrls.map((url) => urlToGenerativePart(url, "image/png"))
-      //     );
+          const parts = await Promise.all(
+            uploadedUrls.map((url) => urlToGenerativePart(url, "image/png"))
+          );
 
-      //     const model = genAI.getGenerativeModel({
-      //       model: "gemini-2.5-flash",
-      //       generationConfig: { temperature: 0, topP: 1, topK: 1 },
-      //     });
+          const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: { temperature: 0, topP: 1, topK: 1 },
+          });
 
-      //     const prompt = `...` // Таны JSON prompt энд оруулна
+          const prompt = `
+Чи зөвхөн JSON буцаа. Markdown, текст, тайлбар битгий оруул.
+Чи зөвхөн сурагчийн бодлого бүрийн үнэн зөв байдлаар дүн гаргана.
+Сурагчийн бичсэн оноо, тайлбарыг тоохгүй.
 
-      //     const result = await model.generateContent([prompt, ...parts]);
-      //     let cleanOutput = (await result.response.text()).trim();
-      //     cleanOutput = cleanOutput
-      //       .replace(/^```json\s*/, "")
-      //       .replace(/^```\s*/, "")
-      //       .replace(/\s*```$/, "");
+**[ЗОРИЛГО]**
+- totalTasks-г зураг дээрх бодит, бие даасан бодлогын тоогоор гаргана.
+- mistakes-д зөвхөн үнэхээр буруу бодсон бодлогууд орно.
+- uncertain-д зөвхөн будлиантай, ойлгомжгүй тэмдэгт, тоо орно.
+- correctTasks, score-г зөвхөн бодлогын үнэн байдал дээр үндэслэнэ.
+- overall-г ерөнхий багшийн дүгнэлт маягтай, товч, “энэ сурагч ийм л ажил хийсэн байна” гэсэн ойлголт төрүүлэх маягтай гаргана.
+- suggest-г заавал **богино, нэг өгүүлбэрийн зөвлөмж** болгож гаргана.
 
-      //     let parsed: AssignmentAnalysis;
-      //     try {
-      //       parsed = JSON.parse(cleanOutput) as AssignmentAnalysis;
-      //       parsed.mistakes = Array.isArray(parsed.mistakes)
-      //         ? parsed.mistakes
-      //         : [parsed.mistakes];
-      //       parsed.uncertain = Array.isArray(parsed.uncertain)
-      //         ? parsed.uncertain
-      //         : [parsed.uncertain];
-      //     } catch (e) {
-      //       console.error("AI JSON parse алдаа:", cleanOutput);
-      //       return;
-      //     }
+**[TOTALTASKS]**
+- totalTasks = correctTasks + mistakes.length + uncertain.length
+- Нэг бодлого = нэг бие даасан асуулт, зураг хэд байсныг үл харгалзан
+- Завсрын алхам, үргэлжлэл, нэмэлт тооцоолол, хариу тусдаа бодлого гэж тооцохгүй
 
-      //     const aiStident = await prisma.studentAssignmentAi.upsert({
-      //       where: {
-      //         studentId_assignmentId: {
-      //           studentId: Number(studentId),
-      //           assignmentId: Number(assignmentId),
-      //         },
-      //       },
-      //       update: {
-      //         score: parsed.score,
-      //         summary: parsed.summary,
-      //         mistakes: parsed.mistakes,
-      //         uncertain: parsed.uncertain,
-      //         suggestions: [parsed.suggest],
-      //         overall: parsed.overall,
-      //       },
-      //       create: {
-      //         studentId: Number(studentId),
-      //         assignmentId: Number(assignmentId),
-      //         score: parsed.score,
-      //         summary: parsed.summary,
-      //         mistakes: parsed.mistakes,
-      //         uncertain: parsed.uncertain,
-      //         suggestions: [parsed.suggest],
-      //         overall: parsed.overall,
-      //       },
-      //     });
+**[SUMMARY]**
+- summary-д заавал сурагч нийт хэдэн бодлого бодсон, хэдийг нь зөв бодсон, хувь (%)-г тооцоолон гаргах.
+- Жишээ: "Сурагч нийт 15 бодлогоос 9-ийг зөв бодож, 60% оноо авсан байна."
+- Энэ нь багшид хүүхдийн үр дүнг нэг хараад ойлгоход хялбар байх ёстой.
 
-      //     console.log("aiStident::", aiStident);
-      //   } catch (aiErr) {
-      //     console.error("AI анализ алдаа:", aiErr);
-      //   }
-      // })();
+**[JSON БҮТЭЦ]**
+{
+  "totalTasks": number,
+  "correctTasks": number,
+  "score": number,
+  "mistakes": [string],
+  "uncertain": [string],
+  "summary": string,
+  "overall": string,
+  "suggest": string
+}
+
+**ЖИШЭЭ overall тайлбар:**
+- "Ерөнхийд нь: энэ хүүхэд бодлого хийх чадвартай, зарим алдаа гаргасан байна."
+- "Ерөнхийд нь: хүүхэд бодлого ихэнхийг зөв хийсэн."
+- "Ерөнхийд нь: зарим бодлого будлиантай, дахин шалгах хэрэгтэй."
+
+**ЖИШЭЭ suggest тайлбар:**
+- "Бутархай тоонууд дээр илүү анхаараарай."
+- "Үржүүлэлт, хуваалтыг дахин давтаарай."
+- "Будлиантай бодлогуудаа багштайгаа хамт нягтлаарай."
+`; // Таны JSON prompt энд оруулна
+
+          const result = await model.generateContent([prompt, ...parts]);
+          let cleanOutput = (await result.response.text()).trim();
+          cleanOutput = cleanOutput
+            .replace(/^```json\s*/, "")
+            .replace(/^```\s*/, "")
+            .replace(/\s*```$/, "");
+
+          let parsed: AssignmentAnalysis;
+          try {
+            parsed = JSON.parse(cleanOutput) as AssignmentAnalysis;
+            parsed.mistakes = Array.isArray(parsed.mistakes)
+              ? parsed.mistakes
+              : [parsed.mistakes];
+            parsed.uncertain = Array.isArray(parsed.uncertain)
+              ? parsed.uncertain
+              : [parsed.uncertain];
+          } catch (e) {
+            console.error("AI JSON parse алдаа:", cleanOutput);
+            return;
+          }
+
+          const aiStident = await prisma.studentAssignmentAi.upsert({
+            where: {
+              studentId_assignmentId: {
+                studentId: Number(studentId),
+                assignmentId: Number(assignmentId),
+              },
+            },
+            update: {
+              score: parsed.score,
+              summary: parsed.summary,
+              mistakes: parsed.mistakes,
+              uncertain: parsed.uncertain,
+              suggestions: [parsed.suggest],
+              overall: parsed.overall,
+            },
+            create: {
+              studentId: Number(studentId),
+              assignmentId: Number(assignmentId),
+              score: parsed.score,
+              summary: parsed.summary,
+              mistakes: parsed.mistakes,
+              uncertain: parsed.uncertain,
+              suggestions: [parsed.suggest],
+              overall: parsed.overall,
+            },
+          });
+
+          console.log("aiStident::", aiStident);
+        } catch (aiErr) {
+          console.error("AI анализ алдаа:", aiErr);
+        }
+      })();
     } catch (err: any) {
       console.error(err);
       res.status(500).json({
