@@ -1,9 +1,10 @@
+// pages/submissions/[assignId].tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { ZuwUildel } from "./GurvanUildel";
+
 import {
   Carousel,
   CarouselContent,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useParams } from "next/navigation";
+import { ZuwUildel } from "./GurvanUildel";
 
 interface Student {
   id: number;
@@ -56,28 +58,29 @@ export default function SubmissionsAssignments() {
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [assignment, setAssignment] = useState<Assignment | null>(null);
 
-  // Modal-тэй carousel-ийн state
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const params = useParams();
 
-  useEffect(() => {
+  const fetchSubmissions = async () => {
     if (!params.assignId) return;
 
-    axios
-
-      .get(
+    try {
+      const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`
-      )
-      .then((res) => {
-        setSubmissions(res.data.submissions);
-        setAssignment(res.data.assignment);
-      })
-      .catch((err) => console.error(err));
+      );
+      setSubmissions(res.data.submissions);
+      setAssignment(res.data.assignment);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubmissions();
   }, [params.assignId]);
 
-  // Зурган дээр товшсон үед carousel-ийг нээх
   const openCarousel = (images: string[], index: number) => {
     setSelectedImages(images);
     setSelectedIndex(index);
@@ -134,7 +137,6 @@ export default function SubmissionsAssignments() {
                   })}
                 </CarouselContent>
 
-                {/* Зургийн тоо 2 ба түүнээс дээш байвал сумыг харуулна */}
                 {s.fileUrl.split(",").length > 1 && (
                   <>
                     <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 p-1 rounded-full shadow">
@@ -151,10 +153,11 @@ export default function SubmissionsAssignments() {
             )}
           </div>
 
-          {/* AI анализ */}
           <div className="flex-1 p-4 bg-gray-100 rounded-lg relative">
             <div className="flex justify-between">
-              <h2 className="font-semibold text-xl mb-3">{s.student?.studentName}</h2>
+              <h2 className="font-semibold text-xl mb-3">
+                {s.student?.studentName}
+              </h2>
               <h3 className="font-semibold mb-2">AI Analysis</h3>
             </div>
             {s.aiAnalysis ? (
@@ -176,14 +179,15 @@ export default function SubmissionsAssignments() {
               <ZuwUildel
                 submissionId={s.id}
                 aiAnalysis={s.aiAnalysis}
-                onSubmissionUpdated={() => {}}
+                initialTeacherScore={s.score ?? undefined}
+                initialApproved={s.status === "APPROVED"}
+                onSubmissionUpdated={fetchSubmissions}
               />
             </div>
           </div>
         </div>
       ))}
 
-      {/* Modal carousel */}
       {selectedImages.length > 0 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
@@ -209,7 +213,6 @@ export default function SubmissionsAssignments() {
                 className="rounded-lg"
               />
 
-              {/* Previous */}
               {selectedIndex > 0 && (
                 <button
                   className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/70 rounded-full shadow"
@@ -219,7 +222,6 @@ export default function SubmissionsAssignments() {
                 </button>
               )}
 
-              {/* Next */}
               {selectedIndex < selectedImages.length - 1 && (
                 <button
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/70 rounded-full shadow"
