@@ -67,7 +67,9 @@ export default function SubmissionsAssignments() {
 
     axios
 
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`)
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`
+      )
       .then((res) => {
         setSubmissions(res.data.submissions);
         setAssignment(res.data.assignment);
@@ -133,12 +135,18 @@ export default function SubmissionsAssignments() {
                     );
                   })}
                 </CarouselContent>
-                <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 p-1 rounded-full shadow">
-                  <ChevronLeft />
-                </CarouselPrevious>
-                <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 p-1 rounded-full shadow">
-                  <ChevronRight />
-                </CarouselNext>
+
+                {/* Зургийн тоо 2 ба түүнээс дээш байвал сумыг харуулна */}
+                {s.fileUrl.split(",").length > 1 && (
+                  <>
+                    <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 p-1 rounded-full shadow">
+                      <ChevronLeft />
+                    </CarouselPrevious>
+                    <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 p-1 rounded-full shadow">
+                      <ChevronRight />
+                    </CarouselNext>
+                  </>
+                )}
               </Carousel>
             ) : (
               <p>Зураг ирээгүй байна</p>

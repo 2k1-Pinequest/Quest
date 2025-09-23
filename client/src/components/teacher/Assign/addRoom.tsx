@@ -13,19 +13,19 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 
 interface AddClassProps {
-  addClassroom: (roomName: string) => void; 
+  addClassroom: (roomName: string) => void;
 }
 
 export function AddClass({ addClassroom }: AddClassProps) {
   const [addClass, setAddClass] = useState("");
-   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-   const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!addClass.trim()) return;
     addClassroom(addClass.trim());
     setAddClass("");
-    setOpen(false); 
+    setOpen(false);
   };
 
   return (
@@ -40,12 +40,12 @@ export function AddClass({ addClassroom }: AddClassProps) {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Анги нэмэх</DialogTitle>
           </DialogHeader>
 
-          <div className="grid gap-4 p-4">
+          <div className="grid gap-4 pt-4 pb-4">
             <Input
               id="name-1"
               name="name"
@@ -61,7 +61,12 @@ export function AddClass({ addClassroom }: AddClassProps) {
             </DialogClose>
 
             <DialogClose asChild>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm font-medium ">Хадгалах</Button>
+              <Button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm font-medium "
+              >
+                Хадгалах
+              </Button>
             </DialogClose>
           </DialogFooter>
         </form>
