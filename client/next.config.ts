@@ -9,8 +9,8 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
       },
       {
-        protocol: "http",
-        hostname: "localhost",
+        protocol: "https",
+        hostname: "quest-coral-three.vercel.app",
       },
     ],
   },
