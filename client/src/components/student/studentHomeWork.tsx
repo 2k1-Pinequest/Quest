@@ -109,12 +109,12 @@ export default function Student({ assignment }: { assignment: Assignment }) {
 
     const formData = new FormData();
     files.forEach((f) => formData.append("files", f));
-    formData.append("assignmentId", assignment.id.toString());
+    // formData.append("assignmentId", assignment.id.toString());
 
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/analyzeAssignment/${studentId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/${assignment.id}/${studentId}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
