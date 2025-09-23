@@ -36,5 +36,7 @@ export const TeacherAssignDetailHeader = ({ assignment }: TeacherAssignDetailHea
         <div></div>
       </div>
     </div>
+
+    
   );
 };
