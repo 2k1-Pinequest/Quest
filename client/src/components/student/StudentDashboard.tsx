@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, X } from "lucide-react";
+import {
+  CheckCircle,
+  ChevronLeft,
+  ClipboardList,
+  Hourglass,
+  X,
+} from "lucide-react";
 import Student from "./studentHomeWork";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -83,20 +89,17 @@ export default function StudentDashboard() {
     router.push("/studentJoinRoom");
   };
 
-  const incompleteAssignments = assignments.filter((a) => {
-    const submission = a.studentSubmission;
-    console.log("submission incompleted", submission);
-    
-    // Хэрэв хариулт байхгүй эсвэл хариулт нь APPROVED статусгүй бол дуусаагүй гэж үзнэ.
-    return !submission || submission.status !== "APPROVED";
-  });
+  const newAssignments = assignments.filter((a) => !a.studentSubmission);
 
-  // Дууссан даалгаврууд
-  const completedAssignments = assignments.filter((a) => {
-    const submission = a.studentSubmission;
-    // Зөвхөн хариулт нь APPROVED статус болон оноотой байвал дууссан гэж үзнэ.
-    return submission?.status === "APPROVED" && submission.score !== null;
-  });
+  const pendingAssignments = assignments.filter(
+    (a) => a.studentSubmission && a.studentSubmission.status !== "APPROVED"
+  );
+
+  const completedAssignments = assignments.filter(
+    (a) =>
+      a.studentSubmission?.status === "APPROVED" &&
+      a.studentSubmission.score !== null
+  );
 
   return (
     <div className="flex flex-col min-h-screen px-4 md:px-8 py-8 bg-gray-50">
@@ -127,10 +130,6 @@ export default function StudentDashboard() {
         </header>
 
         <main className="space-y-8">
-          <h3 className="text-2xl font-normal text-gray-800">
-            Ирсэн даалгавар
-          </h3>
-
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array(6)
@@ -151,14 +150,43 @@ export default function StudentDashboard() {
             <p className="text-gray-500">Ямар ч даалгавар ирээгүй байна.</p>
           ) : (
             <>
-              {incompleteAssignments.length > 0 && (
+              {newAssignments.length > 0 && (
                 <div>
-                  <h4 className="text-xl font-normal text-gray-800 mb-2 flex items-center">
-                    Дуусаагүй
-                    <span className="flex-1 border-t border-gray-300 ml-4" />
-                  </h4>
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-gray-600">
+                      <ClipboardList className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                      Хийх даалгавар
+                    </span>
+                    <div className="flex-1 border-t border-gray-400 h-px" />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {incompleteAssignments.map((assignment) => (
+                    {newAssignments.map((a) => (
+                      <AssignmentCard
+                        key={a.id}
+                        assignment={a}
+                        onSelect={setSelectedAssignment}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {pendingAssignments.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-yellow-100 text-yellow-600">
+                      <Hourglass className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                      Шалгагдаж байгаа
+                    </span>
+                    <div className="flex-1 border-t border-gray-400 h-px" />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pendingAssignments.map((assignment) => (
                       <AssignmentCard
                         key={assignment.id}
                         assignment={assignment}
@@ -170,12 +198,17 @@ export default function StudentDashboard() {
               )}
 
               {completedAssignments.length > 0 && (
-                <div className="mt-8">
-                  <h4 className="text-xl font-normal text-gray-800 mb-2 flex items-center">
-                    Дууссан
-                    <span className="flex-1 border-t border-gray-300 ml-4" />
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-2">
+                <div className="mt-10">
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
+                      <CheckCircle className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
+                      Шалгагдсан
+                    </span>
+                    <div className="flex-1 border-t border-gray-400 h-px" />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {completedAssignments.map((assignment) => (
                       <AssignmentCard
                         key={assignment.id}
