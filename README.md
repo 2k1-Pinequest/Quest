@@ -1,24 +1,15 @@
 # 📚 Edusnap
 
 **Background:**  
-For mathematics teachers in general education schools, the task of reviewing students’ homework and notebooks is notably time-consuming. Research indicates that mathematics teachers spend an average of **3–4 minutes assessing each student’s written solutions**. Given the volume of students and the frequency of assignments, this significantly amplifies teachers’ daily workload. Consequently, teachers have limited opportunity to provide personalized feedback, which is essential for enhancing students’ mathematical understanding and skills.
+In traditional education, mathematics teachers spend a large portion of their day manually collecting and grading students’ homework, often only checking whether answers are correct or incorrect while overlooking AI-assisted insights. Research shows that assessing a single student’s solution usually takes 2–4 minutes, and in classes with many students and frequent assignments, this workload can quickly become overwhelming, leaving little time for personalized guidance. A web-based platform allows teachers to efficiently review all student submissions in a scrollable format, quickly identifying which problems each student solved correctly or incorrectly. By automating parts of the grading process, the system significantly reduces teachers’ workload, frees up time for direct interaction with students, and ensures timely feedback. This not only helps prevent learning gaps and keeps students on track but also empowers teachers to focus on fostering problem-solving skills, guiding understanding, and improving overall classroom learning outcomes.
 
-**Goal:**  
-To mitigate this challenge, the proposed system seeks to optimize the grading process and reduce the time required for evaluation.
-
-### 📌 How the system works
-1. Teachers establish a **virtual classroom** for each mathematics course.  
-2. Students **enroll** in the classroom using a **unique code** and submit assignments electronically.  
-3. Assignments are submitted as **image files** (photos or scanned solutions).  
-4. An **AI module** automatically evaluates the solutions, generating **feedback + scores**.  
-This system reduces workload, enhances grading efficiency, ensures fair feedback, and supports improved learning outcomes in mathematics.
 
 ---
 
 ## 📖 Terminology
 - **Room** – Virtual workspace created by the teacher.  
 - **Room Code** – Unique code for students to join a classroom.  
-- **Assignment** – Task given by the teacher (text, PPT, Word, images).  
+- **Assignment** –  A task or coursework given by the teacher. Students can submit it in images.  
 - **Submission** – Work submitted by students (text or files).  
 - **AI Analysis** – Automatic evaluation + feedback generation.   
 - **Manual Review** – Teacher reviews submissions with low/average AI scores.  
@@ -40,7 +31,8 @@ This system reduces workload, enhances grading efficiency, ensures fair feedback
 ### 🧑‍🎓 Student Flow
 1. Join class with Classroom Code.  
 2. Receive assignments in Student Dashboard.  
-3. Submit work as text or upload file (PPT, Word, image).  
+3. The student prepares the homework and submits it in one of the following formats:
+   -Images (e.g., JPG, PNG). 
 4. AI processes submission → analysis + evaluation.  
 5. View AI evaluation + teacher’s confirmed score and feedback.   
 
@@ -52,11 +44,11 @@ This system reduces workload, enhances grading efficiency, ensures fair feedback
 - **Next.js (React framework)** – UI development (SSR/SPA)  
 - **Tailwind CSS + shadcn/ui** – Modern, responsive UI  
 - **Node.js (Express/Fastify)** – APIs & user management  
-- **Gemini API** – AI-powered question generation  
+- **Gemini API** – AI-powered assignment analysis & feedback
 - **REST API** – Communication between frontend & backend  
 
 ### 🤖 AI Integration
-- **OpenAI GPT** – Automated assignment checking & analysis  
+- **Gemini** – Automated assignment checking & analysis
 
 ### 🗄️ Database
 - **Prisma ORM** – Schema & data handling  
@@ -64,8 +56,5 @@ This system reduces workload, enhances grading efficiency, ensures fair feedback
 
 ### ☁️ Deployment
 - **Vercel** – Frontend & backend & database hosting  
-
-### 📂 Others
-- **PDF.js / Apache Tika** – Extract text from PDF/PPT  
 
 ---
