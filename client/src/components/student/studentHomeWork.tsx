@@ -78,10 +78,12 @@ export default function Student({ assignment }: { assignment: Assignment }) {
     const studentId = localStorage.getItem("studentId");
     if (!studentId) return;
 
-    setStudentId(studentId)
+    setStudentId(studentId);
 
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/${studentId}`)
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/submissions/${assignment.id}/${studentId}`
+      )
       .then((res) => {
         console.log("resss", res.data.submission);
 
@@ -136,7 +138,6 @@ export default function Student({ assignment }: { assignment: Assignment }) {
   console.log("fiel", files);
 
   console.log("studentttt iddddd:", studentId);
-  
 
   if (!studentData) return <div>Ачааллаж байна...</div>;
 
@@ -154,10 +155,15 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       )}
       <div className="w-full max-w-2xl space-y-6">
         {/* Даалгаврын нэр */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 space-y-2">
           <h2 className="text-xl font-semibold text-gray-900">
             {assignment.title}
           </h2>
+          {assignment.description && (
+            <p className="text-sm text-gray-700 whitespace-pre-line">
+              {assignment.description}
+            </p>
+          )}
         </div>
 
         {/* Заавар хэсэг minimal */}
