@@ -107,23 +107,34 @@ export default function Student({ assignment }: { assignment: Assignment }) {
       return;
     }
 
-    const formData = new FormData();
-    files.forEach((f) => formData.append("files", f));
-    // formData.append("assignmentId", assignment.id.toString());
-
     try {
       setLoading(true);
+
+      // 1️⃣ Frontend-с Cloudinary-д upload хийж URL авна
+      const uploadedUrls: string[] = [];
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "coverImage"); // Cloudinary preset
+
+        const cloudResp = await fetch(
+          "https://api.cloudinary.com/v1_1/duw6cdsyv/image/upload",
+          { method: "POST", body: formData }
+        );
+        const data = await cloudResp.json();
+        if (data.secure_url) uploadedUrls.push(data.secure_url);
+      }
+
+      // 2️⃣ Backend руу зөвхөн URL array илгээх
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/studentAssign/${assignment.id}/${studentId}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { imageUrls: uploadedUrls } // backend-д JSON хэлбэрээр
       );
 
       if (response.data?.submission) {
         toast.success("Гэрийн даалгавар амжилттай илгээгдлээ ✅");
-        // шууд submission-ийг шинэчилнэ
         setSubmission(response.data.submission);
-        setFiles([]); // сонгосон файлуудыг цэвэрлэж болно
+        setFiles([]); // файлуудыг цэвэрлэх
       } else {
         toast.error("Даалгавар хадгалах явцад алдаа гарлаа");
       }
