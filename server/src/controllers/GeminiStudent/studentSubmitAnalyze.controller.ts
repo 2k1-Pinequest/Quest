@@ -235,108 +235,54 @@
 // };
 
 import { Request, Response } from "express";
-import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import prisma from "../../utils/prisma";
-import cloudinary from "../../utils/cloudinary";
-import multer from "multer";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import axios from "axios";
 
-// types/assignmentAnalysis.ts
-export interface AssignmentAnalysis {
-  totalTasks: number;
-  correctTasks: number;
-  score: number;
-  summary: string;
-  mistakes: string[];
-  uncertain: string[];
-  suggest: string;
-  overall: string;
-}
+export const analyzeAssignment = async (req: Request, res: Response) => {
+  try {
+    const { studentId, assignmentId } = req.params;
+    const { imageUrls } = req.body as { imageUrls: string[] };
 
-// Multer memoryStorage setup (serverless-д тохиромжтой)
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+    if (!imageUrls || !imageUrls.length) {
+      return res.status(400).json({ error: "No image URLs provided" });
+    }
 
-export const analyzeAssignment = [
-  upload.array("files", 4), // max 4 зураг
-  async (req: Request, res: Response) => {
-    console.log("hi");
-    try {
-      const { studentId, assignmentId } = req.params;
+    // DB-д хадгалах
+    const submission = await prisma.studentSubmission.create({
+      data: {
+        studentId: Number(studentId),
+        assignmentId: Number(assignmentId),
+        fileUrl: imageUrls.join(","), // Cloudinary URLs
+        status: "PENDING",
+      },
+    });
 
-      const assignmentIdNum = Number(assignmentId);
-      if (isNaN(assignmentIdNum)) {
-        return res.status(400).json({ error: "assignmentId буруу байна" });
-      }
+    res.json({ success: true, submission });
 
-      if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-        return res.status(400).json({ error: "Зураг upload хийгдээгүй байна" });
-      }
-
-      const files = req.files as Express.Multer.File[];
-
-      // --- Cloudinary руу шууд buffer-ээс upload ---
-      const uploadedUrls: string[] = [];
-
-      for (const file of files) {
-        const result = await cloudinary.uploader.upload(
-          `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
-          { folder: "assignments" }
+    // AI анализ background
+    (async () => {
+      try {
+        const genAI = new GoogleGenerativeAI(
+          process.env.GEMINI_API_KEY as string
         );
-        uploadedUrls.push(result.secure_url);
-      }
 
-      console.log("uploadedUrls", uploadedUrls);
-
-      // --- DB-д хадгалах ---
-      const submission = await prisma.studentSubmission.create({
-        data: {
-          studentId: Number(studentId),
-          assignmentId: Number(assignmentId),
-          fileUrl: uploadedUrls.join(","),
-          status: "PENDING",
-        },
-      });
-
-      console.log("submission", submission);
-
-      res.json({
-        success: true,
-        submission,
-      });
-
-      // --- AI analysis async ---
-      (async () => {
-        try {
-          console.log("ai analyze starteddd");
-
-          const genAI = new GoogleGenerativeAI(
-            process.env.GEMINI_API_KEY as string
-          );
-
-          async function urlToGenerativePart(
-            url: string,
-            mimeType: string
-          ): Promise<Part> {
-            const response = await axios.get(url, {
-              responseType: "arraybuffer",
-            });
-            const base64 = Buffer.from(response.data).toString("base64");
-            return {
-              inlineData: { data: base64, mimeType },
-            };
-          }
-
-          const parts = await Promise.all(
-            uploadedUrls.map((url) => urlToGenerativePart(url, "image/png"))
-          );
-
-          const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-flash",
-            generationConfig: { temperature: 0, topP: 1, topK: 1 },
+        async function urlToGenerativePart(url: string): Promise<Part> {
+          const response = await axios.get(url, {
+            responseType: "arraybuffer",
           });
+          const base64 = Buffer.from(response.data).toString("base64");
+          return { inlineData: { data: base64, mimeType: "image/png" } };
+        }
 
-          const prompt = `
+        const parts = await Promise.all(imageUrls.map(urlToGenerativePart));
+
+        const model = genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          generationConfig: { temperature: 0, topP: 1, topK: 1 },
+        });
+
+        const prompt = `
 Чи зөвхөн JSON буцаа. Markdown, текст, тайлбар битгий оруул.
 Чи зөвхөн сурагчийн бодлого бүрийн үнэн зөв байдлаар дүн гаргана.
 Сурагчийн бичсэн оноо, тайлбарыг тоохгүй.
@@ -380,68 +326,49 @@ export const analyzeAssignment = [
 - "Бутархай тоонууд дээр илүү анхаараарай."
 - "Үржүүлэлт, хуваалтыг дахин давтаарай."
 - "Будлиантай бодлогуудаа багштайгаа хамт нягтлаарай."
-`; // Таны JSON prompt энд оруулна
+`;
 
-          const result = await model.generateContent([prompt, ...parts]);
-          let cleanOutput = (await result.response.text()).trim();
-          cleanOutput = cleanOutput
-            .replace(/^```json\s*/, "")
-            .replace(/^```\s*/, "")
-            .replace(/\s*```$/, "");
+        const result = await model.generateContent([prompt, ...parts]);
+        let cleanOutput = (await result.response.text()).trim();
+        cleanOutput = cleanOutput
+          .replace(/^```json\s*/, "")
+          .replace(/^```\s*/, "")
+          .replace(/\s*```$/, "");
 
-          let parsed: AssignmentAnalysis;
-          try {
-            parsed = JSON.parse(cleanOutput) as AssignmentAnalysis;
-            parsed.mistakes = Array.isArray(parsed.mistakes)
-              ? parsed.mistakes
-              : [parsed.mistakes];
-            parsed.uncertain = Array.isArray(parsed.uncertain)
-              ? parsed.uncertain
-              : [parsed.uncertain];
-          } catch (e) {
-            console.error("AI JSON parse алдаа:", cleanOutput);
-            return;
-          }
+        const parsed = JSON.parse(cleanOutput);
 
-          const aiStident = await prisma.studentAssignmentAi.upsert({
-            where: {
-              studentId_assignmentId: {
-                studentId: Number(studentId),
-                assignmentId: Number(assignmentId),
-              },
-            },
-            update: {
-              score: parsed.score,
-              summary: parsed.summary,
-              mistakes: parsed.mistakes,
-              uncertain: parsed.uncertain,
-              suggestions: [parsed.suggest],
-              overall: parsed.overall,
-            },
-            create: {
+        await prisma.studentAssignmentAi.upsert({
+          where: {
+            studentId_assignmentId: {
               studentId: Number(studentId),
               assignmentId: Number(assignmentId),
-              score: parsed.score,
-              summary: parsed.summary,
-              mistakes: parsed.mistakes,
-              uncertain: parsed.uncertain,
-              suggestions: [parsed.suggest],
-              overall: parsed.overall,
             },
-          });
-
-          console.log("aiStident::", aiStident);
-        } catch (aiErr) {
-          console.error("AI анализ алдаа:", aiErr);
-        }
-      })();
-    } catch (err: any) {
-      console.error(err);
-      res.status(500).json({
-        error: "API дуудлага хийхэд алдаа гарлаа: " + err.message,
-      });
-    }
-  },
-];
-
-export default analyzeAssignment;
+          },
+          update: {
+            score: parsed.score,
+            summary: parsed.summary,
+            mistakes: parsed.mistakes,
+            uncertain: parsed.uncertain,
+            suggestions: [parsed.suggest],
+            overall: parsed.overall,
+          },
+          create: {
+            studentId: Number(studentId),
+            assignmentId: Number(assignmentId),
+            score: parsed.score,
+            summary: parsed.summary,
+            mistakes: parsed.mistakes,
+            uncertain: parsed.uncertain,
+            suggestions: [parsed.suggest],
+            overall: parsed.overall,
+          },
+        });
+      } catch (err) {
+        console.error("AI analysis error:", err);
+      }
+    })();
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
