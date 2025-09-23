@@ -33,7 +33,7 @@ export const ZuwUildel: React.FC<ZuwUildelProps> = ({
       };
 
       await axios.put(
-        `http://localhost:4200/teacher/approvedSub/${submissionId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/teacher/approvedSub/${submissionId}`,
         payload
       );
 

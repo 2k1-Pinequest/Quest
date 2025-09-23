@@ -27,7 +27,7 @@ export const AssignmentDetails = () => {
     if (!params.assignId) return;
 
     axios
-      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`)
       .then((res) => setAssignmentData(res.data))
       .catch((err) => console.error(err));
   }, [params.assignId]);

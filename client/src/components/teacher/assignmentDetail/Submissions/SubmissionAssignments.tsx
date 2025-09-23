@@ -66,9 +66,8 @@ export default function SubmissionsAssignments() {
     if (!params.assignId) return;
 
     axios
-      .get(
-        `${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`
-      )
+
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`)
       .then((res) => {
         setSubmissions(res.data.submissions);
         setAssignment(res.data.assignment);
