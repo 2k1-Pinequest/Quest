@@ -37,8 +37,13 @@ async function urlToGenerativePart(
 
 export const analyzeAssignment = async (req: Request, res: Response) => {
   try {
-    const { studentId } = req.params;
-    const { assignmentId } = req.body;
+    const { studentId ,assignmentId} = req.params;
+    // const { assignmentId } = req.body;
+
+    const assignmentIdNum = Number(assignmentId);
+    if (!assignmentIdNum) {
+      return res.status(400).json({ error: "assignmentId буруу байна" });
+    }
 
     if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
       return res.status(400).json({ error: "Зураг upload хийгдээгүй байна" });
