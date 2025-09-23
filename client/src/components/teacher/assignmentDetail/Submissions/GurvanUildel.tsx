@@ -1,6 +1,7 @@
+// components/GurvanUildel.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import axios from "axios";
 
@@ -13,35 +14,51 @@ interface ZuwUildelProps {
     suggestions: string[];
     overall: string;
   } | null;
+  initialTeacherScore?: number; // API-аас хадгалагдсан багшийн оноо
+  initialApproved?: boolean; // API-аас хадгалагдсан батлагдсан төлөв
   onSubmissionUpdated: () => void;
 }
 
 export const ZuwUildel: React.FC<ZuwUildelProps> = ({
   submissionId,
   aiAnalysis,
+  initialTeacherScore,
+  initialApproved,
   onSubmissionUpdated,
 }) => {
-  const [score, setScore] = useState<number | undefined>(aiAnalysis?.score);
+  const [score, setScore] = useState<number | undefined>(
+    initialTeacherScore ?? undefined
+  );
   const [showSuccess, setShowSuccess] = useState(false);
+  const [approved, setApproved] = useState(initialApproved ?? false);
+
+  // 🚩 Анхны оноог input дээр AI оноо болгон тавих
+  useEffect(() => {
+    if (
+      score === undefined &&
+      aiAnalysis?.score !== null &&
+      aiAnalysis?.score !== undefined
+    ) {
+      setScore(aiAnalysis.score);
+    }
+  }, [aiAnalysis, score]);
 
   const handleSubmitFeedback = async () => {
+    if (score === undefined || isNaN(score)) {
+      console.warn("Оноо байхгүй байна");
+      return;
+    }
+
     try {
-      const validScore = score !== undefined && !isNaN(score) ? score : 0;
-
-      const payload = {
-        teacherScore: validScore,
-      };
-
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/teacher/approvedSub/${submissionId}`,
-        payload
+        { teacherScore: score }
       );
 
       setShowSuccess(true);
+      setApproved(true);
 
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
+      setTimeout(() => setShowSuccess(false), 3000);
 
       onSubmissionUpdated();
     } catch (err) {
@@ -57,23 +74,38 @@ export const ZuwUildel: React.FC<ZuwUildelProps> = ({
         </div>
       )}
 
-      <input
-        type="number"
-        className="w-24 border rounded-lg p-2"
-        placeholder="Оноо"
-        value={score || ""}
-        onChange={(e) => setScore(Number(e.target.value))}
-      />
+      {/* Батлагдсан үед оноо хэвээр харагдах, input алга */}
+      {approved ? (
+        <div className="text-lg font-semibold text-gray-800">
+          Оноо: {score !== undefined ? score : "—"}
+        </div>
+      ) : (
+        <input
+          type="number"
+          className="w-24 border rounded-lg p-2"
+          placeholder="Оноо"
+          value={score !== undefined ? score : ""}
+          onChange={(e) => setScore(Number(e.target.value))}
+        />
+      )}
 
-      <div className="flex gap-2">
-        <button
-          className="p-2 text-green-600 hover:bg-green-50 rounded-lg border-2"
-          title="Approve"
-          onClick={handleSubmitFeedback}
-        >
-          <Check size={20} />
-        </button>
-      </div>
+      {/* Батлагдаагүй үед approve товч харагдана */}
+      {!approved && (
+        <div className="flex gap-2">
+          <button
+            className="p-2 text-green-600 hover:bg-green-50 rounded-lg border-2"
+            title="Approve"
+            onClick={handleSubmitFeedback}
+          >
+            <Check size={20} />
+          </button>
+        </div>
+      )}
+
+      {/* Батлагдсан тэмдэг */}
+      {approved && (
+        <div className="text-green-600 font-medium">✓ Батлагдсан</div>
+      )}
     </div>
   );
 };
