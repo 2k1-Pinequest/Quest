@@ -8,7 +8,6 @@ import assignmentRouter from "./routes/StudentAssignment.router";
 import { Request, Response } from "express";
 import router from "./routes/assigment.router";
 import getAssignmentRouter from "./routes/allSub.router";
-import path from "path";
 
 const app = express();
 

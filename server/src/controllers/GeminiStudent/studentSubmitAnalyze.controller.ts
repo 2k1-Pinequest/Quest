@@ -248,6 +248,14 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "No image URLs provided" });
     }
 
+    const teacherAssignment = await prisma.assignment.findUnique({
+      where: {
+        id: Number(assignmentId),
+      },
+    });
+
+    console.log("assigment", teacherAssignment?.description);
+
     // DB-д хадгалах
     const submission = await prisma.studentSubmission.create({
       data: {
@@ -287,8 +295,13 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
 Чи зөвхөн сурагчийн бодлого бүрийн үнэн зөв байдлаар дүн гаргана.
 Сурагчийн бичсэн оноо, тайлбарыг тоохгүй.
 
+...
+**[ASSIGNMENT PROBLEMS]**
+${teacherAssignment?.description || "Багшаас бодлого өгөгдөөгүй."}
+
 **[ЗОРИЛГО]**
-- totalTasks-г зураг дээрх бодит, бие даасан бодлогын тоогоор гаргана.
+- Хэрэв assignment.description байгаа бол сурагчийн зурган дээрх бодолтыг зөвхөн тэндх бодлогуудтай тулгаж шалгана.
+- Хэрэв assignment.description хоосон бол сурагчийн зурган дээрх бодлогоор нь нийт бодлогын тоо, үнэлгээг гаргана.
 - mistakes-д зөвхөн үнэхээр буруу бодсон бодлогууд орно.
 - uncertain-д зөвхөн будлиантай, ойлгомжгүй тэмдэгт, тоо орно.
 - correctTasks, score-г зөвхөн бодлогын үнэн байдал дээр үндэслэнэ.
@@ -296,9 +309,10 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
 - suggest-г заавал **богино, нэг өгүүлбэрийн зөвлөмж** болгож гаргана.
 
 **[TOTALTASKS]**
-- totalTasks = correctTasks + mistakes.length + uncertain.length
-- Нэг бодлого = нэг бие даасан асуулт, зураг хэд байсныг үл харгалзан
-- Завсрын алхам, үргэлжлэл, нэмэлт тооцоолол, хариу тусдаа бодлого гэж тооцохгүй
+- Хэрэв assignment.description байгаа бол totalTasks = description дээрх бодлогын тоо.
+- Хэрэв assignment.description байхгүй бол totalTasks = зураг дээрх бие даасан бодлогын тоо.
+- Нэг бодлого = нэг бие даасан асуулт, зураг хэд байсныг үл харгалзан.
+- Завсрын алхам, үргэлжлэл, нэмэлт тооцоолол, хариу тусдаа бодлого гэж тооцохгүй.
 
 **[SUMMARY]**
 - summary-д заавал сурагч нийт хэдэн бодлого бодсон, хэдийг нь зөв бодсон, хувь (%)-г тооцоолон гаргах.
