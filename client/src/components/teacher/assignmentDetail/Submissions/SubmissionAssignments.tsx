@@ -14,7 +14,6 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useParams } from "next/navigation";
 
-// Interface definitions (unchanged)
 interface Student {
   id: number;
   studentName: string;
@@ -56,7 +55,10 @@ interface AssignmentSubmission {
 export default function SubmissionsAssignments() {
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
   const [assignment, setAssignment] = useState<Assignment | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Modal-тэй carousel-ийн state
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const params = useParams();
 
@@ -64,7 +66,9 @@ export default function SubmissionsAssignments() {
     if (!params.assignId) return;
 
     axios
-      .get(`http://localhost:4200/assignments/subs/${params.assignId}`)
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`
+      )
       .then((res) => {
         setSubmissions(res.data.submissions);
         setAssignment(res.data.assignment);
@@ -72,11 +76,15 @@ export default function SubmissionsAssignments() {
       .catch((err) => console.error(err));
   }, [params.assignId]);
 
-  console.log("submissions", submissions);
+  // Зурган дээр товшсон үед carousel-ийг нээх
+  const openCarousel = (images: string[], index: number) => {
+    setSelectedImages(images);
+    setSelectedIndex(index);
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold ">
+      <h1 className="text-2xl font-bold">
         {assignment ? assignment.title : "Даалгавар"}
       </h1>
       <h2 className="mb-4">
@@ -97,12 +105,23 @@ export default function SubmissionsAssignments() {
                   {s.fileUrl.split(",").map((url, i) => {
                     const imageUrl = url.startsWith("http")
                       ? url
-                      : `http://localhost:4200/${url}`;
+                      : `${process.env.NEXT_PUBLIC_API_URL}/${url}`;
                     return (
                       <CarouselItem
                         key={i}
                         className="w-full h-110 relative cursor-pointer"
-                        onClick={() => setSelectedImage(imageUrl)}
+                        onClick={() =>
+                          openCarousel(
+                            s
+                              .fileUrl!.split(",")
+                              .map((u) =>
+                                u.startsWith("http")
+                                  ? u
+                                  : `${process.env.NEXT_PUBLIC_API_URL}/${u}`
+                              ),
+                            i
+                          )
+                        }
                       >
                         <Image
                           src={imageUrl}
@@ -128,18 +147,16 @@ export default function SubmissionsAssignments() {
           </div>
 
           {/* AI анализ */}
-          <div className="flex-1 p-4 bg-gray-100 rounded-lg relative ">
+          <div className="flex-1 p-4 bg-gray-100 rounded-lg relative">
             <h3 className="font-semibold mb-2">AI Analysis</h3>
             {s.aiAnalysis ? (
               <>
                 <p>
                   <strong>Оноо:</strong> {s.aiAnalysis.score}
                 </p>
-
                 <p>
                   <strong>Алдаанууд:</strong> {s.aiAnalysis.mistakes.join(", ")}
                 </p>
-
                 <p>
                   <strong>Ерөнхий үнэлгээ:</strong> {s.aiAnalysis.overall}
                 </p>
@@ -158,10 +175,11 @@ export default function SubmissionsAssignments() {
         </div>
       ))}
 
-      {selectedImage && (
+      {/* Modal carousel */}
+      {selectedImages.length > 0 && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-80 backdrop-blur-sm"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={() => setSelectedImages([])}
         >
           <div
             className="relative w-[90vw] h-[90vh] flex items-center justify-center"
@@ -169,24 +187,39 @@ export default function SubmissionsAssignments() {
           >
             <button
               className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-white"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedImage(null);
-              }}
+              onClick={() => setSelectedImages([])}
             >
               <X size={24} />
             </button>
 
-            <div className="relative w-full h-full">
-              {" "}
+            <div className="relative w-full h-full flex items-center justify-center">
               <Image
-                src={selectedImage}
-                alt="Full-screen submission"
+                src={selectedImages[selectedIndex]}
+                alt={`selected-${selectedIndex}`}
                 fill
-                priority={true}
                 style={{ objectFit: "contain" }}
                 className="rounded-lg"
               />
+
+              {/* Previous */}
+              {selectedIndex > 0 && (
+                <button
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/70 rounded-full shadow"
+                  onClick={() => setSelectedIndex(selectedIndex - 1)}
+                >
+                  <ChevronLeft />
+                </button>
+              )}
+
+              {/* Next */}
+              {selectedIndex < selectedImages.length - 1 && (
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/70 rounded-full shadow"
+                  onClick={() => setSelectedIndex(selectedIndex + 1)}
+                >
+                  <ChevronRight />
+                </button>
+              )}
             </div>
           </div>
         </div>
