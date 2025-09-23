@@ -4,15 +4,8 @@ import { analyzeAssignment } from "../controllers/GeminiStudent/studentSubmitAna
 
 const assignmentRouter = express.Router();
 
-// Multer setup (upload зургуудыг хадгалах)
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // uploads folder
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
+// ✅ Multer memoryStorage ашиглана (serverless-д тохиромжтой)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // POST endpoint – олон зураг upload хийж анализ хийх
