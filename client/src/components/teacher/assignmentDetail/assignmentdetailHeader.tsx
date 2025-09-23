@@ -28,7 +28,7 @@ export const TeacherAssignDetailHeader = ({ assignment }: TeacherAssignDetailHea
         {/* Title + room code */}
         <div className="flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold text-gray-800 leading-tight">
-            Математик {assignment?.roomName}
+           {assignment?.roomName} анги
           </h1>
           <p className="text-gray-600 mt-1">{assignment?.code}</p>
         </div>
