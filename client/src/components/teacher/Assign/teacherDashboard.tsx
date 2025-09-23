@@ -116,7 +116,7 @@ export const TeacherClassRooms = ({ teacherId }: { teacherId: number }) => {
     <div className="flex justify-center">
       <div className="w-full max-w-[1200px] px-4 sm:px-6 bg-white rounded-2xl">
         <main className="px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center">
-          <div className="flex gap-10 w-full">
+          <div className="flex flex-col md:flex-row gap-10 w-full">
             {/* Classroom List */}
             <ClassroomList
               classrooms={classrooms}

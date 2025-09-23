@@ -17,7 +17,7 @@ export const OverviewCarts = ({ submissions }: ClassStatsProps) => {
       : 0;
 
   return (
-    <Card className="rounded-2xl shadow-lg">
+    <Card className="rounded-2xl">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
           Ангийн статистик

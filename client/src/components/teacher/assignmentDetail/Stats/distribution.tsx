@@ -37,14 +37,14 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
     <div className="space-y-6">
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Score Distribution */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
+        <div className="rounded-2xl p-6 border">
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Онооны хуваарилалт
           </h3>
 
           {/* Нийт submission ба дундаж оноо */}
           <p className="text-sm text-gray-600 mb-4">
-            Нийт submission: {totalSubmissions} <br />
+            Нийт ирсэн даалгавар: {totalSubmissions} <br />
             Дундаж оноо: {averageScore.toFixed(2)}
           </p>
 
@@ -95,7 +95,7 @@ export const Distribution = ({ submissions }: ClassStatsProps) => {
         </div>
 
         {/* Top AI зөвлөмжүүд */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
+        <div className="rounded-2xl p-6 border">
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             AI-аас ирж буй зөвлөмжүүд
           </h3>
