@@ -76,10 +76,10 @@ export default function SubmissionsAssignments() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="text-2xl font-bold ">
         {assignment ? assignment.title : "Даалгавар"}
       </h1>
-      <h2 className="mb-8">
+      <h2 className="mb-4">
         {assignment ? assignment.description : "Тайлбар байхгүй"}
       </h2>
 
