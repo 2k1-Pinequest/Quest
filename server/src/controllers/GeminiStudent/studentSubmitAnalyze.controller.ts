@@ -13,26 +13,25 @@ export const analyzeAssignment = async (req: Request, res: Response) => {
     }
 
     const teacherAssignment = await prisma.assignment.findUnique({
-      where: {
-        id: Number(assignmentId),
-      },
+      where: { id: Number(assignmentId) },
     });
 
-    console.log("assigment", teacherAssignment?.description);
+    console.log("assignment", teacherAssignment?.description);
 
-    // DB-д хадгалах
+    // --- 1. Submission create хийхдээ шууд ANALYZING болгож хадгална ---
     const submission = await prisma.studentSubmission.create({
       data: {
         studentId: Number(studentId),
         assignmentId: Number(assignmentId),
         fileUrl: imageUrls.join(","), // Cloudinary URLs
-        status: "PENDING",
+        status: "ANALYZING",
       },
     });
 
+    // Шууд response буцаана → UI дээр PENDING биш ANALYZING харагдана
     res.json({ success: true, submission });
 
-    // AI анализ background
+    // --- 2. AI анализ background ---
     (async () => {
       try {
         const genAI = new GoogleGenerativeAI(
@@ -119,6 +118,7 @@ ${teacherAssignment?.description || "Багшаас бодлого өгөгдө�
 
         const parsed = JSON.parse(cleanOutput);
 
+        // --- 3. StudentAssignmentAi upsert ---
         await prisma.studentAssignmentAi.upsert({
           where: {
             studentId_assignmentId: {
@@ -145,8 +145,25 @@ ${teacherAssignment?.description || "Багшаас бодлого өгөгдө�
             overall: parsed.overall,
           },
         });
+
+        // --- 4. Submission update → AI дууссан гэж тэмдэглэнэ ---
+        await prisma.studentSubmission.update({
+          where: { id: submission.id },
+          data: {
+            status: "ANALYZED",
+            score: parsed.score,
+            feedback: parsed.overall,
+            aiAnalysis: parsed, // бүх JSON хадгална
+          },
+        });
       } catch (err) {
         console.error("AI analysis error:", err);
+
+        // --- 5. Хэрэв алдаа гарвал submission буцааж PENDING/FAILED болгоно ---
+        await prisma.studentSubmission.update({
+          where: { id: submission.id },
+          data: { status: "PENDING" }, // эсвэл "FAILED" гэсэн enum нэмээд хэрэглэж болно
+        });
       }
     })();
   } catch (err: any) {
