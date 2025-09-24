@@ -43,7 +43,7 @@ interface AssignmentSubmission {
   id: number;
   assignmentId: number;
   studentId: number;
-  status: "APPROVED" | "PENDING" | "REJECTED";
+  status: "APPROVED" | "PENDING" | "REJECTED" | "ANALYZING";
   answerText: string | null;
   fileUrl: string | null;
   score: number | null;
@@ -70,6 +70,8 @@ export default function SubmissionsAssignments() {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/assignments/subs/${params.assignId}`
       );
+      console.log("res.data.submissions", res.data.submissions);
+
       setSubmissions(res.data.submissions);
       setAssignment(res.data.assignment);
     } catch (err) {
@@ -160,7 +162,9 @@ export default function SubmissionsAssignments() {
               </h2>
               <h3 className="font-semibold mb-2">AI Analysis</h3>
             </div>
-            {s.aiAnalysis ? (
+            {s.status === "ANALYZING" ? (
+              <p>AI анализ явагдаж байна...</p>
+            ) : s.aiAnalysis ? (
               <>
                 <p>
                   <strong>Оноо:</strong> {s.aiAnalysis.score}
@@ -175,6 +179,7 @@ export default function SubmissionsAssignments() {
             ) : (
               <p>AI анализ байхгүй</p>
             )}
+
             <div className="absolute bottom-4 right-4">
               <ZuwUildel
                 submissionId={s.id}
