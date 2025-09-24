@@ -168,6 +168,7 @@ export default function StudentDashboard() {
                         key={a.id}
                         assignment={a}
                         onSelect={setSelectedAssignment}
+                         isSubmitted={!!a.studentSubmission} 
                       />
                     ))}
                   </div>
@@ -191,6 +192,7 @@ export default function StudentDashboard() {
                         key={assignment.id}
                         assignment={assignment}
                         onSelect={setSelectedAssignment}
+                        isSubmitted={!!assignment.studentSubmission} 
                       />
                     ))}
                   </div>
@@ -215,6 +217,7 @@ export default function StudentDashboard() {
                         assignment={assignment}
                         score={assignment.studentSubmission?.score}
                         onSelect={setSelectedAssignment}
+                        isSubmitted={!!assignment.studentSubmission} 
                       />
                     ))}
                   </div>

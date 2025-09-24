@@ -5,14 +5,16 @@ import { BookOpen, Upload } from "lucide-react";
 
 interface AssignmentCardProps {
   assignment: Assignment;
-  score?: number | null; // Багшийн өгсөн оноог хүлээн авах проп
+  score?: number | null; 
   onSelect: (assignment: Assignment) => void;
+  isSubmitted?: boolean; // 
 }
 
 export default function AssignmentCard({
   assignment,
-  score, // Пропоо задлаж авна
+  score, 
   onSelect,
+  isSubmitted,
 }: AssignmentCardProps) {
   const parsedDueDate = assignment.dueDate
     ? new Date(assignment.dueDate)
@@ -75,8 +77,12 @@ export default function AssignmentCard({
           Дуусах хугацаа: {dueDateStr}
         </span>
 
-        {isPastDue ? (
-          <span className="text-white font-semibold text-center py-2 rounded-xl border  bg-gray-400">
+         {isSubmitted ? (
+          <span className="text-green-600 font-semibold text-center py-2 rounded-xl border">
+            ✅ Илгээсэн
+          </span>
+        ) : isPastDue ? (
+          <span className="text-white font-semibold text-center py-2 rounded-xl border bg-gray-400">
             Хугацаа дууссан
           </span>
         ) : (
